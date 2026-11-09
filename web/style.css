@@ -2119,59 +2119,12 @@ body.guide-open,
   transform: translateY(0) scale(1);
 }
 
-.first-run-close {
-  position: absolute;
-  top: 20px;
-  inset-inline-end: 20px;
-  inset-inline-start: auto;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
-  color: #dcdce2;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  display: grid;
-  place-items: center;
-  padding: 0;
-  font-size: 0;
-  line-height: 0;
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease;
-}
-
-.first-run-close::before,
-.first-run-close::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 2px;
-  border-radius: 2px;
-  background: currentColor;
-}
-
-.first-run-close::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.first-run-close::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.first-run-close:hover {
-  transform: rotate(90deg);
-  background: rgba(255, 255, 255, 0.14);
-}
-
 /* Updated First-Run Header (Batch 1 index.html) */
 .first-run-header {
   display: flex;
   align-items: center;
   gap: 20px;
   margin-bottom: 24px;
-  padding-inline-end: 44px;
 }
 
 .first-run-brand {
@@ -2379,16 +2332,6 @@ body.guide-open,
   gap: 15px;
   font-size: 19px;
   font-weight: 850;
-}
-
-.ng-dialog-close {
-  background: var(--surface3);
-  color: #ffffff;
-  border: 1px solid var(--stroke-strong);
-  border-radius: 50%;
-  font-size: 20px;
-  width: 38px;
-  height: 38px;
 }
 
 #ng-dialog-desc {
@@ -3202,3 +3145,71 @@ input[type='number'],
 .ng-offline-storage-site { direction: ltr; unicode-bidi: plaintext; display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
 .ng-dialog { max-height: calc(100dvh - 32px); overflow: auto; }
 #ng-dialog-desc { max-height: min(52dvh, 480px); overflow-y: auto; overscroll-behavior: contain; }
+
+/* Unified Modal Design System: shared visual primitives for NGDialog and the setup guide.
+   ROMs, BIOS, PREVIEWS and Fully Offline use NGDialog.action (not separate modal builders). */
+.ng-modal-overlay {
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vw, 24px);
+}
+
+.ng-dialog-backdrop,
+.first-run-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.ng-modal-panel {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--stroke-strong);
+  border-radius: 20px;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.8);
+  text-align: start;
+  direction: inherit;
+}
+
+.ng-modal-heading {
+  color: var(--text);
+  font-weight: 850;
+}
+
+.ng-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ng-modal-actions [data-ng-modal-action] {
+  min-height: 44px;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 750;
+  transition: background 0.2s ease, filter 0.2s ease;
+}
+
+.ng-modal-actions [data-ng-modal-action="secondary"] {
+  background: var(--surface3);
+  color: var(--text);
+  border: 1px solid var(--stroke-strong);
+}
+
+.ng-modal-actions [data-ng-modal-action="primary"] {
+  background: var(--yellow);
+  color: #111111;
+  border: 1px solid var(--yellow);
+}
+
+.ng-modal-actions [data-ng-modal-action]:hover {
+  filter: brightness(1.08);
+}
+
+@media (max-width: 480px) {
+  .ng-modal-actions [data-ng-modal-action] { min-height: 44px; }
+  .ng-modal-panel { max-width: 100%; }
+}

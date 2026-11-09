@@ -199,7 +199,7 @@
     <!-- نافذة الإرشاد الترحيبية عند التشغيل الأول -->
     <section
       id="first-run-guide"
-      class="first-run-overlay"
+      class="first-run-overlay ng-modal-overlay"
       role="dialog"
       aria-modal="true"
       aria-labelledby="first-run-title"
@@ -207,17 +207,8 @@
       hidden
     >
       <div class="first-run-backdrop" aria-hidden="true"></div>
-      <div class="first-run-panel" tabindex="-1">
-        <button
-          class="first-run-close"
-          type="button"
-          data-guide-dismiss
-          aria-label="Close setup guide"
-         data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.close_setup_guide&quot;}">
-          ×
-        </button>
-
-        <header class="first-run-header">
+      <div class="first-run-panel ng-modal-panel" tabindex="-1">
+        <header class="first-run-header ng-modal-heading">
           <div class="first-run-brand">
             <img src="/assets/media/neo-geo-mark.png" width="68" height="68" alt="Neo Geo" />
           </div>
@@ -274,11 +265,11 @@
             closing the browser. Games are never copied into browser storage without your
             consent.
           </p>
-          <div class="first-run-actions">
-            <button type="button" class="guide-primary" data-guide-setup data-i18n-text="index.got_it_set_up_library">
+          <div class="first-run-actions ng-modal-actions">
+            <button type="button" class="guide-primary" data-guide-setup data-ng-modal-action="primary" data-i18n-text="index.got_it_set_up_library">
               Got it — set up library
             </button>
-            <button type="button" class="guide-secondary" data-guide-dismiss data-i18n-text="index.explore_first">
+            <button type="button" class="guide-secondary" data-guide-dismiss data-ng-modal-action="secondary" data-i18n-text="index.explore_first">
               Explore first
             </button>
           </div>

@@ -7,9 +7,9 @@
   function ensure() {
     if (element) return element;
     element = document.createElement('div');
-    element.className = 'ng-dialog-backdrop';
+    element.className = 'ng-dialog-backdrop ng-modal-overlay';
     element.hidden = true;
-    element.innerHTML = `<div class="ng-dialog" role="dialog" aria-modal="true" aria-labelledby="ng-dialog-title" aria-describedby="ng-dialog-desc"><div class="ng-dialog-heading"><span id="ng-dialog-title"></span><button type="button" class="ng-dialog-close" aria-label="${NGI18n.t('message_box.close')}">×</button></div><p id="ng-dialog-desc"></p><div class="ng-dialog-actions"><button class="ng-dialog-cancel" type="button">${NGI18n.t('message_box.cancel')}</button><button class="ng-dialog-confirm" type="button">${NGI18n.t('message_box.ok')}</button></div></div>`;
+    element.innerHTML = `<div class="ng-dialog ng-modal-panel" role="dialog" aria-modal="true" aria-labelledby="ng-dialog-title" aria-describedby="ng-dialog-desc"><div class="ng-dialog-heading ng-modal-heading"><span id="ng-dialog-title"></span></div><p id="ng-dialog-desc"></p><div class="ng-dialog-actions ng-modal-actions"><button class="ng-dialog-cancel" data-ng-modal-action="secondary" type="button">${NGI18n.t('message_box.cancel')}</button><button class="ng-dialog-confirm" data-ng-modal-action="primary" type="button">${NGI18n.t('message_box.ok')}</button></div></div>`;
     document.body.append(element);
     return element;
   }
@@ -35,7 +35,6 @@
         ui.hidden = true;
         document.body.classList.remove('ng-dialog-active');
         confirm.onclick = cancel.onclick = null;
-        ui.querySelector('.ng-dialog-close').onclick = null;
         ui.onkeydown = null;
         ui.onclick = null;
         activeResolve = null;
@@ -58,7 +57,6 @@
         finish(true);
       };
       cancel.onclick = () => finish(false);
-      ui.querySelector('.ng-dialog-close').onclick = () => finish(false);
       ui.onclick = e => {
         if (e.target === ui) finish(false);
       };
@@ -87,7 +85,7 @@
     });
   }
   const api = {
-    // Hides the cancel action while retaining close-button, backdrop, and Escape dismissal.
+    // Alerts keep their OK button, backdrop and Escape dismissal without a duplicate X control.
     alert(message, title = NGI18n.t('message_box.notice')) {
       return open({ title, message, cancelLabel: false });
     },
