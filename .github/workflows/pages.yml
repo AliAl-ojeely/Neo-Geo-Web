@@ -1,6 +1,8 @@
-name: Deploy Neo-Geo Web Port to GitHub Pages (manual)
+name: Deploy Neo-Geo Web Port to GitHub Pages
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       redistribution_reviewed:
@@ -20,18 +22,13 @@ concurrency:
 
 jobs:
   build:
+    if: >-
+      (github.event_name == 'push' && vars.PUBLICATION_APPROVED == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.redistribution_reviewed == true)
     name: Check and package static website
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Require explicit publication clearance
-        env:
-          REDISTRIBUTION_REVIEWED: ${{ inputs.redistribution_reviewed }}
-        run: |
-          if [ "$REDISTRIBUTION_REVIEWED" != 'true' ]; then
-            echo '::error::Review licenses, modified-core corresponding source, and embedded dependencies before publishing.'
-            exit 1
-          fi
       - name: Checkout public source
         uses: actions/checkout@v4
       - name: Configure Python
