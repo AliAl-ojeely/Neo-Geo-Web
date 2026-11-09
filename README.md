@@ -19,7 +19,7 @@
 
 **Status: Active development · Partial validation · Noncommercial core restrictions apply**
 
-[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#127-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
+[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Fully Offline / دون إنترنت**](#fully-offline-emulator) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#127-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
 
 </div>
 
@@ -57,6 +57,7 @@ Four featured games from the project's local Neo Geo catalog. The images are inc
 | **Local sources** | Browser file pickers plus an optional loopback-only Python companion for persistent directory references |
 | **Controls** | Two-player keyboard layout, customizable bindings, and simultaneous multi-button macro shortcuts |
 | **Languages** | English by default, Arabic as an option, RTL/LTR layouts, and saved display-language preferences |
+| **Fully Offline Emulator** | Consent-based offline website + FBNeo runtime, SHA-256 verified install/update, selective removal, and bilingual guidance |
 | **UI design** | Responsive Pitch Black design, clean cards, game previews, guided first-run setup, and accessible dialogs |
 | **Quality checks** | Node.js/Python regression tests, static build verification, and a GitHub Pages asset audit |
 
@@ -69,6 +70,7 @@ Four featured games from the project's local Neo Geo catalog. The images are inc
 | **191 candidates total** | Original assessment scope (not all listed on the active public catalog) |
 | **Complete gameplay** | **Not verified across all 127 games**; boot success is not a guarantee of playable sessions |
 | **Public hosting** | GitHub Pages preparation is available; the published deployment requires its own acceptance checks |
+| **Offline browser testing** | A recorded hosted-site game session exists; this does not establish full-catalog or cross-browser offline compatibility |
 
 ---
 
@@ -96,6 +98,68 @@ ROMs and BIOS files are provided by the user. The generated static site includes
 
 ---
 
+
+## Fully Offline Emulator
+
+The **Fully Offline Emulator** option lets you prepare the public website and its pinned EmulatorJS/FBNeo runtime **once while connected**, then reopen the same website and run supported games using **your own local ROM and BIOS files** without downloading the website or emulator assets again. The feature is available under **Settings → More options**. It is an opt-in browser cache, **not** a Windows installer, a downloadable ROM pack, or a standalone ZIP.
+
+**العربية:** تتيح ميزة **دون الحاجة إلى الاتصال بالإنترنت بشكل كامل** تجهيز ملفات الموقع ومحرك المحاكاة مرة واحدة أثناء الاتصال، ثم فتح الموقع نفسه وتشغيل الألعاب المدعومة باستخدام ملفات ROM وBIOS المحلية الخاصة بك دون إعادة تنزيل ملفات الموقع أو المحرك. ستجدها في **الإعدادات ← خيارات إضافية**. وهي تخزين محلي اختياري داخل المتصفح، وليست برنامج تثبيت لويندوز أو حزمة ألعاب أو ملف ZIP مستقل.
+
+### English — user guide
+
+**What is saved:** The static website (pages, styles, JavaScript, both UI languages, catalog and bundled public assets) plus the emulator loader and pinned FBNeo/WebAssembly runtime required by the published build. The exact list and size come from `offline-manifest.json`. A tested build contained **67 offline files totaling about 10.23 MiB**; these figures can change whenever the website is rebuilt. **ROM ZIPs, `neogeo.zip` BIOS, local save files and private libraries are never copied into the offline package.**
+
+**Install, update, remove:**
+
+1. Open the [hosted website](https://alial-ojeely.github.io/Neo-Geo-Web/) while online and choose **Settings → More options → Fully Offline Emulator**.
+2. Select **Install** (Arabic: **تثبيت**). Review the confirmation dialog: it lists downloaded file categories, total size, storage location and possible download-extension conflicts. Nothing is precached before explicit consent.
+3. Approve the download. Wait for the verified completion message; interrupting the installation does **not** certify a partially downloaded pack as ready.
+4. After installation, the controls change to **Update** (**تحديث**) and **Remove** (**إزالة**). Use **Update** while connected to obtain the current published site and runtime. When a new version is deployed, update the pack **before** going offline, then reload the page.
+5. Choose **Remove** to delete only the caches owned by this feature (including incomplete package remnants), after confirmation. It **does not** clear other browser caches, IndexedDB, local library references, site preferences, save data, or your ROM/BIOS files. The Service Worker may remain registered, but no offline app files remain available from this package; reconnect to reinstall.
+
+**Where are the files?** The downloaded assets reside in the current browser profile's **Cache Storage**, associated with this website's origin and Service Worker scope. They are **not** stored in your Downloads folder and no portable ZIP is created. Inspect them using browser developer tools: **F12 → Application → Cache Storage** (the exact tab label depends on the browser). The browser chooses its own on-disk directory; there is no universal Windows folder path. **Chrome, Brave, Edge, different browser profiles, `localhost`, and GitHub Pages do not automatically share offline packages.** Even changing the local test port changes the origin.
+
+**Playing completely offline:** First install the package online and connect your legally obtained ROMs and BIOS using the Local Library Manager. Verify a game starts, then disconnect the network, reload the **same site URL** and launch it again. Browser File System Access permissions may need renewal after restart, including while offline, and the browser may not provide permanent file access. Keep your game files on your own device. The feature is designed to serve verified app/runtime files locally and avoid unexpected app network requests once enabled; **it does not control the browser's own update checks or guarantee permanent storage**, nor does one successful game certify the entire catalog.
+
+**Integrity and privacy:** Each package entry is checked against its manifest **size and SHA-256 digest**. Incomplete or incorrect files cannot activate a supposedly complete install. Updates stage a new verified cache before replacing the active package; bounded retries can recover from temporary download failures. The **Remove** action targets only caches bearing the feature's dedicated namespace. Initial download and updates require an internet connection and user consent. Site data clearing, private browsing, browser storage eviction or profile deletion may remove the offline installation.
+
+**Troubleshooting:** If installation reports `OFFLINE_ASSET_CHECKSUM_MISMATCH`, a browser download interception may be involved. Temporarily disable **Internet Download Manager (IDM)** browser integration or other download-manager extensions, retry **Install/Update**, and re-enable them afterward. Do **not** disable checksum verification. If the website opens offline but a game does not start, check the local ROM/BIOS permissions and player diagnostics and ensure you have updated to a build containing the offline `GET`-based FBNeo preflight fix. An online page working by itself does not prove offline gameplay.
+
+### العربية — دليل المستخدم
+
+**ما الذي يُحفظ؟** تُخزَّن صفحات الموقع وملفات التنسيق وJavaScript والترجمتان العربية والإنجليزية وفهرس الألعاب والموارد العامة، إضافةً إلى ملفات تحميل المحاكي ومحرك FBNeo/WebAssembly اللازمة للبناء المنشور. تُستمد القائمة والحجم من `offline-manifest.json`. احتوت إحدى النسخ المختبرة على **67 ملفًا بحجم يقارب 10.23 ميبيبايت**، وقد يتغير العدد والحجم في الإصدارات التالية. **لا تُنسخ ملفات ROM أو BIOS (`neogeo.zip`) أو ملفات الحفظ أو مكتبتك الشخصية ضمن الحزمة.**
+
+**التثبيت والتحديث والإزالة:**
+
+1. افتح [الموقع الفعلي](https://alial-ojeely.github.io/Neo-Geo-Web/) أثناء الاتصال بالإنترنت، ثم انتقل إلى **الإعدادات ← خيارات إضافية ← دون الحاجة إلى الاتصال بالإنترنت بشكل كامل**.
+2. اضغط **تثبيت (Install)**. راجع نافذة الموافقة التي تشرح أنواع الملفات وحجمها ومكان تخزينها واحتمال تعارض إضافات التحميل. لا يبدأ التخزين المسبق دون موافقتك.
+3. وافق وانتظر رسالة اكتمال التنزيل والتحقق. لا تُعدّ الحزمة جاهزة إذا كان التنزيل ناقصًا أو فشل التحقق.
+4. بعد النجاح، يظهر زرا **تحديث (Update)** و**إزالة (Remove)**. استخدم **تحديث** أثناء الاتصال للحصول على أحدث ملفات الموقع والمحرك، ثم أعد تحميل الصفحة قبل فصل الإنترنت.
+5. يتيح زر **إزالة**، بعد رسالة تأكيد، حذف **ذاكرة التخزين الخاصة بهذه الميزة فقط**، بما فيها بقايا التنزيلات غير المكتملة. لا يحذف ذاكرة المتصفح الأخرى أو IndexedDB أو مراجع ملفات الألعاب المحفوظة أو الإعدادات أو ملفات الحفظ أو ROM وBIOS. قد يظل Service Worker مسجّلًا، لكن ملفات التشغيل دون إنترنت تكون قد أُزيلت؛ وتحتاج إلى الاتصال لإعادة تثبيتها.
+
+**أين تُحفظ الحزمة؟** داخل **Cache Storage** الخاص بالمتصفح وملف المستخدم وعنوان الموقع ونطاق Service Worker؛ **وليست في Downloads ولا في ملف ZIP مستقل**. لمعاينتها افتح أدوات المطور **F12 ← Application ← Cache Storage** (قد تختلف التسميات بين المتصفحات). يختار المتصفح المسار الفعلي على القرص، ولا يوجد مجلد Windows ثابت يصلح لكل المستخدمين. التخزين منفصل بين Chrome وBrave وEdge وملفات المستخدمين المختلفة، وكذلك بين `localhost` وموقع GitHub Pages. حتى تغيير منفذ الخادم المحلي قد ينشئ نطاق تخزين مختلفًا.
+
+**التشغيل دون إنترنت فعليًا:** ثبّت الحزمة أثناء الاتصال، ثم اربط ملفات ROM وBIOS التي تملك حق استخدامها من **مدير المكتبة المحلية**. تأكد أولًا من تشغيل لعبة، ثم افصل الإنترنت وأعد تحميل **عنوان الموقع نفسه** وشغّل اللعبة مجددًا. قد يطلب المتصفح تجديد صلاحية قراءة المجلدات بعد إعادة تشغيله، حتى دون إنترنت. صُممت الميزة لتقديم ملفات الموقع والمحرك من التخزين المحلي وتجنب طلبات الشبكة غير المتوقعة من التطبيق بعد تفعيلها؛ لكنها **لا تتحكم في فحوص تحديث المتصفح نفسه ولا تضمن بقاء التخزين إلى الأبد**، ولا يعني نجاح لعبة واحدة توافق جميع الألعاب.
+
+**السلامة والخصوصية:** يتحقق المثبّت من **حجم كل ملف وبصمته SHA-256** وفق القائمة المعتمدة. لا تُفعَّل الحزمة إذا كانت الملفات ناقصة أو متضررة. تُجهّز التحديثات في مساحة منفصلة وتُفحَص قبل استبدال الحزمة الحالية، مع محاولات محدودة لمعالجة انقطاع التنزيل. يحذف زر **إزالة** الذاكرات التي تحمل أسماء هذه الميزة فقط. قد تؤدي إزالة بيانات الموقع أو حذف ملف المتصفح أو التصفح الخفي أو سياسات إخلاء التخزين إلى فقدان الحزمة.
+
+**حل المشكلات:** إذا ظهر `OFFLINE_ASSET_CHECKSUM_MISMATCH`، فقد تكون إضافة **Internet Download Manager (IDM)** أو إضافة أخرى لإدارة التنزيلات قد اعترضت الملف. عطّل الإضافة مؤقتًا، وأعد محاولة **تثبيت/تحديث** ثم فعّلها مجددًا. **لا تعطّل التحقق من SHA-256**. وإذا فتح الموقع دون إنترنت ولم تبدأ اللعبة، راجع صلاحيات ROM/BIOS وسجل التشخيص، وتأكد من تحديث الحزمة إلى نسخة تتضمن إصلاح فحص ملفات FBNeo باستخدام `GET` أثناء التشغيل دون إنترنت. فتح الواجهة وحده لا يثبت نجاح تشغيل الألعاب.
+
+### Implementation, testing & acceptance | التنفيذ والاختبارات
+
+- **Implementation / التنفيذ:** `web/offline/offline-ui.js` (bilingual opt-in controls), `tools/offline-sw.template.js` (install, update, selective remove, cache-only runtime), `app/web_distribution.py` (build/manifest), `web/languages.js` (translations), `web/player.js` (offline-safe core preflight). The generated `dist/github-pages/` files must be rebuilt rather than edited directly.
+- **Local commands / أوامر محلية** (each PowerShell command is on one line):
+
+```powershell
+py -3 manage.py web build; if ($LASTEXITCODE -eq 0) { py -3 manage.py web verify }
+node --test tests/fully_offline.test.cjs tests/offline_remove.test.cjs tests/offline_bootstrap_get.test.cjs
+```
+
+- **Observed evidence / الأدلة:** The regression suite has passed **20/20** offline-related tests and **4/4** focused bootstrap/build checks in the recorded local run. A **November 10, 2026** recorded browser session showed real `breakrev.zip` gameplay on the GitHub Pages site after the offline feature and bootstrap fix were deployed. This is **limited acceptance evidence**, not proof of zero browser-level traffic, every browser/version, all 127 catalog entries, complete playthroughs, permanent permissions, or licensing clearance.
+- **Release safety / سلامة النشر:** The published build must never bundle proprietary ROM or BIOS archives, local files, backup folders or private diagnostics. Keep third-party license and redistribution checks separate from functional offline testing.
+
+---
+
 ## Technology Stack
 
 | Component | Technology / implementation |
@@ -104,7 +168,7 @@ ROMs and BIOS files are provided by the user. The generated static site includes
 | **Web emulation runtime** | Pinned EmulatorJS `4.2.3` |
 | **Emulator core** | Pinned FBNeo/WebAssembly build with documented BIOS-related patches |
 | **Local tooling** | Python, project CLI (`manage.py`), loopback-only companion |
-| **Storage** | Local browser preferences, IndexedDB and browser-dependent filesystem handles |
+| **Storage** | Local preferences, IndexedDB/file handles, and opt-in Cache Storage for the Fully Offline Emulator |
 | **Localization** | Centralized `web/languages.js`, English/Arabic, LTR/RTL |
 | **Controls** | RetroPad mapping and keyboard macro adapter |
 | **Testing** | Node.js test runner, Python unittest, local HTTP and distribution verification |
@@ -129,6 +193,7 @@ Neo-Geo-Web/
 │   ├── controls/                   # Custom controls, UI and Tab pause
 │   ├── data/catalog.json           # 127 boot-verified catalog entries and identities
 │   ├── library/                    # Source linking, storage, validation and recovery
+│   ├── offline/                    # Install, update and selective removal UI
 │   ├── media/                      # Frontend icon/logo assets
 │   ├── ui/                         # Shared message boxes and site interactions
 │   ├── index.html                  # Library home page
@@ -452,6 +517,7 @@ The **64 deferred candidates** have not been added to the active catalog. Furthe
 Development workflows include:
 
 - JavaScript syntax validation and Node.js tests covering keyboard inputs, macro overlaps, localization, player layout, saved sources and recovery.
+- Fully Offline Emulator tests for verified cache installation, offline-only runtime serving, safe selective removal, and GET-based offline core preflight.
 - Python tests for installer safety, companion routes, path validation, and local HTTP behavior.
 - `manage.py web build`, `manage.py web verify`, and `manage.py github audit` for static artifacts.
 - Manual browser acceptance for actual gameplay, visuals, audio, and user permissions.
@@ -500,6 +566,7 @@ AI contributions are **assistive, not a replacement for the emulator core or ind
 - Native folder access and persistence depend on browser permissions. Brave may require enabling the File System Access API flag; see [Browser Compatibility & Saved Library Access](#browser-compatibility--saved-library-access).
 - GitHub Pages is static hosting: it cannot run the local Python companion or access a visitor's disk without user permission.
 - Browser saved preferences and library handles are origin-specific.
+- Fully Offline Emulator requires initial consent/download; cached assets may be evicted, and user ROM/BIOS access remains subject to browser permissions. See [Fully Offline Emulator](#fully-offline-emulator).
 - Public deployment, licensing and corresponding-source verification require separate acceptance before declaring an unconditional release.
 
 **Planned improvements**
