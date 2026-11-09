@@ -1,0 +1,113 @@
+diff --git a/src/burner/libretro/libretro.cpp b/src/burner/libretro/libretro.cpp
+index 94db7b4..d61f754 100644
+--- a/src/burner/libretro/libretro.cpp
++++ b/src/burner/libretro/libretro.cpp
+@@ -906,6 +906,8 @@ static int archive_load_rom(uint8_t *dest, int *wrote, int i)
+ 		return 1;
+ 	}
+ 
++    if ((ri.nType & (BRF_BIOS | BRF_SELECT)) == (BRF_BIOS | BRF_SELECT))
++        HandleMessage(RETRO_LOG_INFO, "[FBNeo selected-BIOS] ROM data loaded CRC 0x%08x bytes %u\n", ri.nCrc, ri.nLen);
+ 	ZipClose();
+ 	return 0;
+ }
+@@ -1065,6 +1067,24 @@ static void locate_archive(std::vector<located_archive>& pathList, const char* c
+ 	}
+ }
+ 
++extern bool neogeo_use_specific_default_bios;
++static unsigned selected_bios_index()
++{
++#ifndef NO_NEOGEO
++ return 0x80 + (NeoSystem & 0x3f);
++#else
++ return 0;
++#endif
++}
++
++// A Neo Geo BIOS selection is an alternative, not an additional program ROM.
++// Keep special-board BIOS policies (e.g. Irritating Maze) unchanged.
++static bool selected_bios_is_managed(const BurnRomInfo& ri)
++{
++ return bIsNeogeoCartGame && !neogeo_use_specific_default_bios &&
++  (ri.nType & (BRF_BIOS | BRF_SELECT)) == (BRF_BIOS | BRF_SELECT);
++}
++
+ // This code is very confusing. The original code is even more confusing :(
+ static bool open_archive()
+ {
+@@ -1127,7 +1147,7 @@ static bool open_archive()
+ 					memset(&ri, 0, sizeof(ri));
+ 					BurnDrvGetRomInfo(&ri, i);
+ 
+-					if ((ri.nType & BRF_OPT) || (ri.nType & BRF_NODUMP) || (ri.nType == 0) || (ri.nLen == 0) || ((NULL == pDataRomDesc) && (0 == ri.nCrc)))
++					if (((ri.nType & BRF_OPT) && !selected_bios_is_managed(ri)) || (ri.nType & BRF_NODUMP) || (ri.nType == 0) || (ri.nLen == 0) || ((NULL == pDataRomDesc) && (0 == ri.nCrc)))
+ 					{
+ 						// if a rom is skippable, let's flag it as such
+ 						pRomFind[i].nState = STAT_SKIP;
+@@ -1144,8 +1164,8 @@ static bool open_archive()
+ 
+ 					if (index < 0)
+ 					{
+-						if ((g_find_list_path[z].ignoreCrc && bPatchedRomsetsEnabled) ||
+-							((NULL != pDataRomDesc) && (-1 != pRDI->nDescCount)))					// In romdata mode
++						if (!selected_bios_is_managed(ri) && ((g_find_list_path[z].ignoreCrc && bPatchedRomsetsEnabled) ||
++							((NULL != pDataRomDesc) && (-1 != pRDI->nDescCount))))					// In romdata mode
+ 						{
+ 							index = find_rom_by_name(rom_name, list, count, &real_rom_crc);
+ 							if (index >= 0)
+@@ -1168,8 +1188,6 @@ static bool open_archive()
+ 						continue;
+ 					}
+ 
+-					if (bIsNeogeoCartGame)
+-						set_neogeo_bios_availability(list[index].szName, list[index].nCrc, (g_find_list_path[z].ignoreCrc && bPatchedRomsetsEnabled));
+ 
+ 					// Yay, we found it!
+ 					pRomFind[i].nZip = z;
+@@ -1180,6 +1198,10 @@ static bool open_archive()
+ 						pRomFind[i].nState = STAT_SMALL;
+ 					else if (list[index].nLen > ri.nLen)
+ 						pRomFind[i].nState = STAT_LARGE;
++                    // Wrong-size BIOS data must never become an available selection.
++                    if (bIsNeogeoCartGame && pRomFind[i].nState == STAT_OK)
++                        set_neogeo_bios_availability(list[index].szName, list[index].nCrc,
++                          !selected_bios_is_managed(ri) && g_find_list_path[z].ignoreCrc && bPatchedRomsetsEnabled);
+ 				}
+ 
+ 				free_archive_list(list, count);
+@@ -1190,17 +1212,32 @@ static bool open_archive()
+ 		if (bIsNeogeoCartGame)
+ 			set_neo_system_bios();
+ 
++        const unsigned active_bios_index = selected_bios_index();
++        BurnRomInfo active_bios_info = {0};
++        const bool enforce_selected_bios = bIsNeogeoCartGame &&
++            active_bios_index < nRomCount &&
++            BurnDrvGetRomInfo(&active_bios_info, active_bios_index) == 0 &&
++            selected_bios_is_managed(active_bios_info);
++        if (enforce_selected_bios)
++            HandleMessage(RETRO_LOG_INFO, "[FBNeo selected-BIOS] requiring index %u CRC 0x%08x size %u\n",
++                active_bios_index, active_bios_info.nCrc, active_bios_info.nLen);
++
+ 		// Going over every rom to see if they are properly loaded before we continue ...
+ 		bool ret = true;
+ 		for (unsigned i = 0; i < nRomCount; i++)
+ 		{
++            BurnRomInfo candidate = {0};
++            BurnDrvGetRomInfo(&candidate, i);
++            const bool is_selected_bios = enforce_selected_bios && i == active_bios_index;
++            if (enforce_selected_bios && selected_bios_is_managed(candidate) && !is_selected_bios)
++                continue; // Only unselected system BIOS alternatives are exempt.
+ 			// Neither the available roms nor the skippable ones should trigger an error here
+-			if (pRomFind[i].nState != STAT_OK && pRomFind[i].nState != STAT_SKIP)
++			if (pRomFind[i].nState != STAT_OK && (pRomFind[i].nState != STAT_SKIP || is_selected_bios))
+ 			{
+ 				struct BurnRomInfo ri;
+ 				memset(&ri, 0, sizeof(ri));
+ 				BurnDrvGetRomInfo(&ri, i);
+-				if(!(ri.nType & BRF_OPT))
++				if(!(ri.nType & BRF_OPT) || is_selected_bios)
+ 				{
+ 					static char prev[2048];
+ 					strcpy(prev, text_missing_files);

@@ -1,0 +1,30 @@
+{
+  "core": "fbneo",
+  "buildStart": "2026-11-04T21:31:28.025726+00:00",
+  "buildEnd": "2026-11-04T21:31:28.025726+00:00",
+  "options": {},
+  "custom": true,
+  "variant": "patched",
+  "source": {
+    "FBNeo": "7ffe043d410f6021f7cfca77589b42bf2e094c3c",
+    "RetroArch": "6dd4353937ef48b6ec0bfbdbb15d1c5992d86927",
+    "emsdk": "d7b4130688bfa348392b921ab04015aa15c4f154",
+    "build": "677b1334ab1721a1e31b918f211b68f4e54f67a8"
+  },
+  "emscripten": "3.1.74",
+  "sha256": {
+    "build.json": "585a9a5b5c853724180e18cbc7e5e4cc83c98119e509e3be628f69af4f494c74",
+    "core.json": "8d16e09dba413e0747b7fcf011f152b1059c6991ebb28978a57acca787b17624",
+    "fbneo_libretro.js": "49955126c204c7184f57b287b47c6a8ca1693c352197c7d2f35680cfe45d7c2b",
+    "fbneo_libretro.wasm": "d3ed66b0bf96918583f51fa7993e7e83a6eba6c03df20447bbe7fcb57564a0b9",
+    "license.txt": "49c76873fa10af7bd48c8eda52e42e4e880cc2243b2107195c2de5edf05ba8df"
+  },
+  "package_sha256": "2d2c70daffbc70448dec0516abec37a96486adaf8a2af090de5326b59bce24f9",
+  "patches_sha256": {
+    "fbneo-clang-ucn-metadata.patch": "c86f2e4af3887295d875e8796d6139154966c895bce06a0c95018c9c920bff8d",
+    "fbneo-selected-bios.patch": "9599dd95fce2105932565ed72ee54e97750169cb4aa92608eafe2c96fca6ed12",
+    "fbneo-windows-response-file.patch": "f5202754102a682f101a443ab5736d830b1582c923426f33d2fa16b9fc90c421",
+    "retroarch-windows-response-file.patch": "9ae2e27d73529183eecf7cf39efff6952955b2d5ac52769befa7726de5e83984"
+  },
+  "core_archive_sha256": "f248957b639ebf9ce1b987a935329937e9ffb66e086b5934503d6f96b9bdd343"
+}

@@ -39,13 +39,13 @@ test('dark dropdown is accessible, responsive, and RTL aware', () => {
 // The documentation must be publishable Markdown, not a nested fenced block.
 test('README includes setup, safety boundaries, and an accurate AI disclosure', () => {
   assert.match(readme, /^# Neo-Geo Web Port\s*$/m);
-  assert.match(readme, /^## AI-assisted research and development$/m);
-  assert.match(readme, /^## Connecting a game library$/m);
-  assert.match(readme, /^## Project structure$/m);
-  assert.match(readme, /^## English and Arabic$/m);
-  assert.match(readme, /PARTIAL_VALIDATION/);
+  assert.match(readme, /^## AI-Assisted Analysis & Development$/m);
+  assert.match(readme, /^### .*ROM, PREVIEWS, and BIOS linking$/m);
+  assert.match(readme, /^## Project Architecture$/m);
+  assert.match(readme, /^### English & Arabic$/m);
+  assert.match(readme, /Partial validation/);
   assert.match(readme, /THIRD_PARTY_NOTICES\.md/);
-  assert.match(readme, /not an original emulator core, a ROM distribution service/i);
+  assert.match(readme, /not a replacement for the emulator core or independent validation/i);
 });
 
 // Both language selectors use the same native control styling without sharing settings state.

@@ -1,0 +1,76 @@
+name: Deploy Neo-Geo Web Port to GitHub Pages (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      redistribution_reviewed:
+        description: 'I have reviewed binary redistribution, corresponding-source, and license obligations.'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Check and package static website
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Require explicit publication clearance
+        env:
+          REDISTRIBUTION_REVIEWED: ${{ inputs.redistribution_reviewed }}
+        run: |
+          if [ "$REDISTRIBUTION_REVIEWED" != 'true' ]; then
+            echo '::error::Review licenses, modified-core corresponding source, and embedded dependencies before publishing.'
+            exit 1
+          fi
+      - name: Checkout public source
+        uses: actions/checkout@v4
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify first-party JavaScript tests
+        run: node --test tests/*.test.cjs
+      - name: Verify Python tests
+        run: python manage.py test
+      - name: Build static website
+        run: python manage.py web build
+      - name: Verify generated website
+        run: python manage.py web verify
+      - name: Verify public asset policy and Git history
+        run: python manage.py github audit
+      - name: Verify staged public source and generated artifact
+        run: python tools/github_pages_preflight.py --project . --skip-tests
+      - name: Check Pages entry point
+        run: test -f dist/github-pages/index.html && test -f dist/github-pages/.nojekyll
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload only reviewed static output
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/github-pages
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy static website
+        id: deployment
+        uses: actions/deploy-pages@v4

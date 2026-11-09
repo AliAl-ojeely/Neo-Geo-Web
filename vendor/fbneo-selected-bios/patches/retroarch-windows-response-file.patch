@@ -1,0 +1,14 @@
+diff --git a/Makefile.emulatorjs b/Makefile.emulatorjs
+index fbf6fa5..3709aad 100644
+--- a/Makefile.emulatorjs
++++ b/Makefile.emulatorjs
+@@ -318,7 +318,8 @@ mv_libretro:
+ 
+ $(TARGET): $(RARCH_OBJ) $(libretro_new) mv_libretro
+ 	@$(if $(Q), $(shell echo echo "LD $@ \<obj\> $(libretro_new) $(additional_libs) $(LIBS) $(LDFLAGS)"),)
+-	$(Q)$(LD) -o $@ $(RARCH_OBJ) $(libretro_new) $(additional_libs) $(LIBS) $(LDFLAGS)
++	$(file >$@.inputs,$(RARCH_OBJ) $(libretro_new))
++	$(Q)$(LD) -o $@ @$@.inputs $(additional_libs) $(LIBS) $(LDFLAGS)
+ 
+ $(OBJDIR)/%.o: %.c
+ 	@mkdir -p $(dir $@)

@@ -1,0 +1,14 @@
+diff --git a/src/burner/libretro/Makefile b/src/burner/libretro/Makefile
+index 35fde2b..dc132ec 100644
+--- a/src/burner/libretro/Makefile
++++ b/src/burner/libretro/Makefile
+@@ -732,7 +732,8 @@ $(MAIN_FBNEO_DIR)/cpu/mips3_intf.o: $(MAIN_FBNEO_DIR)/cpu/mips3_intf.cpp
+ $(TARGET): $(OBJS)
+ ifeq ($(STATIC_LINKING), 1)
+ ifeq ($(SPLIT_UP_LINK), 1)
+-	$(AR) rcs $@ $(foreach OBJS,$(OBJS),$(NEWLINE) $(AR) q $@ $(OBJS))
++	$(file >$@.in,$(OBJS))
++	$(AR) rcs $@ @$@.in
+ else
+ 	$(AR) rcs $@ $(OBJS)
+ endif

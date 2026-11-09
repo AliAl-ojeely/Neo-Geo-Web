@@ -1,0 +1,40 @@
+name: Validate Neo-Geo Web Port
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout public source
+        uses: actions/checkout@v4
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify first-party JavaScript tests
+        run: node --test tests/*.test.cjs
+      - name: Verify Python tests
+        run: python manage.py test
+      - name: Build static website
+        run: python manage.py web build
+      - name: Verify generated website
+        run: python manage.py web verify
+      - name: Verify public asset policy and Git history
+        run: python manage.py github audit
+      - name: Verify staged public source and generated artifact
+        run: python tools/github_pages_preflight.py --project . --skip-tests
+      - name: Check the generated entry point
+        run: test -f dist/github-pages/index.html && test -f dist/github-pages/.nojekyll

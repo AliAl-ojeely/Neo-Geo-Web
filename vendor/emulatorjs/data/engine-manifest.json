@@ -1,0 +1,31 @@
+{
+  "version": "4.2.3",
+  "origin": "https://cdn.emulatorjs.org/4.2.3/data/",
+  "sha256": {
+    "loader.js": "69e0903bf1e2f62ced78895e7e511fa26e11316f7eb734925c35e919ba1287b2",
+    "emulator.min.js": "6aec3fd7bb2721255801b0a6af02e47e78b05e28a1822b1f213aacbd348abaee",
+    "emulator.min.css": "16406c60b2dc3b04ae9b115e308613e6f567a0cc7068e21d9d0c1e5030fb395e",
+    "emulator.css": "0ba5b1ce183b6ecb95c17e54e89fbae77697ebb94ec23caca5fd19f9b569defe",
+    "emulator.min.zip": "8901df17c264ba8f047e3e65d9d52b2b6e0d8816393fea725718035e7549402e",
+    "version.json": "d8991427000a96fb97daefdb62178071e9bbff911760706148e584ae8d69f9e7",
+    "src/GameManager.js": "f026130eda3648557498c54c70cbb5b36fd71b088e7e42e5a13e413aab11d888",
+    "src/compression.js": "bd6723ec29fee8de81118cfbddfcb53301b8f41f7c6fb22c2de44dedbf111c2c",
+    "src/emulator.js": "24ebac4baf739892046b82c3bdf01d5b6795b801b77d289e43a4c7d59f9666be",
+    "src/gamepad.js": "27707ee9256cf3e1a6f32d1c3c42f2aed991d637773699fff566008229cc09c8",
+    "src/nipplejs.js": "cf745190f5dc5db942ad54f5683d56c6d6da445646f4b4fc23c049c9985a04df",
+    "src/shaders.js": "79bcd4c35740b2858fc28f2f1894ddb8f483f1aba6f564869a713515726fe902",
+    "src/socket.io.min.js": "b0e735814f8dcfecd6cdb8a7ce95a297a7e1e5f2727a29e6f5901801d52fa0c5",
+    "src/storage.js": "06759f310bb2d782d2728e1d3417a0d8f613eff935d2959c1a705670041a6f2e",
+    "compression/extract7z.js": "4ac9933b995a516cb6b3ca4027db860278372a20c21c405d93ceb1998498853a",
+    "compression/extractzip.js": "3cc825428724213acd43d30552a78008e0869b2326de17dee240dbff9ee2f629",
+    "compression/libunrar.js": "bc35b98ec95020ec047f4762de3e66629741eee3826022195498d2a1e0fc102c",
+    "compression/libunrar.wasm": "e4ea9bd0b13a9767916b424469e30205f47f267ecd9125ed56fb9ff0b9bc1b58",
+    "localization/ar-AR.json": "7f08398ad9cf828c1c6d8cdaa65f9352d4873691475e14b76cbb11b802f8dc28",
+    "localization/en-US.json": "b0c9a9bb92ecd2d03614ee2b0eeda160e883ee79ea94d9e8131addb92c5803f9",
+    "localization/retroarch.json": "31e0c9c1876402da54219ad6da5294eafe78e94d4663e7d2b02193d1b14925b7",
+    "cores/cores.json": "ac78770a8f1db3f9bd0c2ace86b3cf6c32e5f56ee670fda47ce22091aae9ec64",
+    "cores/reports/fbneo.json": "d2c5e07c2afc2b53937f14b721d7d025ad599d111e9627fc77e9b3fd17450e70",
+    "cores/fbneo-wasm.data": "315a25e0bcd61d58ee0d9e8b1dbf3740b9e0ca4b7d0726f848ce1068de73437c",
+    "cores/fbneo-legacy-wasm.data": "9dbb6242c028f4179549f324688b654353881beb552292f939bc6171a0828b5f"
+  }
+}

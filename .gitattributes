@@ -1,0 +1,6 @@
+# Preserve upstream EmulatorJS source formatting.
+vendor/emulatorjs/data/src/emulator.js -whitespace
+
+# Preserve the verbatim FBNeo license and source patches.
+vendor/fbneo-selected-bios/LICENSE.txt -whitespace
+vendor/fbneo-selected-bios/patches/*.patch -whitespace
