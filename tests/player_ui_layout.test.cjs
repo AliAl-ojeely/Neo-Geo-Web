@@ -17,12 +17,19 @@ assert.match(startRule[1], /left:\s*50%\s*;/);
 assert.match(startRule[1], /bottom:\s*auto\s*;/);
 assert.match(startRule[1], /z-index:\s*30\s*;/);
 
-// The close control follows the inline end of the active document direction.
-const closeRule = css.match(/\.first-run-close\s*\{([^}]+)\}/);
-assert(closeRule);
-assert.match(closeRule[1], /inset-inline-end:\s*20px\s*;/);
-assert.match(closeRule[1], /inset-inline-start:\s*auto\s*;/);
-assert.doesNotMatch(closeRule[1], /\bleft:\s*20px\s*;/);
+// The unified modal uses footer actions, not a redundant top-right X button.
+const guideHtml = fs.readFileSync('web/index.html', 'utf8');
+const dialogSource = fs.readFileSync('web/ui/message-box.js', 'utf8');
+assert.match(css, /\.ng-modal-panel\s*\{/);
+assert.match(css, /\.ng-modal-heading\s*\{/);
+assert.match(css, /\.ng-modal-actions\s*\{/);
+assert.doesNotMatch(css, /\.first-run-close\b|\.ng-dialog-close\b/);
+assert.match(guideHtml, /class="first-run-panel ng-modal-panel"/);
+assert.match(guideHtml, /data-guide-dismiss/);
+assert.doesNotMatch(guideHtml, /class="first-run-close"/);
+assert.match(dialogSource, /class="ng-dialog ng-modal-panel"/);
+assert.match(dialogSource, /class="ng-dialog-cancel" data-ng-modal-action="secondary"/);
+assert.doesNotMatch(dialogSource, /ng-dialog-close/);
 
 // Verify the display-language event only updates a visible notice, never the emulator.
 const player = fs.readFileSync('web/player.js', 'utf8');
@@ -43,4 +50,4 @@ const ar = ctx.NGI18n.t(key);
 assert.notEqual(en, ar);
 ctx.NGI18n.setLanguage('en');
 assert.equal(ctx.NGI18n.translateText(ar), en);
-console.log('PASS: player Start CSS, bilingual guide close position, and notice translation');
+console.log('PASS: player Start CSS, unified no-X modal contract, and notice translation');
