@@ -27,7 +27,7 @@
     if (!ui.action) return;
     if (status) latest = status;
     ui.action.disabled = installing;
-    ui.remove.hidden = !latest?.ready || installing;
+    ui.remove.hidden = !(latest?.ready || latest?.removable) || installing;
     ui.action.textContent = latest?.ready ? t('update_button') : t('button');
   }
   async function registration(create = false) {
@@ -177,20 +177,24 @@
     } catch (error) { message('failed', error.message, 'error'); }
   }
   async function confirmRemove() {
+    if (installing) return;
     const approved = root.NGDialog?.confirm
       ? await root.NGDialog.confirm(t('remove_explanation'), t('remove_button'))
       : root.confirm(t('remove_explanation'));
-    if (!approved) return;
+    if (!approved || installing) return;
     installing = true;
     updateControls();
     try {
       const reg = await registration();
       if (!reg) throw Error(t('worker_unavailable'));
-      await command(reg, 'REMOVE');
-      latest = { ready: false };
-      message('not_installed', '', 'info');
+      const removed = await command(reg, 'REMOVE');
+      if (removed.type !== 'removed') throw Error(t('remove_incomplete'));
+      const after = await command(reg, 'STATUS');
+      if (after.ready || after.removable) throw Error(t('remove_incomplete'));
+      latest = after;
+      message('removed', '', 'success');
       const ui = elements();
-      if (ui.detail) ui.detail.textContent = t('no_game_copy');
+      if (ui.detail) ui.detail.textContent = t('remove_success_note');
     } catch (error) { message('failed', error.message, 'error'); }
     finally { installing = false; updateControls(); }
   }
@@ -213,7 +217,7 @@
     if (result.ready)
       message(result.updateAvailable ? 'update_available' : 'ready',
         `${result.count} ${t('files')} · ${bytes(result.bytes)}`, 'success');
-    else message(result.error ? 'failed' : 'not_installed', result.error || '', result.error ? 'error' : 'info');
+    else message(result.error ? 'failed' : result.removable ? 'cleanup_available' : 'not_installed', result.error || '', result.error ? 'error' : 'info');
     updateControls();
   }
   document.addEventListener('ng-language-changed', () => {

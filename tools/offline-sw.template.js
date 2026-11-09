@@ -25,8 +25,11 @@ async function savedState() {
   } catch { return null; }
 }
 async function reportStatus() {
+  // Check only the caches owned by Fully Offline Emulator; do not create caches on STATUS.
+  const cacheNames = await caches.keys();
+  const removable = cacheNames.some(name => name === META_CACHE || name.startsWith(CACHE_PREFIX));
   const state = await savedState();
-  if (!state) return { ready: false, currentBuild: BUILD_ID };
+  if (!state) return { ready: false, removable, currentBuild: BUILD_ID };
   const exists = await caches.has(state.cacheName);
   const items = exists ? await (await caches.open(state.cacheName)).keys() : [];
   const urls = new Set(items.map(item => item.url));
@@ -35,6 +38,7 @@ async function reportStatus() {
     state.paths.every(path => safePath(path) && urls.has(new URL(path, rootURL()).href));
   return {
     ready: exists && exact,
+    removable,
     id: state.id,
     count: state.count,
     cachedCount: items.length,
@@ -189,10 +193,17 @@ async function deletePack(port) {
   if (busy) { report(port, 'error', { message: 'Offline installation in progress.' }); return; }
   busy = true;
   try {
-    const meta = await caches.open(META_CACHE);
-    await meta.delete(stateURL());
-    for (const name of await caches.keys()) if (name.startsWith(CACHE_PREFIX)) await caches.delete(name);
-    report(port, 'removed', { ready: false });
+    // Delete only caches in our dedicated namespace, including offline metadata.
+    // Never clear unrelated Cache Storage, browser settings, IndexedDB, ROMs, BIOS or saves.
+    const ownedNames = (await caches.keys()).filter(name =>
+      name === META_CACHE || name.startsWith(CACHE_PREFIX));
+    for (const name of ownedNames) {
+      if (!(await caches.delete(name))) throw Error('OFFLINE_REMOVE_CACHE_FAILED: ' + name);
+    }
+    const remaining = (await caches.keys()).filter(name =>
+      name === META_CACHE || name.startsWith(CACHE_PREFIX));
+    if (remaining.length) throw Error('OFFLINE_REMOVE_INCOMPLETE');
+    report(port, 'removed', { ready: false, removable: false, removedCaches: ownedNames.length });
   } catch (error) { report(port, 'error', { message: error.message }); }
   finally { busy = false; }
 }
