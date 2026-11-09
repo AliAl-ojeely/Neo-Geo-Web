@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <script src="/assets/languages.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <title data-i18n-text="settings.neo_geo_web_port_settings">Neo-Geo Web Port — Settings</title>
+    <link rel="icon" type="image/png" href="/assets/media/favicon.png" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <script src="/assets/ui/message-box.js" defer></script>
+    <script src="/assets/preferences.js" defer></script>
+    <script src="/assets/controls/global-controls.js" defer></script>
+    <script src="/assets/controls/controls-ui.js" defer></script>
+    <script src="/assets/settings.js" defer></script>
+    <script src="/assets/ui/site-extras.js" defer></script>
+  </head>
+  <body class="settings-page">
+    <div class="settings-viewport">
+      <!-- شريط التنقل العلوي الموحد -->
+      <header class="global-header settings-global-header">
+        <a href="/" class="brand logo-link" aria-label="Neo-Geo Web Port — Home page" data-i18n-attrs="{&quot;aria-label&quot;:&quot;settings.neo_geo_web_port_home_page&quot;}">
+          <img
+            src="/assets/media/neo-geo-mark.png"
+            alt="Neo Geo"
+            class="brand-logo logo-motion"
+            width="56"
+            height="56"
+          />
+          <span class="brand-name">Neo-Geo Web Port</span>
+        </a>
+
+        <nav class="site-page-nav" aria-label="Main navigation" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.main_navigation&quot;}">
+          <a href="/" data-i18n-text="index.library">Library</a>
+          <a href="./?guide=1" data-i18n-text="settings.setup_guide">Setup guide</a>
+          <span aria-current="page" class="nav-current" data-i18n-text="index.settings">Settings</span>
+        </nav>
+
+        <div class="header-actions">
+          <a href="/" class="header-link return-link" data-i18n-text="player.back_to_library">Back to library</a>
+        </div>
+      </header>
+
+      <!-- المحتوى الرئيسي لمركز الإعدادات -->
+      <main class="settings-main">
+        <section class="settings-intro" aria-label="Settings overview" data-i18n-attrs="{&quot;aria-label&quot;:&quot;settings.settings_overview&quot;}">
+          <div class="settings-intro-copy">
+            <h1 data-i18n-text="settings.your_space">Your space. <em data-i18n-text="settings.your_rules">Your rules.</em></h1>
+            <p class="settings-lead" data-i18n-text="settings.customize_controls_audio_and_video_in_one">
+              Customize controls, audio, and video in one place. Saved preferences apply to the
+              next game session.
+            </p>
+          </div>
+        </section>
+
+        <div class="setting-card ui-language-setting">
+          <div class="ui-language-copy">
+            <label for="ui-language" data-i18n="common.displayLanguage" data-i18n-text="common.displayLanguage">Display Language</label>
+            <p class="ui-language-hint" data-i18n="common.languageHint" data-i18n-text="common.languageHint">
+              Updates immediately and is remembered on this browser.
+            </p>
+          </div>
+          <div class="ui-language-control">
+            <div class="ui-language-select-shell">
+              <select id="ui-language" class="ui-language-select" data-ui-language aria-label="Display Language" data-i18n-attrs="{&quot;aria-label&quot;:&quot;common.displayLanguage&quot;}">
+                <option value="en" lang="en" dir="ltr">English</option>
+                <option value="ar" lang="ar" dir="rtl">العربية</option>
+              </select>
+              <svg class="ui-language-chevron" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <p id="ui-language-status" class="ui-language-status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="settings-body-grid settings-shell">
+          <!-- القائمة الجانبية لأقسام الإعدادات -->
+          <aside class="settings-rail">
+            <div class="settings-rail-heading">
+              <span data-i18n-text="settings.system_sections">System sections</span>
+            </div>
+            <nav class="settings-tabs" aria-label="Emulator settings sections" role="tablist" data-i18n-attrs="{&quot;aria-label&quot;:&quot;settings.emulator_settings_sections&quot;}">
+              <button
+                type="button"
+                class="settings-tab"
+                data-tab="controls"
+                aria-selected="true"
+                role="tab"
+              >
+                <span data-i18n-text="settings.controls_and_keys">Controls and keys</span>
+              </button>
+              <button
+                type="button"
+                class="settings-tab"
+                data-tab="directories"
+                aria-selected="false"
+                role="tab"
+              >
+                <span data-i18n-text="settings.file_directories">File directories</span>
+              </button>
+              <button
+                type="button"
+                class="settings-tab"
+                data-tab="video"
+                aria-selected="false"
+                role="tab"
+              >
+                <span data-i18n-text="settings.video_and_display">Video and display</span>
+              </button>
+              <button
+                type="button"
+                class="settings-tab"
+                data-tab="audio"
+                aria-selected="false"
+                role="tab"
+              >
+                <span data-i18n-text="settings.audio">Audio</span>
+              </button>
+              <button
+                type="button"
+                class="settings-tab"
+                data-tab="machine"
+                aria-selected="false"
+                role="tab"
+              >
+                <span data-i18n-text="settings.system">System</span>
+              </button>
+              <button
+                type="button"
+                class="settings-tab"
+                data-tab="misc"
+                aria-selected="false"
+                role="tab"
+              >
+                <span data-i18n-text="settings.more_options">More options</span>
+              </button>
+            </nav>
+            <div
+              class="settings-runtime-info visually-hidden"
+              id="settings-engine-status"
+              role="status"
+            >
+              Reading engine status…
+            </div>
+          </aside>
+
+          <!-- مساحة عرض الخيارات النشطة -->
+          <div class="settings-workarea">
+            <section id="settings-panel" aria-live="polite"></section>
+
+            <div class="setting-actions">
+              <button type="button" id="save-settings" data-i18n-text="settings.save_changes">Save changes</button>
+              <button type="button" id="reset-settings" class="secondary" data-i18n-text="settings.restore_defaults">
+                Restore defaults
+              </button>
+              <span id="settings-message" class="setting-msg" role="status"></span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- تذييل الموقع الموحد -->
+      <footer class="global-footer site-footer" aria-label="Site footer" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.site_footer&quot;}">
+        <a href="/" class="footer-brand" aria-label="Neo-Geo Web Port — Home" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.neo_geo_web_port_home&quot;}">
+          <img
+            src="/assets/media/neo-geo-mark.png"
+            alt=""
+            class="footer-logo"
+            width="52"
+            height="52"
+          />
+          <span class="footer-site-name">Neo-Geo Web Port</span>
+        </a>
+        <div class="footer-rights">
+          <strong
+             data-i18n-text="index.2026_neo_geo_web_port_website_design">© 2026 Neo-Geo Web Port — Website design and development by the project
+            owner.</strong
+          >
+          <span
+             data-i18n-text="index.neo_geo_games_and_trademarks_belong_to">Neo Geo games and trademarks belong to their respective owners. Your files are not
+            uploaded.</span
+          >
+          <a class="footer-help" href="./?guide=1" data-i18n-text="index.library_setup_guide">Library setup guide</a>
+        </div>
+        <button
+          class="back-to-top"
+          type="button"
+          data-scroll-top
+          aria-label="Back to top"
+          aria-hidden="true"
+          tabindex="-1"
+         data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.back_to_top&quot;}">
+          <span class="back-to-top-arrow" aria-hidden="true">↑</span>
+        </button>
+      </footer>
+    </div>
+  </body>
+</html>

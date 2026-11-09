@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <script src="/assets/languages.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <title data-i18n-text="player.neo_geo_web_port_player">Neo-Geo Web Port — Player</title>
+    <link rel="icon" type="image/png" href="/assets/media/favicon.png" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <script src="/assets/ui/message-box.js" defer></script>
+    <script src="/assets/preferences.js" defer></script>
+    <script src="/assets/runtime-diagnostics.js" defer></script>
+    <script src="/assets/controls/global-controls.js" defer></script>
+    <script src="/assets/fbneo-compat.js" defer></script>
+    <script src="/assets/state-guard.js" defer></script>
+    <script src="/assets/runtime-guard.js" defer></script>
+    <script src="/assets/library/save-transfer.js" defer></script>
+    <script src="/assets/controls/tab-pause.js" defer></script>
+    <script src="/assets/player.js" defer></script>
+    <script src="/assets/ui/site-extras.js" defer></script>
+  </head>
+  <body class="player-page">
+    <div class="player-viewport">
+      <!-- شريط التنقل العلوي لشاشة اللعب -->
+      <header class="player-header player-topbar site-header-compact">
+        <a class="player-logo logo-link" href="/" aria-label="Neo-Geo Web Port — Library" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.neo_geo_web_port_library&quot;}">
+          <img
+            src="/assets/media/neo-geo-mark.png"
+            class="logo-motion"
+            alt="Neo Geo"
+            width="56"
+            height="56"
+          />
+          <span class="brand-name">Neo-Geo Web Port</span>
+        </a>
+
+        <nav class="site-page-nav" aria-label="Main navigation" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.main_navigation&quot;}">
+          <a href="/" data-i18n-text="index.library">Library</a>
+          <span aria-current="page" class="nav-current" data-i18n-text="app.play_game">Play game</span>
+          <a href="/settings.html" data-i18n-text="index.settings">Settings</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="back-btn" href="/" data-i18n-text="player.back_to_library">Back to library</a>
+        </div>
+      </header>
+
+      <!-- مسرح تشغيل المحاكي -->
+      <main class="player-main">
+        <section class="player-hud-header" aria-label="Current game" data-i18n-attrs="{&quot;aria-label&quot;:&quot;player.current_game&quot;}">
+          <div class="player-caption">
+            <h1 id="player-title">Initializing emulator…</h1>
+          </div>
+        </section>
+
+        <div id="player-message" class="player-message" role="status">
+          Checking local game files…
+        </div>
+
+        <div class="theater-backdrop cabinet-bezel-wrap">
+          <div class="emulator-stage">
+            <div id="game"></div>
+          </div>
+        </div>
+
+        <div class="player-understage">
+          <div class="stage-note">
+            <div>
+              <strong data-i18n-text="player.focus_on_the_game">Focus on the game</strong>
+              <p data-i18n-text="player.click_the_game_screen_to_focus_the">Click the game screen to focus the keyboard, or use the EmulatorJS toolbar.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-diagnostics">
+          <details id="debug-details">
+            <summary>
+              <span data-i18n-text="player.diagnostics_and_save_states">Diagnostics and save states</span>
+            </summary>
+            <pre id="diagnostic-log">No events yet.</pre>
+            <div class="diagnostics-actions-bar">
+              <button id="copy-diagnostics" type="button" data-i18n-text="player.copy_report">Copy report</button>
+              <button id="export-diagnostics" type="button" data-i18n-text="player.export_json">Export JSON</button>
+            </div>
+          </details>
+        </div>
+      </main>
+    </div>
+
+    <!-- تذييل الموقع الموحد -->
+    <footer class="global-footer site-footer" aria-label="Site footer" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.site_footer&quot;}">
+      <a href="/" class="footer-brand" aria-label="Neo-Geo Web Port — Home" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.neo_geo_web_port_home&quot;}">
+        <img
+          src="/assets/media/neo-geo-mark.png"
+          alt=""
+          class="footer-logo"
+          width="52"
+          height="52"
+        />
+        <span class="footer-site-name">Neo-Geo Web Port</span>
+      </a>
+      <div class="footer-rights">
+        <strong
+           data-i18n-text="index.2026_neo_geo_web_port_website_design">© 2026 Neo-Geo Web Port — Website design and development by the project
+          owner.</strong
+        >
+        <span
+           data-i18n-text="index.neo_geo_games_and_trademarks_belong_to">Neo Geo games and trademarks belong to their respective owners. Your files are not
+          uploaded.</span
+        >
+        <a class="footer-help" href="./?guide=1" data-i18n-text="index.library_setup_guide">Library setup guide</a>
+      </div>
+      <button
+        class="back-to-top"
+        type="button"
+        data-scroll-top
+        aria-label="Back to top"
+        aria-hidden="true"
+        tabindex="-1"
+       data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.back_to_top&quot;}">
+        <span class="back-to-top-arrow" aria-hidden="true">↑</span>
+      </button>
+    </footer>
+  </body>
+</html>

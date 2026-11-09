@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <script src="/assets/languages.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Neo-Geo Web Port — Play local Neo Geo games in your browser."
+     data-i18n-attrs="{&quot;content&quot;:&quot;index.neo_geo_web_port_play_local_neo&quot;}"/>
+    <title data-i18n-text="index.neo_geo_web_port_library">Neo-Geo Web Port — Library</title>
+    <link rel="icon" type="image/png" href="/assets/media/favicon.png" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <script src="/assets/ui/message-box.js" defer></script>
+    <script src="/assets/app.js" defer></script>
+    <script src="/assets/ui/site-extras.js" defer></script>
+  </head>
+  <body class="home-page">
+    <div class="obsidian-shell">
+      <!-- شريط التنقل العلوي الموحد -->
+      <header class="global-header">
+        <a class="brand" href="/" aria-label="Back to home" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.back_to_home&quot;}">
+          <img
+            src="/assets/media/neo-geo-mark.png"
+            width="56"
+            height="56"
+            alt="Neo Geo"
+            class="brand-logo logo-motion"
+          />
+          <span class="brand-name">Neo-Geo Web Port</span>
+        </a>
+
+        <nav class="global-nav" aria-label="Main navigation" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.main_navigation&quot;}">
+          <button type="button" class="nav-action active" data-view="all">
+            <span data-i18n-text="index.library">Library</span>
+            <span id="side-count" class="nav-number">—</span>
+          </button>
+          <button type="button" class="nav-action" data-view="favorites">
+            <span data-i18n-text="index.favorites">Favorites</span>
+            <span id="favorite-count" class="nav-number">0</span>
+          </button>
+        </nav>
+
+        <div class="header-actions">
+          <a class="header-link" href="#local-library" data-i18n-text="index.local_sources">Local sources</a>
+          <a class="icon-link" href="/settings.html" title="Settings" aria-label="Settings" data-i18n-attrs="{&quot;title&quot;:&quot;index.settings&quot;,&quot;aria-label&quot;:&quot;index.settings&quot;}">
+            <span data-i18n-text="index.settings">Settings</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- المحتوى الرئيسي للمنصة -->
+      <main class="home-main">
+        <div id="banner" class="banner" role="alert" hidden></div>
+
+        <!-- الواجهة الترحيبية للعبة المميزة -->
+        <section class="hero-editorial feature" aria-label="Featured game" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.featured_game&quot;}">
+          <div class="hero-copy feature-copy">
+            <div class="hero-heading-group">
+              <h1 class="hero-heading" data-i18n-text="index.arcade">Arcade, <em data-i18n-text="index.without_limits">without limits.</em></h1>
+              <h2 id="featured-title">Neo Geo, the way you love to play.</h2>
+              <p id="featured-description">
+                Link your local games for a focused arcade experience. Your files stay on your
+                device.
+              </p>
+            </div>
+            <div class="hero-actions feature-buttons">
+              <a id="featured-play" class="primary-button" href="#collection" data-i18n-text="index.start_playing">Start playing</a>
+              <a class="secondary-button" href="#local-library" data-i18n-text="index.manage_library">Manage library</a>
+            </div>
+            <span class="visually-hidden" id="engine-health" role="status"
+              >Checking engine…</span
+            >
+          </div>
+
+          <div class="hero-art feature-visual">
+            <div class="art-halo" aria-hidden="true"></div>
+            <div class="hero-art-inner">
+              <div class="artwork-frame">
+                <img id="featured-image" alt="Featured game image" hidden  data-i18n-attrs="{&quot;alt&quot;:&quot;index.featured_game_image&quot;}"/>
+                <div id="feature-placeholder" class="artwork-placeholder">
+                  <span class="placeholder-monogram">NG</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- شريط إحصائيات حالة المكتبة -->
+        <section class="quick-stats stats-row" aria-label="Library status" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.library_status&quot;}">
+          <div class="quick-stat">
+            <span data-i18n-text="index.known_games">Known games</span>
+            <strong id="stat-games">—</strong>
+          </div>
+          <div class="quick-stat">
+            <span data-i18n-text="index.game_previews">Game previews</span>
+            <strong id="stat-shots">—</strong>
+          </div>
+          <div class="quick-stat">
+            <span data-i18n-text="index.archive_size">Archive size</span>
+            <strong id="stat-size" dir="ltr">—</strong>
+          </div>
+          <div class="quick-stat">
+            <span data-i18n-text="index.bios_status">BIOS status</span>
+            <strong id="stat-bios">—</strong>
+          </div>
+        </section>
+
+        <!-- ملاحظة: يقوم library-ui.js بحقن قسم #local-library تلقائيًا قبل #collection -->
+        <section class="collection" id="collection">
+          <div class="collection-heading section-heading">
+            <div class="section-title-wrap">
+              <h2 id="collection-title">
+                All games <span id="results" class="result-count">—</span>
+              </h2>
+              <p id="filter-description" hidden></p>
+            </div>
+          </div>
+
+          <!-- شريط البحث والفرز والتصنيفات المدمج -->
+          <div class="collection-controls-bar">
+            <div class="collection-toolbar filters">
+              <label class="search-box">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input
+                  id="search"
+                  type="search"
+                  autocomplete="off"
+                  placeholder="Search games, series, or ROM filenames…"
+                  aria-label="Search library"
+                 data-i18n-attrs="{&quot;placeholder&quot;:&quot;index.search_games_series_or_rom_filenames&quot;,&quot;aria-label&quot;:&quot;index.search_library&quot;}"/>
+                <kbd>/</kbd>
+              </label>
+              <label class="sort-label">
+                <span data-i18n-text="index.sort">Sort</span>
+                <select id="sort" aria-label="Sort games" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.sort_games&quot;}">
+                  <option value="name" data-i18n-text="index.by_name">By name</option>
+                  <option value="size" data-i18n-text="index.by_size">By size</option>
+                  <option value="filename" data-i18n-text="index.by_rom_filename">By ROM filename</option>
+                </select>
+              </label>
+            </div>
+
+            <nav class="category-strip" aria-label="Game categories" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.game_categories&quot;}">
+              <button type="button" data-category="fighting" data-i18n-text="app.fighting">Fighting</button>
+              <button type="button" data-category="action" data-i18n-text="app.action">Action</button>
+              <button type="button" data-category="shooter" data-i18n-text="app.shooters">Shooters</button>
+              <button type="button" data-category="sports" data-i18n-text="app.sports">Sports</button>
+              <button type="button" data-category="puzzle" data-i18n-text="app.puzzles">Puzzles</button>
+              <button type="button" data-category="other" data-i18n-text="app.other">Other</button>
+            </nav>
+          </div>
+
+          <!-- شبكة عرض الألعاب -->
+          <div id="game-grid" class="game-grid" aria-live="polite">
+            <div class="empty-state" data-i18n-text="index.loading_your_local_library">Loading your local library…</div>
+          </div>
+        </section>
+      </main>
+
+      <!-- تذييل الصفحة -->
+      <footer class="global-footer site-footer" aria-label="Site footer" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.site_footer&quot;}">
+        <a href="/" class="footer-brand" aria-label="Neo-Geo Web Port — Home" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.neo_geo_web_port_home&quot;}">
+          <img
+            src="/assets/media/neo-geo-mark.png"
+            alt=""
+            class="footer-logo"
+            width="52"
+            height="52"
+          />
+          <span class="footer-site-name">Neo-Geo Web Port</span>
+        </a>
+        <div class="footer-rights">
+          <strong
+             data-i18n-text="index.2026_neo_geo_web_port_website_design">© 2026 Neo-Geo Web Port — Website design and development by the project
+            owner.</strong
+          >
+          <span
+             data-i18n-text="index.neo_geo_games_and_trademarks_belong_to">Neo Geo games and trademarks belong to their respective owners. Your files are not
+            uploaded.</span
+          >
+          <a class="footer-help" href="./?guide=1" data-i18n-text="index.library_setup_guide">Library setup guide</a>
+        </div>
+        <button
+          class="back-to-top"
+          type="button"
+          data-scroll-top
+          aria-label="Back to top"
+          aria-hidden="true"
+          tabindex="-1"
+         data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.back_to_top&quot;}">
+          <span class="back-to-top-arrow" aria-hidden="true">↑</span>
+        </button>
+      </footer>
+    </div>
+
+    <!-- نافذة الإرشاد الترحيبية عند التشغيل الأول -->
+    <section
+      id="first-run-guide"
+      class="first-run-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="first-run-title"
+      aria-describedby="first-run-description"
+      hidden
+    >
+      <div class="first-run-backdrop" aria-hidden="true"></div>
+      <div class="first-run-panel" tabindex="-1">
+        <button
+          class="first-run-close"
+          type="button"
+          data-guide-dismiss
+          aria-label="Close setup guide"
+         data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.close_setup_guide&quot;}">
+          ×
+        </button>
+
+        <header class="first-run-header">
+          <div class="first-run-brand">
+            <img src="/assets/media/neo-geo-mark.png" width="68" height="68" alt="Neo Geo" />
+          </div>
+          <div class="first-run-title-group">
+            <h2 id="first-run-title" data-i18n-text="index.ready_for_neo_geo">Ready for Neo Geo?</h2>
+            <p id="first-run-description" class="first-run-lead" data-i18n-text="index.prepare_these_three_local_sources_and_link">
+              Prepare these three local sources and link them to the player. No file uploads are
+              needed.
+            </p>
+          </div>
+        </header>
+
+        <div class="first-run-sources">
+          <article class="first-run-source">
+            <div class="source-card-top">
+              <h3>ROMs</h3>
+              <span class="source-required" data-i18n-text="index.required">Required</span>
+            </div>
+            <p data-i18n-text="index.your_game_files_extract_the_game_package|index.folder_containing_the_zip_games_keep_each">
+              Your game files. Extract the game package, then select the <b>ROMs</b> folder
+              containing the ZIP games. Keep each game ZIP compressed.
+            </p>
+          </article>
+
+          <article class="first-run-source">
+            <div class="source-card-top">
+              <h3>PREVIEWS</h3>
+              <span class="source-recommended" data-i18n-text="index.recommended">Recommended</span>
+            </div>
+            <p data-i18n-text="index.previews_help_you_recognize_games_in_the|index.folder_after_extracting_the_image_package_games">
+              Previews help you recognize games in the library. Select the
+              <b>PREVIEWS</b> folder after extracting the image package. Games work without
+              previews.
+            </p>
+          </article>
+
+          <article class="first-run-source">
+            <div class="source-card-top">
+              <h3>BIOS</h3>
+              <span class="source-required" data-i18n-text="index.required">Required</span>
+            </div>
+            <p data-i18n-text="index.neo_geo_system_files_required_by_fbneo|index.from_the_bios_folder_keep_this_inner">
+              Neo Geo system files required by FBNeo. Select
+              <b dir="ltr">neogeo.zip</b> from the BIOS folder. Keep this inner ZIP compressed.
+            </p>
+          </article>
+        </div>
+
+        <p class="first-run-swipe-hint" data-i18n-text="index.swipe_horizontally_to_view_all_three_sources">Swipe horizontally to view all three sources ← →</p>
+
+        <footer class="first-run-footer">
+          <p class="first-run-privacy" data-i18n-text="index.files_stay_on_your_device_brave_may">
+            Files stay on your device. Brave may ask you to select session files again after
+            closing the browser. Games are never copied into browser storage without your
+            consent.
+          </p>
+          <div class="first-run-actions">
+            <button type="button" class="guide-primary" data-guide-setup data-i18n-text="index.got_it_set_up_library">
+              Got it — set up library
+            </button>
+            <button type="button" class="guide-secondary" data-guide-dismiss data-i18n-text="index.explore_first">
+              Explore first
+            </button>
+          </div>
+        </footer>
+      </div>
+    </section>
+  </body>
+</html>
