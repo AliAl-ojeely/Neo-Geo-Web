@@ -213,8 +213,9 @@
     const resource = path =>
       window.NG_STATIC ? new URL(path.replace(/^\//, ''), NG_BASE).href : path;
     for (const asset of ['fbneo-legacy-wasm.data', 'fbneo.json']) {
+      // The offline worker serves cached GET requests; HEAD bypasses its cache.
       const response = await fetch(resource('/vendor/fbneo-selected-bios/' + asset), {
-        method: 'HEAD',
+        method: window.NG_STATIC ? 'GET' : 'HEAD',
         cache: 'no-store'
       });
       if (!response.ok)
