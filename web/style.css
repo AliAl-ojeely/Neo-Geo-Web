@@ -3170,3 +3170,35 @@ input[type='number'],
 .vault-consent-label {
   unicode-bidi: plaintext;
 }
+
+/* Fully Offline Emulator: confined to the existing settings card system. */
+.ng-offline-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ng-offline-button { border-color: #9d8c2b; background: #3b330b; color: #ffdd6a; }
+.ng-offline-remove { border-color: #88524c; }
+.ng-offline-status { margin: 12px 0 6px; font-weight: 700; overflow-wrap: anywhere; }
+.ng-offline-status[data-state="success"] { color: #7ce6aa; }
+.ng-offline-status[data-state="error"] { color: #ff9d95; }
+.ng-offline-status[data-state="busy"] { color: #ffd365; }
+.ng-offline-progress { width: min(100%, 550px); height: 14px; accent-color: #e7c84e; display: block; }
+.ng-offline-progress[hidden] { display: none; }
+.ng-offline-detail { color: var(--text-muted, #b9b9c4); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+
+/* Highlight optional download-manager troubleshooting without modifying runtime behavior. */
+.ng-offline-extension-note {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-inline-start: 3px solid #ffd365;
+  border-radius: 6px;
+  background: rgba(255, 211, 101, .06);
+  color: #e8d9a6;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* Browser-owned offline storage location and accessible confirmation dialog. */
+.ng-offline-storage-box { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--stroke-strong, #393943); border-radius: 10px; background: rgba(255, 255, 255, .025); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.ng-offline-storage-box strong { display: block; margin-bottom: 6px; color: var(--text, #fff); }
+.ng-offline-storage-box p { margin: 6px 0; }
+.ng-offline-storage-site { direction: ltr; unicode-bidi: plaintext; display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+.ng-dialog { max-height: calc(100dvh - 32px); overflow: auto; }
+#ng-dialog-desc { max-height: min(52dvh, 480px); overflow-y: auto; overscroll-behavior: contain; }

@@ -199,6 +199,13 @@
     // Render startup, exit confirmation, and diagnostic preferences.
     misc: () => [
       card(
+        NGI18n.t('offline.title'),
+        NGI18n.t('offline.description'),
+        `<div class="ng-offline-actions"><button id="ng-offline-action" class="settings-utility ng-offline-button" type="button">${NGI18n.t('offline.button')}</button><button id="ng-offline-remove" class="settings-utility ng-offline-remove" type="button" hidden>${NGI18n.t('offline.remove_button')}</button></div><p id="ng-offline-status" class="ng-offline-status" role="status">${NGI18n.t('offline.not_installed')}</p><p class="ng-offline-extension-note" data-i18n-text="offline.extension_note" role="note">${NGI18n.t('offline.extension_note')}</p><section class="ng-offline-storage-box" aria-label="${NGI18n.t('offline.storage_heading')}"><strong data-i18n-text="offline.storage_heading">${NGI18n.t('offline.storage_heading')}</strong><p data-i18n-text="offline.storage_location">${NGI18n.t('offline.storage_location')}</p><p><span data-i18n-text="offline.storage_site">${NGI18n.t('offline.storage_site')}</span> <span id="ng-offline-storage-site" class="ng-offline-storage-site" dir="ltr" data-no-i18n></span></p><p data-i18n-text="offline.storage_scope">${NGI18n.t('offline.storage_scope')}</p><p data-i18n-text="offline.storage_inspect">${NGI18n.t('offline.storage_inspect')}</p><p data-i18n-text="offline.storage_privacy">${NGI18n.t('offline.storage_privacy')}</p></section><progress id="ng-offline-progress" class="ng-offline-progress" max="100" value="0" hidden></progress><p id="ng-offline-detail" class="ng-offline-detail" role="status"></p>`,
+        true,
+        true
+      ),
+      card(
         NGI18n.t('settings.automatic_startup'),
         NGI18n.t('settings.start_after_file_checks_your_browser_may'),
         toggle('autoStart', NGI18n.t('settings.start_when_ready')),
@@ -249,6 +256,7 @@
     `;
 
     window.NGControlsUI?.mount();
+    window.NGOfflineUI?.mount();
 
     document.querySelectorAll('[data-pref]').forEach(el =>
       // Stage preference changes without persisting them until the save action.

@@ -2,6 +2,53 @@
 'use strict';
 (function (root) {
   const CATALOG = {
+    offline: {
+      storage_heading: { en: "Where is the offline package stored?", ar: "أين تُحفظ حزمة التشغيل دون إنترنت؟" },
+      storage_location: { en: "Website and emulator files are saved in this browser's Cache Storage for this site. They are NOT downloaded to your Downloads folder and are not a separate ZIP file.", ar: "تُحفظ ملفات الموقع والمحرك داخل مساحة التخزين المحلية لهذا المتصفح (Cache Storage)، وليست في مجلد التنزيلات (Downloads) ولا في ملف ZIP مستقل." },
+      storage_site: { en: "Storage site address:", ar: "عنوان الموقع المرتبط بالتخزين:" },
+      storage_scope: { en: "This storage belongs to the current browser profile and site address (including its port). A different browser, profile or site address does not automatically share it. Clearing site data can erase the package.", ar: "تخص مساحة التخزين هذا المتصفح وملف المستخدم وعنوان الموقع، بما في ذلك رقم المنفذ. إذا فتحت الموقع من عنوان أو متصفح آخر، فلن تستخدم تلقائيًا الحزمة نفسها. وقد يؤدي مسح بيانات الموقع إلى حذفها." },
+      storage_inspect: { en: "On desktop, view it with F12 > Application > Cache Storage. Look for neogeo-static-offline-v1-.... The physical disk folder is browser-managed and may differ between devices and profiles.", ar: "للاطلاع عليها من الكمبيوتر: افتح أدوات المطور (F12)، ثم Application > Cache Storage. يختار المتصفح موقع الملفات الفعلي على القرص ولا يوجد مسار ثابت مشترك بين الأجهزة." },
+      storage_saved: { en: "Saved to this browser's Cache Storage for:", ar: "تم حفظ الملفات في مساحة المتصفح المحلية المرتبطة بهذا العنوان:" },
+      storage_privacy: { en: "Your personal ROM and BIOS files stay in the local locations you selected; they are not copied or moved into this package automatically.", ar: "تظل ملفات الألعاب ROM وBIOS في مواقعها الأصلية التي اخترتها، ولا تُنقل أو تُنسخ إلى هذه الحزمة تلقائيًا." },
+      extension_note: {
+        en: 'Troubleshooting: If offline setup fails, a download-manager browser extension, such as Internet Download Manager (IDM), may have intercepted a file request. Temporarily disable IDM integration or other download-manager extensions, then retry. You can re-enable them after setup.',
+        ar: 'تنبيه: إذا فشل تجهيز التشغيل دون إنترنت، فقد تكون إضافة Internet Download Manager ‏(IDM) أو إحدى إضافات إدارة التنزيلات قد اعترضت طلب أحد الملفات. عطّل الإضافة مؤقتًا ثم أعد المحاولة، ويمكنك إعادة تفعيلها بعد اكتمال التجهيز.'
+      },
+      title: { en: 'Fully Offline Emulator', ar: 'دون الحاجة الى الاتصال بالانترنت بشكل كامل' },
+      button: { en: 'Fully Offline Emulator', ar: 'دون الحاجة الى الاتصال بالانترنت بشكل كامل' },
+      description: { en: 'Save the website and the complete emulator runtime locally for access without an internet connection.', ar: 'احتفظ بملفات الموقع والمحاكي كاملة داخل المتصفح لتشغيلها دون اتصال بالإنترنت.' },
+      dialog_title: { en: 'Prepare fully offline emulation', ar: 'تجهيز المحاكي للعمل دون إنترنت' },
+      confirm_intro: { en: 'The browser will download and verify every published website file required by this emulator, including its pages, interface, catalog, fonts/images, EmulatorJS and FBNeo/WebAssembly. The files will be stored in this browser for offline use.', ar: 'سيحمّل المتصفح ويتحقق من جميع ملفات الموقع اللازمة، وتشمل الصفحات والواجهة والفهرس والصور وملفات EmulatorJS ومحرك FBNeo/WebAssembly، ثم يحتفظ بها في تخزين المتصفح.' },
+      download_size: { en: 'Website download', ar: 'حجم تنزيل ملفات الموقع' },
+      files: { en: 'files', ar: 'ملفًا' },
+      category_fbneo: { en: 'FBNeo + WebAssembly', ar: 'محرك FBNeo وWebAssembly' },
+      category_emulatorjs: { en: 'EmulatorJS runtime', ar: 'ملفات محاكي EmulatorJS' },
+      category_assets: { en: 'Site scripts, styles and images', ar: 'سكربتات الموقع والتنسيقات والصور' },
+      category_pages: { en: 'Site pages', ar: 'صفحات الموقع' },
+      category_other: { en: 'Catalog, licenses and support files', ar: 'فهرس الألعاب والتراخيص والملفات المساعدة' },
+      local_files_note: { en: 'ROMs, BIOS and personal previews are NOT downloaded or copied. Continue using your own local files. Their saved folder references and browser permissions are separate.', ar: 'لن تُنزَّل أو تُنسخ ملفات ROMs أو BIOS أو صور مكتبتك الخاصة. سيستمر التشغيل باستخدام ملفاتك المحلية، وتظل صلاحيات الوصول إلى مجلداتها مستقلة.' },
+      permissions_note: { en: 'After restarting the browser you may need to click Reconnect Saved Sources or grant file access again, even while offline. Do not clear site data or use private mode if you need persistence.', ar: 'بعد إعادة فتح المتصفح قد يلزم الضغط على «إعادة ربط المصادر المحفوظة» أو تجديد إذن قراءة الملفات حتى دون إنترنت. لا تمسح بيانات الموقع ولا تستخدم الوضع الخاص إن أردت الاحتفاظ بها.' },
+      updates_note: { en: 'An internet connection is needed only for the initial website download and future updates. This does not stop the browser itself from attempting update checks while online.', ar: 'يلزم الاتصال بالإنترنت للتنزيل الأول وللتحديثات المستقبلية فقط. قد يحاول المتصفح نفسه فحص التحديثات أثناء الاتصال.' },
+      start_download: { en: 'Download offline package', ar: 'تنزيل حزمة التشغيل دون إنترنت' },
+      cancel: { en: 'Cancel', ar: 'إلغاء' },
+      downloading: { en: 'Downloading and verifying offline files', ar: 'جارٍ تنزيل ملفات التشغيل والتحقق منها' },
+      ready: { en: 'Offline emulator ready', ar: 'المحاكي جاهز للعمل دون إنترنت' },
+      ready_note: { en: 'You can now disconnect from the internet, reopen this site and play with your own local ROMs and BIOS.', ar: 'يمكنك الآن قطع الاتصال بالإنترنت وفتح هذا الموقع مجددًا واللعب باستخدام ملفات ROMs وBIOS المحلية.' },
+      update_button: { en: 'Update Fully Offline Emulator', ar: 'تحديث حزمة المحاكي دون إنترنت' },
+      update_available: { en: 'Offline pack saved; a newer website build is available', ar: 'حزمة دون إنترنت محفوظة؛ يوجد إصدار أحدث من الموقع' },
+      remove_button: { en: 'Remove offline files', ar: 'حذف ملفات التشغيل دون إنترنت' },
+      remove_explanation: { en: 'Remove downloaded website and emulator cache? Your ROMs, BIOS, local saved library references and game saves will NOT be deleted.', ar: 'هل تريد حذف نسخ الموقع والمحاكي المخزنة للعمل دون إنترنت؟ لن تُحذف ROMs أو BIOS أو مراجع المجلدات أو ملفات حفظ الألعاب.' },
+      not_installed: { en: 'Offline package not installed', ar: 'لم تُثبَّت حزمة التشغيل دون إنترنت' },
+      failed: { en: 'Offline setup failed', ar: 'فشل تجهيز التشغيل دون إنترنت' },
+      incomplete: { en: 'Not all offline files were saved.', ar: 'لم تُحفظ جميع الملفات اللازمة.' },
+      invalid_manifest: { en: 'The offline asset list is invalid.', ar: 'قائمة ملفات التشغيل دون إنترنت غير صالحة.' },
+      unsupported: { en: 'This browser or context does not support secure Service Workers.', ar: 'المتصفح أو سياق الصفحة لا يدعم Service Workers الآمنة.' },
+      static_only: { en: 'Offline installation is available on the static GitHub Pages site.', ar: 'تثبيت التشغيل دون إنترنت متاح في نسخة GitHub Pages الثابتة.' },
+      worker_unavailable: { en: 'Offline worker is unavailable. Reload while online and retry.', ar: 'خدمة التخزين دون إنترنت غير متاحة. أعد فتح الموقع أثناء الاتصال ثم حاول مجددًا.' },
+      timeout: { en: 'The offline operation timed out. Try again with a stable connection.', ar: 'انتهت مهلة التجهيز دون إنترنت. حاول مجددًا باتصال ثابت.' },
+      retry_note: { en: 'No complete offline package was activated. You can safely retry.', ar: 'لم تُفعَّل حزمة غير مكتملة؛ يمكنك إعادة المحاولة بأمان.' },
+      no_game_copy: { en: 'Your personal games, BIOS and saved preferences were not removed.', ar: 'لم تُحذف ألعابك الخاصة أو BIOS أو إعداداتك المحفوظة.' }
+    },
     app: {
       fighting: {
         en: 'Fighting',

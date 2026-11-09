@@ -327,6 +327,40 @@ def build():
         copy(c.ROOT / name, name)
     copy(c.ROOT / "vendor/emulatorjs/LICENSE", "vendor/emulatorjs/LICENSE")
     (PUBLIC / ".nojekyll").write_text("", encoding="utf-8")
+    # A deterministic asset index makes the user-approved offline download exhaustive and verifiable.
+    import hashlib
+    existing = sorted(
+        p for p in PUBLIC.rglob('*') if p.is_file() and p.relative_to(PUBLIC).as_posix()
+        not in {'.nojekyll', 'offline-sw.js', 'offline-manifest.json'}
+    )
+    signature = '\n'.join(
+        p.relative_to(PUBLIC).as_posix() + ':' + c.sha(p) for p in existing
+    )
+    build_id = hashlib.sha256(signature.encode('utf-8')).hexdigest()[:16]
+    template = (c.ROOT / 'tools/offline-sw.template.js').read_text(encoding='utf-8')
+    if template.count('__NG_OFFLINE_BUILD_ID__') != 1:
+        raise RuntimeError('Offline Service Worker build token is missing or ambiguous')
+    (PUBLIC / 'offline-sw.js').write_text(
+        template.replace('__NG_OFFLINE_BUILD_ID__', build_id), encoding='utf-8'
+    )
+    offline_paths = existing + [PUBLIC / 'offline-sw.js']
+    offline_files = [
+        {
+            'path': p.relative_to(PUBLIC).as_posix(),
+            'sha256': c.sha(p),
+            'bytes': p.stat().st_size,
+        }
+        for p in offline_paths
+    ]
+    (PUBLIC / 'offline-manifest.json').write_text(
+        json.dumps({
+            'schema': 1,
+            'id': build_id,
+            'files': offline_files,
+            'totalBytes': sum(x['bytes'] for x in offline_files),
+        }, ensure_ascii=False, indent=2) + '\n',
+        encoding='utf-8',
+    )
     files = {
         p.relative_to(PUBLIC).as_posix(): {
             "sha256": c.sha(p),
