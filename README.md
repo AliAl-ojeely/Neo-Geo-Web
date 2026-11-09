@@ -19,7 +19,7 @@
 
 **Status: Active development · Partial validation · Noncommercial core restrictions apply**
 
-[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Setup guide**](#installation--local-development) · [**Game catalog**](#127-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
+[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#127-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
 
 </div>
 
@@ -200,6 +200,42 @@ py -3 -u tools/local_companion_v032.py serve --port 8777
 Then open `http://127.0.0.1:8777/Neo-Geo-Web/`. The companion is bound to loopback and should **not** be exposed to the internet. It uses local machine configuration and cannot run inside GitHub Pages.
 
 **Note:** A public GitHub Pages visitor must select their own files through available browser APIs. Library permissions and preferences do not transfer automatically from `localhost` to `github.io` because the origin changes.
+
+---
+
+## Browser Compatibility & Saved Library Access
+
+**Browser testing scope (Windows):** The project has been tested with **Google Chrome, Brave, and Microsoft Edge**. These are the only browsers in the project's reported manual browser-testing scope so far; the Node.js/Python tests are not a substitute for browser-by-browser gameplay verification. **Firefox, Safari, Opera, Vivaldi, and other browsers have not been verified**. Additional browser testing is planned for future releases. Support and permission behavior may also differ across browser versions, operating systems, and privacy settings.
+
+### Why ROMs or BIOS might need to be selected again
+
+The public [GitHub Pages site](https://alial-ojeely.github.io/Neo-Geo-Web/) **never bundles or uploads your ROMs or BIOS**. When a browser supports the native File System Access API, the Local Library Manager stores your selected ROMs, PREVIEWS, and BIOS file/folder handles in the site's **IndexedDB**. However, saving a handle is **not the same as granting permanent permission**: browsers may require renewed read permission after restarting, and private sessions, cleared site data, or ordinary file-input fallback selections may not persist.
+
+**First-time setup:** Open the public website, choose your own ROMs folder and matching `neogeo.zip` BIOS (and optionally PREVIEWS), then click **Save Library**. On subsequent visits, do **not** immediately select the paths again. If the source cards say **Permission renewal required**, click **Reconnect Saved Sources** and approve access to the already-saved sources. When your browser offers **Allow on every visit**, choose it if you want recurring access on this device. You can later revoke permissions in your browser's site settings. If the cards say the sources are missing rather than requiring permission, see the checks below.
+
+| Browser | Tested scope | Reopening the saved library |
+| :--- | :--- | :--- |
+| **Google Chrome** | Tested on Windows | Supports saving native handles; the **Allow on every visit** permission resolved the repeated-selection issue in project testing. If prompted, use **Reconnect Saved Sources** and choose that option. |
+| **Brave** | Tested on Windows | Some versions disable the native File System Access API by default, causing temporary session-only selection. See the Brave steps below. Once enabled, select the folders and **Save Library** again; permanent access depends on the browser's available permission options. |
+| **Microsoft Edge** | Included in the Windows browser testing scope | Uses Chromium file-access permissions. Select and save sources, reconnect when needed, and use persistent permission if Edge offers it. This is **not a guarantee** that every Edge version will retain permission permanently. |
+| **Firefox, Safari, and other browsers** | **Not tested / not verified** | Compatibility, native directory-picker support, and saved permission behavior remain unverified. The site may fall back to session-only file selection. |
+
+### Brave: enable native directory access when unavailable
+
+1. Open `brave://flags/#file-system-access-api` in Brave's address bar.
+2. If **File System Access API** is available and currently **Default** or **Disabled**, change it to **Enabled**, then click **Relaunch**. This is an **experimental browser-wide setting** and may affect security/privacy; enable it only if you accept that trade-off. The flag may be absent or behave differently in some Brave versions.
+3. Reopen the GitHub Pages website; select ROMs, PREVIEWS (optional), and BIOS; click **Save Library**.
+4. Close and reopen the browser to test persistence. If permission is requested again, use **Reconnect Saved Sources** and choose a persistent/always-allow option **only if Brave provides one**.
+
+### Chrome and Edge: prefer persistent site permission
+
+1. After saving your sources, reopen the website. If a file-access prompt lists previously selected files/folders, select **Allow on every visit** when available, rather than **Allow this time**.
+2. If the site shows **Permission renewal required**, click **Reconnect Saved Sources**. This should request access to saved handles without opening the original folder picker.
+3. Check that your browser is **not clearing site data on exit** for `alial-ojeely.github.io`; avoid private/incognito sessions for persistent library setup. Do not clear this site's IndexedDB unless you intend to forget the saved references.
+
+**Troubleshooting:** If source cards show **Not connected**, check whether your browser exposes `window.showDirectoryPicker` and `window.showOpenFilePicker` (both should be functions for native selection). If they are unavailable, the site's fallback file input only lasts for that session. **Protect Browser Storage** can request more durable storage, but does **not** grant file-system permission. Permissions are browser-, profile-, and origin-specific: granting access in Chrome does not automatically grant it in Brave or Edge, and `localhost` settings do not migrate to GitHub Pages.
+
+**References:** [Chrome persistent permissions](https://developer.chrome.com/blog/persistent-permissions-for-the-file-system-access-api) · [File System Access API](https://developer.chrome.com/docs/capabilities/web-apis/file-system-access) · [Brave compatibility discussion](https://github.com/brave/brave-browser/issues/29411)
 
 ---
 
@@ -461,7 +497,7 @@ AI contributions are **assistive, not a replacement for the emulator core or ind
 
 - Not all 191 historically investigated candidates can launch through the currently selected driver/archive path.
 - Passing boot tests does not prove that gameplay, sound and controls are perfect for every listed title.
-- Persistent directory selection depends on the browser; some Brave workflows rely on a session-only fallback or the optional local companion.
+- Native folder access and persistence depend on browser permissions. Brave may require enabling the File System Access API flag; see [Browser Compatibility & Saved Library Access](#browser-compatibility--saved-library-access).
 - GitHub Pages is static hosting: it cannot run the local Python companion or access a visitor's disk without user permission.
 - Browser saved preferences and library handles are origin-specific.
 - Public deployment, licensing and corresponding-source verification require separate acceptance before declaring an unconditional release.
