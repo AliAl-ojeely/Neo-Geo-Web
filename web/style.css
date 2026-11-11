@@ -1393,6 +1393,32 @@ summary:focus-visible {
   display: none !important;
 }
 
+/* Player-only notification for the first of two Escape presses. */
+.ng-esc-exit-hint {
+  position: absolute;
+  z-index: 102;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  background: rgba(5, 5, 7, 0.94);
+  color: #ffffff;
+  border: 1px solid var(--yellow);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 750;
+  text-align: center;
+  direction: inherit;
+  pointer-events: none;
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.7);
+}
+
+.ng-esc-exit-hint[hidden] {
+  display: none !important;
+}
+
 /* Understage Note & Technical Diagnostics */
 .player-understage {
   display: flex;

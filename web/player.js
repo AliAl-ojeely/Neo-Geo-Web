@@ -262,6 +262,7 @@
     // Enable pause and input/state guards after EmulatorJS announces game startup.
     window.EJS_onGameStart = () => {
       window.NGTabPause?.enable();
+      window.NGEscExit?.enable();
       if (window.NG_STATIC && window.parent !== window) {
         window.focus();
         window.EJS_emulator.elements.parent.focus();
@@ -280,6 +281,7 @@
     // Disable the pause integration when EmulatorJS reports that the session ended.
     window.EJS_onExit = () => {
       window.NGTabPause?.disable();
+      window.NGEscExit?.disable();
       log('INFO', 'EmulatorJS exited');
     };
     const script = document.createElement('script');

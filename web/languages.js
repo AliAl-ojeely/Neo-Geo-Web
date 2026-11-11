@@ -399,6 +399,10 @@
         en: 'Back to library',
         ar: 'العودة للمكتبة'
       },
+      press_esc_again_to_return_to_library: {
+        en: 'Press Esc again to return to the library',
+        ar: 'اضغط Esc مرة ثانية للعودة إلى المكتبة'
+      },
       current_game: {
         en: 'Current game',
         ar: 'عنوان اللعبة النشطة'
