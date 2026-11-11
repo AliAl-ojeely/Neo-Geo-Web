@@ -3239,3 +3239,114 @@ input[type='number'],
   .ng-modal-actions [data-ng-modal-action] { min-height: 44px; }
   .ng-modal-panel { max-width: 100%; }
 }
+
+/* Entry-only startup cover. App scripts initialize behind this visual layer. */
+.ng-startup-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(44, 54, 66, 0.36), transparent 52%),
+    #07090e;
+  color: #f6f5f0;
+  place-items: center;
+  overflow: hidden;
+}
+
+html.ng-startup-pending .ng-startup-screen:not([hidden]) {
+  display: grid;
+}
+
+.ng-startup-screen[hidden] {
+  display: none !important;
+}
+
+.ng-startup-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+.ng-startup-wordmark {
+  direction: ltr;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 900;
+  letter-spacing: 0.17em;
+  color: #f8f7f2;
+}
+
+.ng-startup-wordmark span:last-child { color: #e4b652; }
+.ng-startup-wordmark i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e4b652;
+}
+
+.ng-startup-spinner {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 40px 0 20px;
+}
+
+.ng-startup-dot {
+  position: absolute;
+  left: calc(50% - 4px);
+  top: calc(50% - 4px);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e4b652;
+  transform: rotate(calc(var(--dot-index) * 30deg)) translateY(-35px);
+  animation: ng-startup-dot-pulse 1.2s ease-in-out infinite;
+  animation-delay: calc(var(--dot-index) * -0.1s);
+}
+
+.ng-startup-dot:nth-child(1) { --dot-index: 0; }
+.ng-startup-dot:nth-child(2) { --dot-index: 1; }
+.ng-startup-dot:nth-child(3) { --dot-index: 2; }
+.ng-startup-dot:nth-child(4) { --dot-index: 3; }
+.ng-startup-dot:nth-child(5) { --dot-index: 4; }
+.ng-startup-dot:nth-child(6) { --dot-index: 5; }
+.ng-startup-dot:nth-child(7) { --dot-index: 6; }
+.ng-startup-dot:nth-child(8) { --dot-index: 7; }
+.ng-startup-dot:nth-child(9) { --dot-index: 8; }
+.ng-startup-dot:nth-child(10) { --dot-index: 9; }
+.ng-startup-dot:nth-child(11) { --dot-index: 10; }
+.ng-startup-dot:nth-child(12) { --dot-index: 11; }
+
+@keyframes ng-startup-dot-pulse {
+  0%, 100% { opacity: 0.16; scale: 0.82; }
+  38% { opacity: 1; scale: 1; }
+}
+
+.ng-startup-label {
+  margin: 0;
+  color: #f6f5f0;
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.ng-startup-description {
+  margin: 9px 0 0;
+  color: #a9abb6;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-startup-dot { animation: none; opacity: 0.7; scale: 1; }
+}

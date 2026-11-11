@@ -54,6 +54,13 @@
       retry_note: { en: 'No complete offline package was activated. You can safely retry.', ar: 'لم تُفعَّل حزمة غير مكتملة؛ يمكنك إعادة المحاولة بأمان.' },
       no_game_copy: { en: 'Your personal games, BIOS and saved preferences were not removed.', ar: 'لم تُحذف ألعابك الخاصة أو BIOS أو إعداداتك المحفوظة.' }
     },
+    startup: {
+      loading: { en: 'Loading', ar: 'جارٍ التحميل' },
+      preparing_arcade: {
+        en: 'Preparing your arcade…',
+        ar: 'جارٍ تجهيز مكتبة الألعاب…'
+      }
+    },
     app: {
       fighting: {
         en: 'Fighting',

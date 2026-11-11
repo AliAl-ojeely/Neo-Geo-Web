@@ -13,11 +13,26 @@
     <title data-i18n-text="index.neo_geo_web_port_library">Neo-Geo Web Port — Library</title>
     <link rel="icon" type="image/png" href="/assets/media/favicon.png" />
     <link rel="stylesheet" href="/assets/style.css" />
+    <script src="/assets/ui/startup-screen.js"></script>
     <script src="/assets/ui/message-box.js" defer></script>
     <script src="/assets/app.js" defer></script>
     <script src="/assets/ui/site-extras.js" defer></script>
   </head>
   <body class="home-page">
+    <!-- Entry splash: display only on a new tab session; scripts run behind it. -->
+    <section id="ng-startup-screen" class="ng-startup-screen" role="status" aria-live="polite">
+      <div class="ng-startup-inner">
+        <div class="ng-startup-wordmark" aria-hidden="true"><span>NEO</span><i></i><span>GEO</span></div>
+        <div class="ng-startup-spinner" aria-hidden="true">
+          <span class="ng-startup-dot"></span><span class="ng-startup-dot"></span><span class="ng-startup-dot"></span>
+          <span class="ng-startup-dot"></span><span class="ng-startup-dot"></span><span class="ng-startup-dot"></span>
+          <span class="ng-startup-dot"></span><span class="ng-startup-dot"></span><span class="ng-startup-dot"></span>
+          <span class="ng-startup-dot"></span><span class="ng-startup-dot"></span><span class="ng-startup-dot"></span>
+        </div>
+        <p class="ng-startup-label" data-i18n-text="startup.loading">Loading</p>
+        <p class="ng-startup-description" data-i18n-text="startup.preparing_arcade">Preparing your arcade…</p>
+      </div>
+    </section>
     <div class="obsidian-shell">
       <!-- شريط التنقل العلوي الموحد -->
       <header class="global-header">
