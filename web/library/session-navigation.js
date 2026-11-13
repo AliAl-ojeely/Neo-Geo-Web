@@ -54,6 +54,8 @@
       frame = null;
       document.body.style.overflow = oldOverflow;
       await NGLocal.scan();
+      if (typeof document.dispatchEvent === 'function' && typeof CustomEvent === 'function')
+        document.dispatchEvent(new CustomEvent('ng-library-return'));
       return true;
     }
   };

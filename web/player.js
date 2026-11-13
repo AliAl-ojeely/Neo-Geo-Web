@@ -263,6 +263,7 @@
     window.EJS_onGameStart = () => {
       window.NGTabPause?.enable();
       window.NGEscExit?.enable();
+      window.NGPlusFullscreen?.enable();
       if (window.NG_STATIC && window.parent !== window) {
         window.focus();
         window.EJS_emulator.elements.parent.focus();
@@ -282,6 +283,7 @@
     window.EJS_onExit = () => {
       window.NGTabPause?.disable();
       window.NGEscExit?.disable();
+      window.NGPlusFullscreen?.disable();
       log('INFO', 'EmulatorJS exited');
     };
     const script = document.createElement('script');

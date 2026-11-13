@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/assets/style.css" />
     <script src="/assets/ui/startup-screen.js"></script>
     <script src="/assets/ui/message-box.js" defer></script>
+    <script src="/assets/ui/library-motion.js" defer></script>
     <script src="/assets/app.js" defer></script>
     <script src="/assets/ui/site-extras.js" defer></script>
   </head>
@@ -171,6 +172,10 @@
           <!-- شبكة عرض الألعاب -->
           <div id="game-grid" class="game-grid" aria-live="polite">
             <div class="empty-state" data-i18n-text="index.loading_your_local_library">Loading your local library…</div>
+          </div>
+          <div class="ng-load-more" id="ng-load-more" hidden>
+            <p id="ng-game-progress" role="status" aria-live="polite"></p>
+            <button id="ng-load-more-btn" type="button" data-i18n-text="app.load_more_games">Load More Games</button>
           </div>
         </section>
       </main>

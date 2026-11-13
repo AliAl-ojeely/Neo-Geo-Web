@@ -3350,3 +3350,68 @@ html.ng-startup-pending .ng-startup-screen:not([hidden]) {
 @media (prefers-reduced-motion: reduce) {
   .ng-startup-dot { animation: none; opacity: 0.7; scale: 1; }
 }
+
+/* v1.2.0: library entrance animation and 30-at-a-time pagination. */
+.ng-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  padding: 34px 12px 20px;
+  text-align: center;
+}
+.ng-load-more[hidden] { display: none !important; }
+.ng-load-more p { color: var(--muted); font-size: 13px; margin: 0; }
+.ng-load-more button {
+  min-width: 225px;
+  padding: 14px 28px;
+  font: inherit;
+  font-weight: 750;
+  color: #14100a;
+  background: var(--yellow);
+  border: 1px solid var(--yellow);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+.ng-load-more button:hover { transform: translateY(-3px); filter: brightness(1.08); }
+.ng-load-more button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.home-page .ng-page-arrive {
+  animation: ng-library-rise 650ms both var(--ease-premium);
+  animation-delay: var(--ng-page-delay, 0ms);
+}
+.home-page .quick-stats.ng-page-arrive { animation-name: ng-library-scale; }
+.home-page .collection-heading.ng-page-arrive { animation-name: ng-library-side; }
+.home-page .collection-controls-bar.ng-page-arrive { animation-name: ng-library-rise; }
+.home-page .ng-card-motion.ng-card-seen {
+  animation-duration: 570ms;
+  animation-fill-mode: both;
+  animation-timing-function: var(--ease-premium);
+  animation-delay: var(--ng-card-delay, 0ms);
+}
+.home-page .ng-card-motion.ng-card-seen[data-ng-motion='rise'] { animation-name: ng-library-rise; }
+.home-page .ng-card-motion.ng-card-seen[data-ng-motion='side'] { animation-name: ng-library-side; }
+.home-page .ng-card-motion.ng-card-seen[data-ng-motion='scale'] { animation-name: ng-library-scale; }
+@keyframes ng-library-rise {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ng-library-side {
+  from { opacity: 0; transform: translateX(calc(24px * var(--ng-slide-direction, 1))) rotate(1deg); }
+  to { opacity: 1; transform: translateX(0) rotate(0); }
+}
+@keyframes ng-library-scale {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+html[dir='rtl'] .home-page .ng-page-arrive.collection-heading,
+html[dir='rtl'] .home-page .ng-card-motion.ng-card-seen[data-ng-motion='side'] {
+  --ng-slide-direction: -1;
+}
+.ng-tab-paused { unicode-bidi: plaintext; }
+@media (prefers-reduced-motion: reduce) {
+  .home-page .ng-page-arrive,
+  .home-page .ng-card-motion.ng-card-seen { animation: none !important; }
+  .ng-load-more button { transition: none; }
+}

@@ -27,6 +27,8 @@
     html.removeAttribute('aria-busy');
     const screen = document.getElementById('ng-startup-screen');
     if (screen) screen.hidden = true;
+    if (typeof document.dispatchEvent === 'function' && typeof Event === 'function')
+      document.dispatchEvent(new Event('ng-startup-finished'));
   }
 
   // Deferred site scripts run before DOMContentLoaded; they are never delayed by the splash.

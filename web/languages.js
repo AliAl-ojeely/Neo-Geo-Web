@@ -62,6 +62,8 @@
       }
     },
     app: {
+      load_more_games: { en: 'Load More Games', ar: 'تحميل المزيد من الألعاب' },
+      showing_games_count: { en: 'Showing {shown} of {total} games', ar: 'عرض {shown} من أصل {total} لعبة' },
       fighting: {
         en: 'Fighting',
         ar: 'قتال'
@@ -1061,8 +1063,8 @@
     },
     tab_pause: {
       paused_press_tab_to_resume: {
-        en: 'Paused — press Tab to resume',
-        ar: 'متوقف مؤقتًا — اضغط Tab للمتابعة'
+        en: 'Press Tab to continue',
+        ar: 'للمتابعة اضغط Tab'
       },
       click_the_game_to_focus_controls_press: {
         en: 'Click the game to focus controls. Press Tab to pause or resume, including in fullscreen.',

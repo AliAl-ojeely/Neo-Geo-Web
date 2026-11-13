@@ -8,7 +8,8 @@ const state = {
   engine: null,
   view: 'all',
   category: null,
-  query: ''
+  query: '',
+  visibleCount: 30
 };
 const favoriteKey = 'neogeo-webemu-favorites-v1';
 let favorites = new Set();
@@ -76,6 +77,7 @@ function updateNavigation() {
 function switchView(view, category) {
   state.view = view;
   state.category = category || null;
+  state.visibleCount = 30;
   updateNavigation();
   render();
   if (innerWidth < 780) $('collection').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -166,7 +168,7 @@ function card(g) {
 }
 
 // Filter and sort the loaded games, then replace the result grid or show an empty state.
-function render() {
+function render(appendOnly = false) {
   const query = state.query.trim().toLocaleLowerCase();
   let games = state.games.filter(g => {
     if (state.category && g.category !== state.category) return false;
@@ -202,6 +204,11 @@ function render() {
     (query ? NGI18n.t('app.search_results_in') + ' ' : NGI18n.t('app.browse') + ' ') + label;
 
   const grid = $('game-grid');
+  const shown = Math.min(state.visibleCount, games.length);
+  const more = $('ng-load-more');
+  more.hidden = shown >= games.length;
+  $('ng-game-progress').dataset.counts = `${shown}/${games.length}`;
+  $('ng-game-progress').textContent = NGI18n.t('app.showing_games_count', { shown, total: games.length });
   if (!games.length) {
     const msg = !state.games.length
       ? NGI18n.t('app.no_games_are_linked_yet_use_the')
@@ -211,8 +218,14 @@ function render() {
     grid.replaceChildren(node('div', 'empty-state', msg));
   } else {
     const fragment = document.createDocumentFragment();
-    for (const g of games) fragment.appendChild(card(g));
-    grid.replaceChildren(fragment);
+    const start = appendOnly ? Math.max(0, state.visibleCount - 30) : 0;
+    for (const g of games.slice(start, shown)) fragment.appendChild(card(g));
+    if (appendOnly) grid.appendChild(fragment);
+    else grid.replaceChildren(fragment);
+    window.NGLibraryMotion?.reveal(
+      [...grid.querySelectorAll('.game-card')].slice(appendOnly ? start : 0),
+      !appendOnly
+    );
   }
 }
 
@@ -312,9 +325,19 @@ document
 // Update search results immediately as the query changes.
 $('search').addEventListener('input', e => {
   state.query = e.target.value;
+  state.visibleCount = 30;
   render();
 });
-$('sort').addEventListener('change', render);
+$('sort').addEventListener('change', () => { state.visibleCount = 30; render(); });
+$('ng-load-more-btn').addEventListener('click', () => {
+  state.visibleCount += 30;
+  render(true);
+});
+document.addEventListener('ng-language-changed', () => {
+  const count = $('ng-game-progress');
+  const match = /^(\d+)\s*\/\s*(\d+)$/.exec(count.dataset.counts || '');
+  if (match) count.textContent = NGI18n.t('app.showing_games_count', { shown: Number(match[1]), total: Number(match[2]) });
+});
 
 // Focus search with slash and clear it with Escape when the search field is active.
 document.addEventListener('keydown', event => {
@@ -331,6 +354,7 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && document.activeElement === $('search')) {
     $('search').value = '';
     state.query = '';
+    state.visibleCount = 30;
     render();
     $('search').blur();
   }
