@@ -232,7 +232,9 @@ function render(appendOnly = false) {
 // Prefer a featured game with a screenshot, falling back to any illustrated game.
 function feature() {
   const games = state.games;
-  const featured =
+  const last = window.NGLastPlayed?.read();
+  const recent = last ? games.find(g => g.filename === last.filename) : null;
+  const featured = recent ||
     ['mslug3', 'kof98', 'blazstar', 'samsho2', 'garou', 'mslug']
       .map(id => games.find(g => g.id.toLowerCase() === id && g.screenshot))
       .find(Boolean) || games.find(g => g.screenshot);
@@ -240,22 +242,29 @@ function feature() {
   $('featured-title').setAttribute('data-no-i18n', '');
   $('featured-title').textContent = featured.title;
   $('featured-description').textContent = NGI18n.t(
-    'app.a_verified_arcade_game_from_your_local'
+    recent ? 'app.last_played_game_description' : 'app.a_verified_arcade_game_from_your_local'
   );
   $('featured-play').href = gameLink(featured);
   const img = $('featured-image');
+  const placeholder = $('feature-placeholder');
+  img.hidden = true;
+  placeholder.hidden = true;
+  img.removeAttribute('src');
+  if (!featured.screenshot) {
+    placeholder.hidden = false;
+    return;
+  }
+  // Bind one stable image failure handler even across library rescans.
+  if (!img.dataset.ngFeaturedErrorBound) {
+    img.addEventListener('error', () => {
+      img.hidden = true;
+      placeholder.hidden = false;
+    });
+    img.dataset.ngFeaturedErrorBound = '1';
+  }
   if (window.NG_STATIC) NGPreviews.attach(img, featured.screenshot);
   else img.src = shot(featured);
   img.hidden = false;
-  img.addEventListener(
-    'error',
-    () => {
-      img.hidden = true;
-      $('feature-placeholder').hidden = false;
-    },
-    { once: true }
-  );
-  $('feature-placeholder').hidden = true;
 }
 
 // Load browser-linked or server library data and update counters, notices, and game cards.
@@ -358,6 +367,12 @@ document.addEventListener('keydown', event => {
     render();
     $('search').blur();
   }
+});
+
+// Refresh the hero when a same-origin game iframe returns to its parent library.
+document.addEventListener('ng-library-return', feature);
+document.addEventListener('ng-language-changed', () => {
+  if (state.games.length) feature();
 });
 
 if (window.NG_STATIC) {

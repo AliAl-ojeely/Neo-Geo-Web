@@ -261,6 +261,8 @@
 
     // Enable pause and input/state guards after EmulatorJS announces game startup.
     window.EJS_onGameStart = () => {
+      // Update the local hero only for a successfully started game.
+      if (!diag.report.failureStage) window.NGLastPlayed?.record(game?.filename);
       window.NGTabPause?.enable();
       window.NGEscExit?.enable();
       window.NGPlusFullscreen?.enable();

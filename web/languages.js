@@ -62,6 +62,7 @@
       }
     },
     app: {
+      last_played_game_description: { en: 'Last played game — continue playing from your local library.', ar: 'آخر لعبة لعبتها — تابع اللعب باستخدام مكتبتك المحلية.' },
       load_more_games: { en: 'Load More Games', ar: 'تحميل المزيد من الألعاب' },
       showing_games_count: { en: 'Showing {shown} of {total} games', ar: 'عرض {shown} من أصل {total} لعبة' },
       fighting: {
