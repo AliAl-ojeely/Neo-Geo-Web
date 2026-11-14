@@ -12,7 +12,8 @@
     autoStart: false,
     fullscreen: false,
     askBeforeExit: false,
-    diagnostics: true
+    diagnostics: true,
+    loadMoreGames: true
   });
 
   // Merge supported preference values into defaults and clamp the volume range.
@@ -30,7 +31,8 @@
       'autoStart',
       'fullscreen',
       'askBeforeExit',
-      'diagnostics'
+      'diagnostics',
+      'loadMoreGames'
     ]) {
       if (typeof raw[key] === 'boolean') p[key] = raw[key];
     }

@@ -198,6 +198,7 @@
 
     // Render startup, exit confirmation, and diagnostic preferences.
     misc: () => [
+      // Library paging is independent of the existing entrance animations.
       card(
         NGI18n.t('offline.title'),
         NGI18n.t('offline.description'),
@@ -227,6 +228,13 @@
         NGI18n.t('settings.runtime_diagnostics'),
         NGI18n.t('settings.record_loading_stages_and_sha_256_checks'),
         toggle('diagnostics', NGI18n.t('settings.enable_runtime_diagnostics')),
+        true
+      ),
+      // Keep paging as the final More options card, separate from animation preferences.
+      card(
+        NGI18n.t('settings.library_load_more_title'),
+        NGI18n.t('settings.library_load_more_description'),
+        toggle('loadMoreGames', NGI18n.t('settings.library_load_more_enable')),
         true
       )
     ]

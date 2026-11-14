@@ -534,6 +534,18 @@
       }
     },
     settings: {
+      library_load_more_title: {
+        en: 'Load More Games',
+        ar: 'عرض الألعاب على دفعات'
+      },
+      library_load_more_description: {
+        en: 'Show 30 games at a time with Load More Games. Turn off to show all matching games immediately. Game card animations stay enabled.',
+        ar: 'اعرض 30 لعبة في كل دفعة باستخدام زر «تحميل المزيد من الألعاب». عند تعطيل الخيار تظهر جميع الألعاب المطابقة مباشرة، مع استمرار حركات ظهور الألعاب.'
+      },
+      library_load_more_enable: {
+        en: 'Enable Load More Games',
+        ar: 'تفعيل زر تحميل المزيد من الألعاب'
+      },
       neo_geo_web_port_settings: {
         en: 'Neo-Geo Web Port — Settings',
         ar: 'Neo-Geo Web Port — الإعدادات'

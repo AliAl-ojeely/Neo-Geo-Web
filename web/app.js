@@ -204,7 +204,8 @@ function render(appendOnly = false) {
     (query ? NGI18n.t('app.search_results_in') + ' ' : NGI18n.t('app.browse') + ' ') + label;
 
   const grid = $('game-grid');
-  const shown = Math.min(state.visibleCount, games.length);
+  const paging = window.NGPrefs?.load()?.loadMoreGames !== false;
+  const shown = Math.min(paging ? state.visibleCount : games.length, games.length);
   const more = $('ng-load-more');
   more.hidden = shown >= games.length;
   $('ng-game-progress').dataset.counts = `${shown}/${games.length}`;
@@ -218,13 +219,13 @@ function render(appendOnly = false) {
     grid.replaceChildren(node('div', 'empty-state', msg));
   } else {
     const fragment = document.createDocumentFragment();
-    const start = appendOnly ? Math.max(0, state.visibleCount - 30) : 0;
+    const start = appendOnly && paging ? Math.max(0, state.visibleCount - 30) : 0;
     for (const g of games.slice(start, shown)) fragment.appendChild(card(g));
-    if (appendOnly) grid.appendChild(fragment);
+    if (appendOnly && paging) grid.appendChild(fragment);
     else grid.replaceChildren(fragment);
     window.NGLibraryMotion?.reveal(
-      [...grid.querySelectorAll('.game-card')].slice(appendOnly ? start : 0),
-      !appendOnly
+      [...grid.querySelectorAll('.game-card')].slice(appendOnly && paging ? start : 0),
+      !appendOnly || !paging
     );
   }
 }
@@ -341,6 +342,12 @@ $('sort').addEventListener('change', () => { state.visibleCount = 30; render(); 
 $('ng-load-more-btn').addEventListener('click', () => {
   state.visibleCount += 30;
   render(true);
+});
+// Reflect a saved paging preference from another tab or an embedded Settings page.
+window.addEventListener('storage', event => {
+  if (event.key !== window.NGPrefs?.KEY) return;
+  state.visibleCount = 30;
+  render();
 });
 document.addEventListener('ng-language-changed', () => {
   const count = $('ng-game-progress');
