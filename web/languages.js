@@ -190,6 +190,33 @@
         ar: 'فشل تحميل مكتبة الألعاب من الخادم المحلي:'
       }
     },
+    shortcuts: {
+      open: { en: 'Keyboard shortcuts', ar: 'اختصارات لوحة المفاتيح' },
+      title: { en: 'Keyboard Shortcuts', ar: 'اختصارات لوحة المفاتيح' },
+      description: { en: 'Quick reference for the built-in emulator actions and default game controls.', ar: 'دليل سريع لاختصارات المحاكي المدمجة وأزرار اللعب الافتراضية.' },
+      quick_title: { en: 'Emulator shortcuts', ar: 'اختصارات المحاكي' },
+      fullscreen: { en: 'Enter fullscreen', ar: 'ملء الشاشة' },
+      fullscreen_desc: { en: 'While playing, press + or Numpad +.', ar: 'أثناء اللعب، اضغط + أو علامة + في لوحة الأرقام.' },
+      pause: { en: 'Pause / resume', ar: 'إيقاف مؤقت / متابعة' },
+      pause_desc: { en: 'Press Tab while the game is running.', ar: 'اضغط Tab أثناء تشغيل اللعبة.' },
+      exit: { en: 'Return to library', ar: 'العودة إلى المكتبة' },
+      exit_desc: { en: 'Press Esc twice within two seconds during gameplay.', ar: 'اضغط Esc مرتين خلال ثانيتين أثناء اللعب.' },
+      search: { en: 'Search the library', ar: 'البحث في المكتبة' },
+      search_desc: { en: 'On Home, press / to focus search; Esc clears it.', ar: 'في الصفحة الرئيسية، اضغط / للبحث؛ وEsc لمسح البحث.' },
+      defaults_title: { en: 'Default game controls', ar: 'أزرار اللعب الافتراضية' },
+      move: { en: 'Player 1 movement', ar: 'حركة اللاعب الأول' },
+      move_desc: { en: 'Move using the arrow keys.', ar: 'استخدم أسهم لوحة المفاتيح للحركة.' },
+      actions: { en: 'Player 1 buttons', ar: 'أزرار اللاعب الأول' },
+      actions_desc: { en: 'Neo-Geo A, B, C, D in this order.', ar: 'أزرار Neo-Geo: ‏A وB وC وD بالترتيب.' },
+      credit: { en: 'Start / coin', ar: 'البدء / إضافة رصيد' },
+      credit_desc: { en: '1 = Player 1 Start; 3 = Player 1 Coin.', ar: '‏1 = بدء اللاعب الأول؛ 3 = إضافة رصيد للاعب الأول.' },
+      combos: { en: 'Player 1 combinations', ar: 'اختصارات دمج الأزرار' },
+      combos_desc: { en: 'Q = A+B, R = A+B+C, E = C+D.', ar: '‏Q = A+B، وR = A+B+C، وE = C+D.' },
+      p2: { en: 'Player 2 defaults', ar: 'الإعدادات الافتراضية للاعب الثاني' },
+      p2_desc: { en: 'Numpad movement; J/K/L/P for A/B/C/D; 2 = Start, 4 = Coin. Enable Num Lock if needed.', ar: 'الحركة بلوحة الأرقام؛ J/K/L/P للأزرار A/B/C/D؛ 2 للبدء و4 لإضافة رصيد. فعّل Num Lock عند الحاجة.' },
+      note: { en: 'Game controls can be customized in Settings. You can also enter fullscreen from the emulator toolbar; the browser may use Esc to leave fullscreen first.', ar: 'يمكن تخصيص أزرار اللعب من الإعدادات. ويمكن أيضًا تفعيل ملء الشاشة من شريط المحاكي؛ وقد يستخدم المتصفح Esc أولًا للخروج من ملء الشاشة.' },
+      done: { en: 'Got it', ar: 'فهمت' }
+    },
     index: {
       neo_geo_web_port_play_local_neo: {
         en: 'Neo-Geo Web Port — Play local Neo Geo games in your browser.',

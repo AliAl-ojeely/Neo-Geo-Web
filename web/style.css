@@ -3415,3 +3415,65 @@ html[dir='rtl'] .home-page .ng-card-motion.ng-card-seen[data-ng-motion='side'] {
   .home-page .ng-card-motion.ng-card-seen { animation: none !important; }
   .ng-load-more button { transition: none; }
 }
+
+/* Home keyboard shortcut guide: reuse the first-run modal and shared action tokens. */
+.ng-shortcuts-trigger {
+  inline-size: 44px;
+  block-size: 44px;
+  flex: 0 0 44px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--stroke-strong);
+  border-radius: 50%;
+  background: var(--surface2);
+  color: var(--yellow);
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.ng-shortcuts-trigger:hover { background: var(--surface-hover); border-color: var(--yellow); transform: translateY(-2px); }
+.ng-shortcuts-trigger:focus-visible, .ng-shortcuts-panel [data-shortcuts-close]:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.ng-shortcuts-modal[hidden] { display: none !important; }
+body.ng-shortcuts-open { overflow: hidden; }
+.ng-shortcuts-modal { z-index: 20010; }
+.ng-shortcuts-panel { width: min(910px, calc(100vw - 30px)); padding: clamp(20px, 3vw, 32px); }
+.ng-shortcuts-header-icon {
+  inline-size: 62px; block-size: 62px; flex: 0 0 62px;
+  display: grid; place-items: center;
+  border-radius: 17px; border: 1px solid rgba(255, 212, 79, .3);
+  background: rgba(255, 212, 79, .10); color: var(--yellow);
+}
+.ng-shortcuts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ng-shortcuts-section { min-height: 0; padding: 20px; gap: 0; }
+.ng-shortcuts-section h3 { font-size: 15px; direction: inherit; margin: 0 0 13px; }
+.ng-shortcut-item {
+  min-width: 0; display: grid; grid-template-columns: 86px minmax(0, 1fr);
+  align-items: center; gap: 12px; padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,.085);
+}
+.ng-shortcut-item kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 34px; min-width: 0; padding: 5px 6px;
+  font-family: inherit; font-size: 12px; font-weight: 700; line-height: 1.2; direction: ltr; unicode-bidi: isolate;
+  color: #ffe9ab; background: #222027;
+  border: 1px solid rgba(255,212,79,.3); border-bottom-width: 3px;
+  border-radius: 8px; white-space: nowrap;
+}
+.ng-shortcut-item .ng-shortcut-key-wide { font-size: 10px; letter-spacing: -.2px; }
+.ng-shortcut-item strong { display: block; color: var(--text); font-size: 13px; font-weight: 800; line-height: 1.5; }
+.ng-shortcut-item p { font-size: 11px; color: #b0b0b8; line-height: 1.65; margin: 3px 0 0; }
+.ng-shortcuts-footer { margin-top: 15px; }
+@media (max-width: 750px) {
+  .ng-shortcuts-grid { grid-template-columns: 1fr; }
+  .ng-shortcuts-header { gap: 12px; }
+  .ng-shortcuts-header-icon { inline-size: 48px; block-size: 48px; flex-basis: 48px; }
+  .ng-shortcuts-section { padding: 14px; }
+  .ng-shortcut-item { grid-template-columns: 95px minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .ng-shortcuts-trigger { inline-size: 40px; block-size: 40px; flex-basis: 40px; }
+  .ng-shortcuts-panel { padding: 18px; }
+  .ng-shortcut-item { grid-template-columns: 77px minmax(0, 1fr); gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-shortcuts-trigger { transition: none; }
+}

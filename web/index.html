@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/assets/style.css" />
     <script src="/assets/ui/startup-screen.js"></script>
     <script src="/assets/ui/message-box.js" defer></script>
+    <script src="/assets/ui/shortcut-guide.js" defer></script>
     <script src="/assets/library/last-played.js" defer></script>
     <script src="/assets/ui/library-motion.js" defer></script>
     <script src="/assets/app.js" defer></script>
@@ -61,6 +62,15 @@
         </nav>
 
         <div class="header-actions">
+          <button id="ng-shortcuts-trigger" class="ng-shortcuts-trigger" type="button"
+            aria-label="Keyboard shortcuts" title="Keyboard shortcuts" aria-haspopup="dialog"
+            aria-controls="ng-shortcuts-modal" aria-expanded="false"
+            data-i18n-attrs="{&quot;aria-label&quot;:&quot;shortcuts.open&quot;,&quot;title&quot;:&quot;shortcuts.open&quot;}">
+            <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+              <path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7 16h10"></path>
+            </svg>
+          </button>
           <a class="header-link" href="#local-library" data-i18n-text="index.local_sources">Local sources</a>
           <a class="icon-link" href="/settings.html" title="Settings" aria-label="Settings" data-i18n-attrs="{&quot;title&quot;:&quot;index.settings&quot;,&quot;aria-label&quot;:&quot;index.settings&quot;}">
             <span data-i18n-text="index.settings">Settings</span>
@@ -293,6 +303,50 @@
             <button type="button" class="guide-secondary" data-guide-dismiss data-ng-modal-action="secondary" data-i18n-text="index.explore_first">
               Explore first
             </button>
+          </div>
+        </footer>
+      </div>
+    </section>
+
+    <!-- Home-only shortcut guide, styled with the existing first-run modal primitives. -->
+    <section id="ng-shortcuts-modal" class="first-run-overlay ng-modal-overlay ng-shortcuts-modal"
+      role="dialog" aria-modal="true" aria-labelledby="ng-shortcuts-title"
+      aria-describedby="ng-shortcuts-description" hidden>
+      <div class="first-run-backdrop" data-shortcuts-dismiss aria-hidden="true"></div>
+      <div class="first-run-panel ng-modal-panel ng-shortcuts-panel" tabindex="-1">
+        <header class="first-run-header ng-modal-heading ng-shortcuts-header">
+          <div class="ng-shortcuts-header-icon" aria-hidden="true">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+              <path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7 16h10"></path>
+            </svg>
+          </div>
+          <div class="first-run-title-group">
+            <h2 id="ng-shortcuts-title" data-i18n-text="shortcuts.title">Keyboard Shortcuts</h2>
+            <p id="ng-shortcuts-description" class="first-run-lead" data-i18n-text="shortcuts.description">Useful shortcuts for playing Neo-Geo games in your browser.</p>
+          </div>
+        </header>
+        <div class="ng-shortcuts-grid">
+          <section class="first-run-source ng-shortcuts-section" aria-labelledby="ng-shortcuts-play-title">
+            <h3 id="ng-shortcuts-play-title" data-i18n-text="shortcuts.quick_title">Emulator shortcuts</h3>
+            <div class="ng-shortcut-item"><kbd>+</kbd><div><strong data-i18n-text="shortcuts.fullscreen">Enter fullscreen</strong><p data-i18n-text="shortcuts.fullscreen_desc">During gameplay, press + or Numpad +.</p></div></div>
+            <div class="ng-shortcut-item"><kbd>Tab</kbd><div><strong data-i18n-text="shortcuts.pause">Pause / resume</strong><p data-i18n-text="shortcuts.pause_desc">Press Tab while the game is running.</p></div></div>
+            <div class="ng-shortcut-item"><kbd>Esc <span aria-hidden="true">×2</span></kbd><div><strong data-i18n-text="shortcuts.exit">Return to library</strong><p data-i18n-text="shortcuts.exit_desc">Press Esc twice within two seconds while playing.</p></div></div>
+            <div class="ng-shortcut-item"><kbd>/</kbd><div><strong data-i18n-text="shortcuts.search">Search the library</strong><p data-i18n-text="shortcuts.search_desc">On Home, press / to focus search; Esc clears it.</p></div></div>
+          </section>
+          <section class="first-run-source ng-shortcuts-section" aria-labelledby="ng-shortcuts-default-title">
+            <h3 id="ng-shortcuts-default-title" data-i18n-text="shortcuts.defaults_title">Default game controls</h3>
+            <div class="ng-shortcut-item"><kbd class="ng-shortcut-key-wide">↑ ↓ ← →</kbd><div><strong data-i18n-text="shortcuts.move">Player 1 movement</strong><p data-i18n-text="shortcuts.move_desc">Arrow keys move the first player.</p></div></div>
+            <div class="ng-shortcut-item"><kbd>A S D F</kbd><div><strong data-i18n-text="shortcuts.actions">Player 1 buttons</strong><p data-i18n-text="shortcuts.actions_desc">Neo-Geo A, B, C, D in that order.</p></div></div>
+            <div class="ng-shortcut-item"><kbd>1 / 3</kbd><div><strong data-i18n-text="shortcuts.credit">Start / coin</strong><p data-i18n-text="shortcuts.credit_desc">1 = Player 1 Start; 3 = Player 1 Coin.</p></div></div>
+            <div class="ng-shortcut-item"><kbd>Q R E</kbd><div><strong data-i18n-text="shortcuts.combos">Player 1 combinations</strong><p data-i18n-text="shortcuts.combos_desc">Q = A+B, R = A+B+C, E = C+D.</p></div></div>
+            <div class="ng-shortcut-item"><kbd class="ng-shortcut-key-wide">Num 8/2/4/6</kbd><div><strong data-i18n-text="shortcuts.p2">Player 2 defaults</strong><p data-i18n-text="shortcuts.p2_desc">Numpad movement; J/K/L/P for A/B/C/D; 2 = Start, 4 = Coin. Turn on Num Lock if needed.</p></div></div>
+          </section>
+        </div>
+        <footer class="first-run-footer ng-shortcuts-footer">
+          <p class="first-run-privacy" data-i18n-text="shortcuts.note">Game bindings are customizable in Settings. Fullscreen is also available from the emulator toolbar; browser Escape may exit fullscreen first.</p>
+          <div class="first-run-actions ng-modal-actions">
+            <button type="button" class="guide-primary" data-ng-modal-action="primary" data-shortcuts-close data-i18n-text="shortcuts.done">Got it</button>
           </div>
         </footer>
       </div>
