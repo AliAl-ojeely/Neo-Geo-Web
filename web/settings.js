@@ -87,6 +87,15 @@
     return `<label class="setting-toggle-label"><input type="checkbox" data-pref="${key}"${prefs[key] ? ' checked' : ''}> <span>${label}</span></label>`;
   }
 
+
+  // Build a localized HUD preference select; existing data-pref save handling persists it.
+  function hudSelect(key, labelKey, values) {
+    const label = NGI18n.t(labelKey);
+    return `<label class="ng-performance-setting-choice"><span>${label}</span><select data-pref="${key}" aria-label="${label}">${values.map(([value, textKey]) =>
+      `<option value="${value}"${prefs[key] === value ? ' selected' : ''}>${NGI18n.t(textKey)}</option>`
+    ).join('')}</select></label>`;
+  }
+
   // Show an escaped server path or the loading placeholder.
   function path(key) {
     return `<div class="setting-path">${safe(summary?.[key] || NGI18n.t('settings.reading_path'))}</div>`;
@@ -228,6 +237,28 @@
         NGI18n.t('settings.runtime_diagnostics'),
         NGI18n.t('settings.record_loading_stages_and_sha_256_checks'),
         toggle('diagnostics', NGI18n.t('settings.enable_runtime_diagnostics')),
+        true
+      ),
+      card(
+        NGI18n.t('performance_monitor.settings_title'),
+        NGI18n.t('performance_monitor.settings_description'),
+        toggle('performanceMonitor', NGI18n.t('performance_monitor.settings_toggle')) +
+        `<div class="ng-performance-settings-grid">` +
+        hudSelect('performanceHudSize', 'performance_monitor.hud_size_label', [
+          ['full', 'performance_monitor.hud_full'],
+          ['medium', 'performance_monitor.hud_medium'],
+          ['small', 'performance_monitor.hud_small']
+        ]) +
+        hudSelect('performanceHudPosition', 'performance_monitor.hud_position_label', [
+          ['top-left', 'performance_monitor.hud_top_left'],
+          ['top-center', 'performance_monitor.hud_top_center'],
+          ['top-right', 'performance_monitor.hud_top_right'],
+          ['middle-left', 'performance_monitor.hud_middle_left'],
+          ['middle-right', 'performance_monitor.hud_middle_right'],
+          ['bottom-left', 'performance_monitor.hud_bottom_left'],
+          ['bottom-center', 'performance_monitor.hud_bottom_center'],
+          ['bottom-right', 'performance_monitor.hud_bottom_right']
+        ]) + `</div>`,
         true
       ),
       // Keep paging as the final More options card, separate from animation preferences.

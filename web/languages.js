@@ -54,6 +54,42 @@
       retry_note: { en: 'No complete offline package was activated. You can safely retry.', ar: 'لم تُفعَّل حزمة غير مكتملة؛ يمكنك إعادة المحاولة بأمان.' },
       no_game_copy: { en: 'Your personal games, BIOS and saved preferences were not removed.', ar: 'لم تُحذف ألعابك الخاصة أو BIOS أو إعداداتك المحفوظة.' }
     },
+    performance_monitor: {
+      title: { en: 'Performance Monitor', ar: 'مراقبة الأداء' },
+      browser_measurement: { en: 'BROWSER + FBNeo', ar: 'المتصفح + FBNeo' },
+      fps: { en: 'Browser FPS', ar: 'إطارات المتصفح' },
+      frame: { en: 'Frame interval', ar: 'الفاصل بين الإطارات' },
+      gameFps: { en: 'Game FPS (core)', ar: 'إطارات اللعبة (المحرك)' },
+      emulationSpeed: { en: 'Emulation speed', ar: 'سرعة المحاكاة' },
+      memory: { en: 'JS Heap', ar: 'ذاكرة JavaScript' },
+      session: { en: 'Active session', ar: 'مدة اللعب النشطة' },
+      chart: { en: 'Frame pacing · 30s', ar: 'انتظام الإطارات · 30 ثانية' },
+      limitations: {
+        en: 'Core frames / ~59.18 Hz. Does not detect original game slowdowns.',
+        ar: 'إطارات المحرك / نحو 59.18 هرتز. لا يقيس البطء الأصلي داخل اللعبة.'
+      },
+      unavailable: { en: 'N/A', ar: 'غير متاح' },
+      export: { en: 'Export performance JSON', ar: 'تصدير تقرير الأداء JSON' },
+      settings_title: { en: 'Performance Monitor', ar: 'مراقبة الأداء' },
+      settings_description: {
+        en: 'Choose the HUD size (Full, Medium or Small) and position during gameplay. Fullscreen-safe; disabled by default.',
+        ar: 'اختر حجم لوحة الأداء (كامل أو متوسط أو صغير) ومكانها أثناء اللعب. تعمل في وضع ملء الشاشة، وهي معطلة افتراضيًا.'
+      },
+      settings_toggle: { en: 'Show monitor while playing', ar: 'إظهار مراقبة الأداء أثناء اللعب' },
+      hud_size_label: { en: 'HUD size', ar: 'حجم لوحة الأداء' },
+      hud_position_label: { en: 'HUD position', ar: 'موضع لوحة الأداء' },
+      hud_full: { en: 'Full — all metrics + graph', ar: 'كامل — جميع المؤشرات مع الرسم' },
+      hud_medium: { en: 'Medium — four key metrics', ar: 'متوسط — أربعة مؤشرات أساسية' },
+      hud_small: { en: 'Small — Game FPS and session only', ar: 'صغير — إطارات اللعبة ومدة اللعب فقط' },
+      hud_top_left: { en: 'Top left', ar: 'أعلى اليسار' },
+      hud_top_center: { en: 'Top center', ar: 'أعلى المنتصف' },
+      hud_top_right: { en: 'Top right', ar: 'أعلى اليمين' },
+      hud_middle_left: { en: 'Middle left', ar: 'منتصف اليسار' },
+      hud_middle_right: { en: 'Middle right', ar: 'منتصف اليمين' },
+      hud_bottom_left: { en: 'Bottom left', ar: 'أسفل اليسار' },
+      hud_bottom_center: { en: 'Bottom center', ar: 'أسفل المنتصف' },
+      hud_bottom_right: { en: 'Bottom right', ar: 'أسفل اليمين' },
+    },
     startup: {
       loading: { en: 'Loading', ar: 'جارٍ التحميل' },
       preparing_arcade: {

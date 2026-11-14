@@ -96,7 +96,11 @@ test('player hook records only after start and both pages load one shared module
   for (const page of [index, player]) {
     assert.match(page, /src="\/assets\/library\/last-played\.js" defer/);
     const last = page.indexOf('last-played.js');
-    const next = page.indexOf(page === index ? 'src="/assets/app.js"' : 'src="/assets/player.js"');
+    // Query-string revisions preserve the page-entry load order.
+    const entry = page === index
+      ? /src="\/assets\/app\.js(?:\?[^"]*)?"/
+      : /src="\/assets\/player\.js(?:\?[^"]*)?"/;
+    const next = page.search(entry);
     assert(last > 0 && last < next);
   }
   assert.match(js, /window\.EJS_onGameStart = \(\) => \{[\s\S]{0,250}if \(!diag\.report\.failureStage\) window\.NGLastPlayed\?\.record\(game\?\.filename\)/);

@@ -3477,3 +3477,131 @@ body.ng-shortcuts-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .ng-shortcuts-trigger { transition: none; }
 }
+
+/* v1.3.0 performance HUD: belongs to EmulatorJS's fullscreen element, not the page. */
+#game .ng-performance-hud {
+  position: absolute;
+  z-index: 96;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  width: min(254px, calc(100% - 24px));
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid rgba(245, 193, 75, .42);
+  border-radius: 13px;
+  background: rgba(10, 12, 18, .89);
+  color: #f8f8fa;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  direction: ltr;
+  text-align: left;
+  pointer-events: none;
+  user-select: none;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .48);
+  backdrop-filter: blur(5px);
+}
+#game .ng-performance-heading { display: flex; justify-content: space-between; gap: 6px; align-items: center; margin-bottom: 8px; }
+#game .ng-performance-heading strong { font-size: 12px; color: #f1c05c; }
+#game .ng-performance-heading span { font-size: 9px; color: #a6abb5; white-space: nowrap; }
+#game .ng-performance-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+#game .ng-performance-cell { border-radius: 8px; background: rgba(255,255,255,.055); padding: 7px 8px; min-width: 0; }
+#game .ng-performance-label { display: block; font-size: 9px; color: #aeb1bc; margin-bottom: 3px; }
+#game .ng-performance-value { font: 750 16px/1.15 ui-monospace, Consolas, monospace; color: #ebeff8; white-space: nowrap; }
+#game .ng-performance-cell:first-child .ng-performance-value { color: #68dca6; }
+#game .ng-performance-cell:nth-child(2) .ng-performance-value { color: #ffcc67; }
+#game .ng-performance-chart { padding: 7px 7px 4px; margin-top: 6px; border-radius: 8px; background: rgba(255,255,255,.043); }
+#game .ng-performance-chart-label { display: block; color: #aeb1bc; font-size: 9px; }
+#game .ng-performance-chart svg { width: 100%; height: 35px; display: block; }
+#game .ng-performance-spark { fill: none; stroke: #68dca6; stroke-width: 2; vector-effect: non-scaling-stroke; }
+#game .ng-performance-note { display: block; margin-top: 5px; font-size: 9px; color: #989ca5; }
+@media (max-width: 650px) {
+  #game .ng-performance-hud { padding: 7px; width: min(205px, calc(100% - 12px)); }
+  #game .ng-performance-value { font-size: 13px; }
+  #game .ng-performance-note { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { #game .ng-performance-hud { backdrop-filter: none; } }
+
+html[dir='rtl'] #game .ng-performance-hud { direction: rtl; text-align: right; }
+
+/* The HUD stays inside the exact element used by the emulator's Fullscreen API. */
+#game:fullscreen .ng-performance-hud,
+#game:-webkit-full-screen .ng-performance-hud { z-index: 96; }
+
+/* Explicit physical corner/edge positions are stable under both RTL and LTR. */
+#game .ng-performance-hud[data-ng-position='top-left'] { top: 54px; left: 12px; }
+#game .ng-performance-hud[data-ng-position='top-center'] { top: 54px; left: 50%; transform: translateX(-50%); }
+#game .ng-performance-hud[data-ng-position='top-right'] { top: 54px; right: 12px; }
+#game .ng-performance-hud[data-ng-position='middle-left'] { top: 50%; left: 12px; transform: translateY(-50%); }
+#game .ng-performance-hud[data-ng-position='middle-right'] { top: 50%; right: 12px; transform: translateY(-50%); }
+#game .ng-performance-hud[data-ng-position='bottom-left'] { bottom: 54px; left: 12px; }
+#game .ng-performance-hud[data-ng-position='bottom-center'] { bottom: 54px; left: 50%; transform: translateX(-50%); }
+#game .ng-performance-hud[data-ng-position='bottom-right'] { bottom: 54px; right: 12px; }
+
+/* Full shows every metric and its graph. Medium shows four, Small only Game FPS and session. */
+#game .ng-performance-hud[data-ng-size='medium'] { width: min(216px, calc(100% - 24px)); }
+#game .ng-performance-hud[data-ng-size='medium'] .ng-performance-cell[data-ng-metric='frame'],
+#game .ng-performance-hud[data-ng-size='medium'] .ng-performance-cell[data-ng-metric='memory'],
+#game .ng-performance-hud[data-ng-size='medium'] .ng-performance-chart,
+#game .ng-performance-hud[data-ng-size='medium'] .ng-performance-note { display: none; }
+#game .ng-performance-hud[data-ng-size='small'] { width: min(164px, calc(100% - 24px)); padding: 8px; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-heading { margin-bottom: 6px; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-heading span { display: none; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-heading strong { font-size: 10px; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-metrics { grid-template-columns: 1fr 1fr; gap: 4px; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-cell { padding: 5px 4px; text-align: center; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-cell[data-ng-metric='gameFps'] { order: -1; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-label { font-size: 8px; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-value { font-size: 12px; }
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-cell:not([data-ng-metric='gameFps']):not([data-ng-metric='session']),
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-chart,
+#game .ng-performance-hud[data-ng-size='small'] .ng-performance-note { display: none; }
+@media (max-width: 650px) {
+  #game .ng-performance-hud[data-ng-position='top-left'] { top: 48px; left: 6px; }
+  #game .ng-performance-hud[data-ng-position='top-center'] { top: 48px; }
+  #game .ng-performance-hud[data-ng-position='top-right'] { top: 48px; right: 6px; }
+  #game .ng-performance-hud[data-ng-position='middle-left'] { left: 6px; }
+  #game .ng-performance-hud[data-ng-position='middle-right'] { right: 6px; }
+  #game .ng-performance-hud[data-ng-position='bottom-left'] { bottom: 48px; left: 6px; }
+  #game .ng-performance-hud[data-ng-position='bottom-center'] { bottom: 48px; }
+  #game .ng-performance-hud[data-ng-position='bottom-right'] { bottom: 48px; right: 6px; }
+  #game .ng-performance-hud[data-ng-size='small'] { width: min(152px, calc(100% - 12px)); }
+}
+/* Compact, accessible selectors in Settings > More options. */
+.settings-page .ng-performance-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.settings-page .ng-performance-setting-choice {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+.settings-page .ng-performance-setting-choice select {
+  display: block;
+  width: 100%;
+  min-height: 41px;
+  border: 1px solid var(--stroke-strong);
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.settings-page .ng-performance-setting-choice select:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+@media (max-width: 750px) {
+  .settings-page .ng-performance-settings-grid { grid-template-columns: 1fr; }
+}

@@ -13,7 +13,10 @@
     fullscreen: false,
     askBeforeExit: false,
     diagnostics: true,
-    loadMoreGames: true
+    loadMoreGames: true,
+    performanceMonitor: false,
+    performanceHudSize: 'full',
+    performanceHudPosition: 'top-right'
   });
 
   // Merge supported preference values into defaults and clamp the volume range.
@@ -32,10 +35,16 @@
       'fullscreen',
       'askBeforeExit',
       'diagnostics',
-      'loadMoreGames'
+      'loadMoreGames',
+      'performanceMonitor'
     ]) {
       if (typeof raw[key] === 'boolean') p[key] = raw[key];
     }
+    if (['full', 'medium', 'small'].includes(raw.performanceHudSize))
+      p.performanceHudSize = raw.performanceHudSize;
+    if (['top-left', 'top-center', 'top-right', 'middle-left', 'middle-right',
+      'bottom-left', 'bottom-center', 'bottom-right'].includes(raw.performanceHudPosition))
+      p.performanceHudPosition = raw.performanceHudPosition;
     return p;
   }
 

@@ -266,6 +266,12 @@
       window.NGTabPause?.enable();
       window.NGEscExit?.enable();
       window.NGPlusFullscreen?.enable();
+      if (!diag.report.failureStage)
+        window.NGPerformanceMonitor?.start(window.EJS_emulator, {
+          enabled: prefs.performanceMonitor,
+          size: prefs.performanceHudSize,
+          position: prefs.performanceHudPosition
+        });
       if (window.NG_STATIC && window.parent !== window) {
         window.focus();
         window.EJS_emulator.elements.parent.focus();
@@ -286,6 +292,7 @@
       window.NGTabPause?.disable();
       window.NGEscExit?.disable();
       window.NGPlusFullscreen?.disable();
+      window.NGPerformanceMonitor?.stop();
       log('INFO', 'EmulatorJS exited');
     };
     const script = document.createElement('script');
