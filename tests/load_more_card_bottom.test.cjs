@@ -34,5 +34,5 @@ test('Both paging modes still run their existing animations', () => {
 // The HTML entry uses a new asset version so existing caches cannot hide the moved card.
 test('settings HTML loads the relocated card script version', () => {
   const html = fs.readFileSync('web/settings.html', 'utf8');
-  assert.match(html, /src="\/assets\/settings\.js\?v=1\.3\.2"/);
+  assert.match(html, /src="\/assets\/settings\.js\?v=1\.7\.0"/);
 });

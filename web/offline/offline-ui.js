@@ -100,7 +100,7 @@
       throw Error(t('invalid_manifest'));
     return data;
   }
-  async function runInstall() {
+  async function runInstall(beforeInstall = null) {
     if (installing) return;
     installing = true;
     updateControls();
@@ -114,6 +114,7 @@
     // Persistence is a best-effort storage request, never a filesystem permission grant.
     try { navigator.storage?.persist?.().catch(() => {}); } catch (_) {}
     try {
+      if (typeof beforeInstall === 'function') await beforeInstall();
       const reg = await registration(true);
       if (!reg) throw Error(t('unsupported'));
       const result = await command(reg, 'INSTALL', value => {
@@ -133,9 +134,10 @@
       installing = false;
       if (ui.progress) ui.progress.hidden = true;
       updateControls();
+      try { document.dispatchEvent?.(new Event('ng-offline-pack-finished')); } catch (_) {}
     }
   }
-  async function confirmInstall() {
+  async function confirmInstall(beforeInstall = null) {
     try {
       if (!root.NG_STATIC) throw Error(t('static_only'));
       if (!('serviceWorker' in navigator) || !root.isSecureContext)
@@ -166,14 +168,18 @@
         t('extension_note')
       ].join('\n');
       if (root.NGDialog?.action) {
-        root.NGDialog.action({
+        return root.NGDialog.action({
           title: t('dialog_title'),
           message: explanation,
           confirmLabel: t('start_download'),
           cancelLabel: t('cancel'),
-          onConfirm: runInstall
+          onConfirm: () => runInstall(beforeInstall)
         });
-      } else if (root.confirm(explanation)) await runInstall();
+      } else if (root.confirm(explanation)) {
+        await runInstall(beforeInstall);
+        return true;
+      }
+      return false;
     } catch (error) { message('failed', error.message, 'error'); }
   }
   async function confirmRemove() {
@@ -193,6 +199,7 @@
       if (after.ready || after.removable) throw Error(t('remove_incomplete'));
       latest = after;
       message('removed', '', 'success');
+      try { document.dispatchEvent?.(new Event('ng-offline-pack-changed')); } catch (_) {}
       const ui = elements();
       if (ui.detail) ui.detail.textContent = t('remove_success_note');
     } catch (error) { message('failed', error.message, 'error'); }
@@ -223,5 +230,5 @@
   document.addEventListener('ng-language-changed', () => {
     if (document.getElementById('ng-offline-action')) mount();
   });
-  root.NGOfflineUI = { mount, status };
+  root.NGOfflineUI = { mount, status, confirmInstall };
 })(globalThis);

@@ -15,10 +15,11 @@ test('settings page has one Library nav link without redundant Back to library',
 
 test('settings page references versioned JS for the installed paging setting', () => {
   const html = read('web/settings.html');
-  for (const name of ['languages.js', 'preferences.js']) {
-    assert.match(html, new RegExp('src="/assets/' + name.replace('.', '\\.') + '\\?v=1\\.3\\.2"'));
+  for (const [name, version] of [['languages.js', '1.7.0'], ['preferences.js', '1.3.2']]) {
+    const escapedVersion = version.replace(/\./g, '\\.');
+    assert.match(html, new RegExp('src="/assets/' + name.replace('.', '\\.') + '\\?v=' + escapedVersion + '"'));
   }
-  assert.match(html, /src="\/assets\/settings\.js\?v=1\.3\.2"/);
+  assert.match(html, /src="\/assets\/settings\.js\?v=1\.7\.0"/);
 });
 
 test('More options really renders the Load More Games preference', () => {

@@ -215,6 +215,14 @@
         true,
         true
       ),
+      // Show published and locally installed offline build IDs without downloading assets.
+      card(
+        NGI18n.t('offline_update.title'),
+        NGI18n.t('offline_update.description'),
+        `<div class="ng-offline-actions"><button id="ng-offline-update-check" class="settings-utility" type="button">${NGI18n.t('offline_update.check_button')}</button><button id="ng-offline-update-apply" class="settings-utility ng-offline-button" type="button" hidden>${NGI18n.t('offline_update.update_button')}</button></div><p id="ng-offline-update-status" class="ng-offline-status" role="status" aria-live="polite">${NGI18n.t('offline_update.checking')}</p><p id="ng-offline-update-detail" class="ng-offline-detail" style="white-space: pre-line"></p><p class="ng-offline-detail">${NGI18n.t('offline_update.privacy_note')}</p>`,
+        true,
+        true
+      ),
       card(
         NGI18n.t('settings.automatic_startup'),
         NGI18n.t('settings.start_after_file_checks_your_browser_may'),
@@ -296,6 +304,7 @@
 
     window.NGControlsUI?.mount();
     window.NGOfflineUI?.mount();
+    window.NGOfflineUpdateUI?.mount();
 
     document.querySelectorAll('[data-pref]').forEach(el =>
       // Stage preference changes without persisting them until the save action.

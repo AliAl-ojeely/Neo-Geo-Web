@@ -200,7 +200,7 @@ test('integration keeps vendor Fullscreen, library, runtime reports and shortcut
   assert.match(player, /performance-monitor\.js\?v=1\.3\.2/);
   assert.match(logic, /size: prefs\.performanceHudSize/);
   assert.match(logic, /position: prefs\.performanceHudPosition/);
-  assert.match(settings, /settings\.js\?v=1\.3\.2/);
+  assert.match(settings, /settings\.js\?v=1\.7\.0/);
   assert.match(js, /host\.append\(hud\)/);
   assert.match(js, /manager\?\.getFrameNum\?\.\(\)/);
   assert.doesNotMatch(js, /requestFullscreen\s*=|postMainLoop\s*=|getFrameNum\s*=/);
