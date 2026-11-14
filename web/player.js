@@ -266,6 +266,9 @@
       window.NGTabPause?.enable();
       window.NGEscExit?.enable();
       window.NGPlusFullscreen?.enable();
+      window.NGGamepadManager?.attach?.(window.EJS_emulator);
+      window.NGGamepadRemap?.attach?.(window.EJS_emulator);
+      window.NGGamepadShortcuts?.attach?.(window.EJS_emulator);
       if (!diag.report.failureStage)
         window.NGPerformanceMonitor?.start(window.EJS_emulator, {
           enabled: prefs.performanceMonitor,
@@ -293,6 +296,9 @@
       window.NGEscExit?.disable();
       window.NGPlusFullscreen?.disable();
       window.NGPerformanceMonitor?.stop();
+      window.NGGamepadManager?.detach?.();
+      window.NGGamepadRemap?.detach?.();
+      window.NGGamepadShortcuts?.detach?.();
       log('INFO', 'EmulatorJS exited');
     };
     const script = document.createElement('script');

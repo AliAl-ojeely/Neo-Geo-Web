@@ -102,19 +102,20 @@
   }
 
   const cards = {
-    // Render the global keyboard editor and a browser gamepad probe.
+    // Preserve global keyboard mappings; render the separate native gamepad assignment manager.
     controls: () => [
+      // Controller configuration is visible first, above the long keyboard editor.
       card(
-        NGI18n.t('settings.global_controls_neo_geo_custom'),
-        NGI18n.t('settings.set_both_players_keys_once_new_sessions'),
-        '<div id="global-controls-root"></div>',
+        NGI18n.t('gamepad_manager.title'),
+        NGI18n.t('gamepad_manager.description'),
+        '<div id="ng-gamepad-manager-root"></div><div id="ng-gamepad-remap-root"></div><div id="ng-gamepad-shortcuts-root"></div>',
         true,
         true
       ),
       card(
-        NGI18n.t('settings.controller_check_gamepad'),
-        NGI18n.t('settings.check_connected_controllers_before_configuring_them_in'),
-        `<div class="gamepad-test-row"><button id="test-gamepad" class="settings-utility" type="button">${NGI18n.t('settings.check_controllers')}</button><div id="gamepad-result" class="gamepad-status-box"></div></div>`,
+        NGI18n.t('settings.global_controls_neo_geo_custom'),
+        NGI18n.t('settings.set_both_players_keys_once_new_sessions'),
+        '<div id="global-controls-root"></div>',
         true,
         true
       )
@@ -303,6 +304,9 @@
     `;
 
     window.NGControlsUI?.mount();
+    window.NGGamepadManager?.mount?.();
+    window.NGGamepadRemap?.mount?.();
+    window.NGGamepadShortcuts?.mount?.();
     window.NGOfflineUI?.mount();
     window.NGOfflineUpdateUI?.mount();
 
@@ -335,22 +339,6 @@
       update();
     }
 
-    const pad = $('test-gamepad');
-    if (pad) {
-      // Query currently exposed gamepads and display the detected device names.
-      pad.addEventListener('click', () => {
-        const arr =
-          typeof navigator.getGamepads === 'function'
-            ? Array.from(navigator.getGamepads()).filter(Boolean)
-            : [];
-        const resBox = $('gamepad-result');
-        if (!resBox) return;
-        resBox.textContent = arr.length
-          ? NGI18n.t('settings.detected') + ' ' + arr.map(g => g.id).join(' | ')
-          : NGI18n.t('settings.no_active_controllers_detected_connect_one_press');
-        resBox.dataset.detected = arr.length ? 'true' : 'false';
-      });
-    }
   }
 
   // Switch settings sections and update the selected tab before rendering.

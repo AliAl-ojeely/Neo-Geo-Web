@@ -3605,3 +3605,49 @@ html[dir='rtl'] #game .ng-performance-hud { direction: rtl; text-align: right; }
 @media (max-width: 750px) {
   .settings-page .ng-performance-settings-grid { grid-template-columns: 1fr; }
 }
+
+/* Gamepad Manager: self-contained controller selection and live diagnostic surface. */
+.settings-page #ng-gamepad-manager-root { display: grid; gap: 12px; margin-top: 4px; }
+.settings-page .ng-gamepad-note { color: var(--muted); font-size: 12px; line-height: 1.8; margin: 0; }
+.settings-page .ng-gamepad-status { color: var(--text); font-size: 13px; font-weight: 700; margin: 0; }
+.settings-page .ng-gamepad-assignments { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.settings-page .ng-gamepad-choice { display: grid; gap: 7px; font-size: 12px; font-weight: 700; min-width: 0; }
+.settings-page .ng-gamepad-choice > span { color: var(--text); }
+.settings-page .ng-gamepad-choice select { width: 100%; min-height: 42px; border-radius: 10px; border: 1px solid var(--stroke-strong); background: var(--surface2); color: var(--text); padding: 8px 12px; font: inherit; cursor: pointer; }
+.settings-page .ng-gamepad-choice select:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.settings-page .ng-gamepad-feedback { font-size: 12px; color: var(--success); margin: 0; min-height: 1.4em; }
+.settings-page .ng-gamepad-tester-title { max-width: 460px; }
+.settings-page .ng-gamepad-test-output { font-family: ui-monospace, Consolas, monospace; font-size: 12px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; direction: ltr; text-align: start; border: 1px solid var(--stroke); background: rgba(255,255,255,.025); color: var(--text); padding: 14px; border-radius: 12px; margin: 0; min-height: 60px; }
+@media (max-width: 650px) { .settings-page .ng-gamepad-assignments { grid-template-columns: 1fr; } }
+
+/* Scoped Neo Geo controller button remapper; never changes the keyboard editor. */
+.settings-page #ng-gamepad-remap-root { padding-top: 1rem; border-top: 1px solid var(--border, #2c2d34); margin-top: 1rem; }
+.settings-page #ng-gamepad-remap-root h3 { margin: 0 0 .45rem; }
+.settings-page .ng-gpr-note { color: #a4acbd; font-size: .8rem; line-height: 1.7; margin: .35rem 0 .85rem; }
+.settings-page .ng-gpr-tabs { display: flex; gap: .5rem; margin: .8rem 0; }
+.settings-page .ng-gpr-tabs button { flex: 1; }
+.settings-page .ng-gpr-tabs button[aria-pressed="true"] { border-color: #f2c852; color: #f2c852; }
+.settings-page .ng-gpr-rows { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .6rem; }
+.settings-page .ng-gpr-row { display: flex; align-items: center; gap: .5rem; background: #111319; border: 1px solid #2d3039; border-radius: 12px; padding: .65rem; min-width: 0; }
+.settings-page .ng-gpr-details { display: flex; flex: 1; flex-direction: column; gap: .3rem; min-width: 0; }
+.settings-page .ng-gpr-details strong { font-size: .85rem; }
+.settings-page .ng-gpr-value { font: 700 .78rem/1.5 system-ui,sans-serif; color: #ffd04f; direction: ltr; unicode-bidi: isolate; }
+.settings-page .ng-gpr-row button { flex: 0 0 auto; padding: .45rem .6rem; min-width: auto; }
+.settings-page .ng-gpr-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 .5rem; }
+.settings-page #ng-gpr-status { min-height: 1.7em; color: #f2c852; font-size: .84rem; }
+@media (max-width: 900px) { .settings-page .ng-gpr-rows { grid-template-columns: 1fr; } }
+@media (max-width: 450px) { .settings-page .ng-gpr-row { flex-wrap: wrap; } }
+/* Player-one gamepad action shortcuts; no changes to core button mappings. */
+.settings-page #ng-gamepad-shortcuts-root { margin-top: 18px; border-top: 1px solid var(--stroke); padding-top: 16px; display: grid; gap: 11px; }
+.settings-page #ng-gamepad-shortcuts-root h3 { margin: 0; font-size: 16px; }
+.settings-page .ng-gps-actions { display: grid; gap: 7px; }
+.settings-page .ng-gps-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 9px 0; align-items: center; border-bottom: 1px solid var(--stroke); }
+.settings-page .ng-gps-details { flex: 1 1 170px; min-width: 0; display: grid; gap: 5px; }
+.settings-page .ng-gps-details strong { font-size: 12px; color: var(--text); }
+.settings-page .ng-gps-current { font: 12px ui-monospace,Consolas,monospace; direction: ltr; text-align: end; color: var(--muted); }
+.settings-page .ng-gps-row button { min-height: 35px; padding: 7px 10px; border-radius: 9px; cursor: pointer; }
+.settings-page .ng-gps-row button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.settings-page .ng-gps-feedback { color: var(--success); font-size: 12px; min-height: 1.4em; margin: 0; }
+.ng-gamepad-shortcut-hint { position: absolute; z-index: 300; top: 20%; left: 50%; transform: translateX(-50%); max-width: min(90%, 360px); padding: 12px 16px; border: 1px solid var(--yellow, #ecc752); background: rgba(8, 9, 14, .93); color: #fff; border-radius: 12px; font-weight: 700; text-align: center; pointer-events: none; }
+.ng-gamepad-shortcut-hint[hidden] { display: none; }
+@media (max-width: 650px) { .settings-page .ng-gps-row { gap: 6px; } }
