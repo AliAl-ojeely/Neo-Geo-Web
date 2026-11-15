@@ -108,7 +108,7 @@
       card(
         NGI18n.t('gamepad_manager.title'),
         NGI18n.t('gamepad_manager.description'),
-        '<div id="ng-gamepad-manager-root"></div><div id="ng-gamepad-remap-root"></div><div id="ng-gamepad-shortcuts-root"></div>',
+        '<div id="ng-gamepad-manager-root"></div><div id="ng-gamepad-remap-root"></div><div id="ng-gamepad-visualizer-root"></div><div id="ng-gamepad-shortcuts-root"></div>',
         true,
         true
       ),
@@ -306,6 +306,7 @@
     window.NGControlsUI?.mount();
     window.NGGamepadManager?.mount?.();
     window.NGGamepadRemap?.mount?.();
+    window.NGGamepadKeyboardVisualizer?.mount?.();
     window.NGGamepadShortcuts?.mount?.();
     window.NGOfflineUI?.mount();
     window.NGOfflineUpdateUI?.mount();

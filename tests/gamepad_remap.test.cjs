@@ -152,7 +152,7 @@ test('settings UI renders controller editor before playing and captures physical
 test('mouse capture remains on selected player only and no connected controller is safe', () => {
   const { api, host, pads } = mock();
   api.mount();
-  const tabs = find(host, n => n.className === 'ng-gpr-tabs')[0];
+  const tabs = find(host, n => n.className.includes('ng-gpr-tabs'))[0];
   tabs.children[1].click();
   const bind = find(host, n => n.className.includes('ng-gpr-capture'));
   bind[4].click();
@@ -180,8 +180,8 @@ test('integration is settings/player only and vendor files are unchanged', () =>
   assert.match(settings, /NGGamepadRemap\?\.mount\?\.\(\)/);
   assert.match(player, /NGGamepadRemap\?\.attach\?\.\(window\.EJS_emulator\)/);
   assert.match(player, /NGGamepadRemap\?\.detach\?\.\(\)/);
-  assert.match(html, /gamepad-remap\.js\?v=1\.4\.2/);
-  assert.match(ph, /gamepad-remap\.js\?v=1\.4\.2/);
+  assert.match(html, /gamepad-remap\.js\?v=1\.4\.5/);
+  assert.match(ph, /gamepad-remap\.js\?v=1\.4\.5/);
   assert.doesNotMatch(read('web/index.html'), /gamepad-remap\.js/);
   assert.doesNotMatch(source(), /simulateInput|dispatchEvent\(.*keydown|\.saveSettings\(/);
 });

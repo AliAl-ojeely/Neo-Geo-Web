@@ -3651,3 +3651,266 @@ html[dir='rtl'] #game .ng-performance-hud { direction: rtl; text-align: right; }
 .ng-gamepad-shortcut-hint { position: absolute; z-index: 300; top: 20%; left: 50%; transform: translateX(-50%); max-width: min(90%, 360px); padding: 12px 16px; border: 1px solid var(--yellow, #ecc752); background: rgba(8, 9, 14, .93); color: #fff; border-radius: 12px; font-weight: 700; text-align: center; pointer-events: none; }
 .ng-gamepad-shortcut-hint[hidden] { display: none; }
 @media (max-width: 650px) { .settings-page .ng-gps-row { gap: 6px; } }
+
+/* Live keyboard-to-gamepad visualization. Scoped to Settings; no input interception. */
+.settings-page #ng-gamepad-visualizer-root { margin-top: 20px; border-top: 1px solid var(--stroke, #30333c); padding-top: 20px; }
+.settings-page .ng-kv-shell { color: var(--text, #f2f4f8); display: grid; gap: 16px; min-width: 0; }
+.settings-page .ng-kv-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.settings-page .ng-kv-heading h3 { font-size: 18px; margin: 0 0 7px; }
+.settings-page .ng-kv-desc, .settings-page .ng-kv-footer { font-size: 12px; line-height: 1.8; color: var(--muted, #9da6b9); margin: 0; }
+.settings-page .ng-kv-live-badge { color: #ffd45b; background: rgba(255, 205, 65, .08); border: 1px solid rgba(255, 205, 65, .3); border-radius: 100px; padding: 5px 10px; font-size: 10px; font-weight: 800; letter-spacing: .09em; }
+.settings-page .ng-kv-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #07080b; border: 1px solid #242932; border-radius: 13px; padding: 5px; gap: 5px; }
+.settings-page .ng-kv-tab { border: 1px solid transparent; border-radius: 9px; padding: 10px 12px; min-width: 0; background: transparent; color: #aab3c4; font-size: 12px; font-weight: 700; cursor: pointer; }
+.settings-page .ng-kv-tab[aria-selected="true"] { background: #181b25; border-color: rgba(244, 198, 78, .55); color: #ffd45b; }
+.settings-page .ng-kv-tab:focus-visible { outline: 2px solid #ffd45b; outline-offset: 2px; }
+.settings-page .ng-kv-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 16px; }
+.settings-page .ng-kv-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; color: #aeb6c5; }
+.settings-page .ng-kv-legend-item::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #52596a; }
+.settings-page .ng-kv-legend-movement::before { background: #66b0ed; }
+.settings-page .ng-kv-legend-gameplay::before { background: #ffd45b; }
+.settings-page .ng-kv-legend-system::before { background: #77cfa2; }
+.settings-page .ng-kv-legend-combo::before { background: #c4a0ec; }
+.settings-page .ng-kv-board-wrap { background: linear-gradient(135deg, #0b0d14, #10121a); border: 1px solid #2e323e; border-radius: 16px; padding: 14px 10px; overflow-x: auto; max-width: 100%; scrollbar-color: #515565 #151821; }
+.settings-page .ng-kv-board { display: flex; align-items: flex-end; justify-content: center; gap: 11px; min-width: 700px; direction: ltr; }
+.settings-page .ng-kv-main { flex: 1 0 auto; min-width: 0; display: grid; gap: 4px; }
+.settings-page .ng-kv-row { display: flex; gap: 4px; justify-content: center; }
+.settings-page .ng-kv-key { min-width: 0; width: 36px; height: 45px; box-sizing: border-box; border-radius: 7px; border: 1px solid #303541; background: #181c25; color: #aab1bf; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; padding: 3px; position: relative; }
+.settings-page .ng-kv-key-label { font: 700 10px/1.2 ui-monospace, Consolas, monospace; border: 0; background: transparent; white-space: nowrap; }
+.settings-page .ng-kv-key-action { font: 800 8px/1.1 ui-monospace, Consolas, monospace; white-space: nowrap; color: inherit; }
+.settings-page .ng-kv-key.ng-kv-active { color: #ffdf80; border-color: rgba(255, 207, 80, .7); background: rgba(210, 152, 27, .13); box-shadow: inset 0 0 11px rgba(255, 207, 80, .09); }
+.settings-page .ng-kv-key[data-group="movement"] { color: #9bd2ff; border-color: rgba(104, 176, 237, .66); background: rgba(67, 143, 202, .16); }
+.settings-page .ng-kv-key[data-group="system"] { color: #a5e7bf; border-color: rgba(119, 207, 162, .65); background: rgba(64, 150, 103, .16); }
+.settings-page .ng-kv-key[data-group="combo"] { color: #d5baf8; border-color: rgba(196, 160, 236, .6); background: rgba(159, 100, 212, .16); }
+.settings-page .ng-kv-key.ng-kv-wide { width: 53px; }
+.settings-page .ng-kv-key.ng-kv-space { width: 225px; max-width: 45%; }
+.settings-page .ng-kv-nav, .settings-page .ng-kv-numpad { display: grid; gap: 4px; flex: 0 0 auto; }
+.settings-page .ng-kv-nav .ng-kv-key, .settings-page .ng-kv-numpad .ng-kv-key { width: 36px; }
+.settings-page .ng-kv-column-label { font-size: 9px; font-weight: 700; color: #8792a6; text-align: center; height: 13px; }
+.settings-page .ng-kv-extras { display: grid; gap: 7px; direction: ltr; margin: 12px 0 0; }
+.settings-page .ng-kv-extras .ng-kv-row { flex-wrap: wrap; justify-content: flex-start; }
+.settings-page .ng-kv-mappings { display: grid; gap: 12px; }
+.settings-page .ng-kv-mappings-header { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.settings-page .ng-kv-mappings-header h4 { margin: 0; font-size: 14px; font-weight: 750; }
+.settings-page .ng-kv-mini-note { font-size: 11px; color: var(--muted, #9da6b9); }
+.settings-page .ng-kv-mapping-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.settings-page .ng-kv-link { min-width: 0; background: #11141b; border: 1px solid #2b303b; border-radius: 11px; padding: 10px 11px; display: flex; flex-direction: column; gap: 7px; }
+.settings-page .ng-kv-link-title { display: flex; align-items: center; gap: 7px; min-width: 0; font-size: 11px; }
+.settings-page .ng-kv-link-title strong { flex: 0 0 auto; color: #ffd45b; font: 800 12px ui-monospace, Consolas, monospace; }
+.settings-page .ng-kv-link-movement .ng-kv-link-title strong { color: #9bd2ff; }
+.settings-page .ng-kv-link-system .ng-kv-link-title strong { color: #a5e7bf; }
+.settings-page .ng-kv-link-combo .ng-kv-link-title strong { color: #d5baf8; }
+.settings-page .ng-kv-link-title span { overflow-wrap: anywhere; }
+.settings-page .ng-kv-link-pair { display: flex; flex-direction: row; gap: 8px; align-items: center; flex-wrap: wrap; }
+.settings-page .ng-kv-link-keyboard { font: 750 11px/1.2 ui-monospace, Consolas, monospace; background: #252934; border: 1px solid #3b414d; border-radius: 6px; padding: 5px 8px; color: #f4f6fa; }
+.settings-page .ng-kv-link-arrow { color: #a1a8b5; font-size: 12px; }
+.settings-page .ng-kv-link-pad { color: #ffcf5d; font: 750 11px/1.3 ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+.settings-page .ng-kv-link-pad.ng-kv-link-native { color: #9ba7b9; font-weight: 500; }
+.settings-page .ng-kv-footer { background: rgba(123, 141, 180, .05); border: 1px solid #303743; border-radius: 11px; padding: 10px 12px; }
+@media (max-width: 700px) { .settings-page .ng-kv-mapping-list { grid-template-columns: 1fr; } .settings-page .ng-kv-heading { flex-wrap: wrap; } }
+@media (prefers-reduced-motion: reduce) { .settings-page .ng-kv-key, .settings-page .ng-kv-tab { transition: none; } }
+
+/* v1.4.4: use the Neo Geo Custom card, tab and key components for gamepad settings. */
+.settings-page #ng-gamepad-remap-root { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--stroke); }
+.settings-page #ng-gamepad-remap-root .ng-gpr-intro { margin-bottom: 18px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-intro p { margin: 0; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-tabs.player-control-tabs { display: flex; gap: 8px; margin: 0 0 14px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-tab { border: 0; min-width: 0; padding: 8px 12px; cursor: pointer; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-tab[aria-selected='true'] { background: var(--surface3); color: #fff; border-color: transparent; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-rows.controls-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; background: var(--void); border: 1px solid var(--stroke); border-radius: 13px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-details.control-action { display: flex; flex: 1 1 40%; flex-direction: row; align-items: center; gap: 11px; font-size: 13px; font-weight: 780; line-height: 1.5; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-details .control-symbol { flex: 0 0 36px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-binding { display: flex; align-items: center; gap: 7px; justify-content: flex-end; flex: 0 1 auto; min-width: 0; max-width: 62%; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-capture.control-key { display: flex; align-items: center; gap: 9px; flex: 0 1 auto; min-width: 0; max-width: 100%; min-height: 42px; padding: 8px 12px; background: var(--surface3); border: 1px solid var(--stroke-strong); border-radius: 11px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-capture kbd { min-width: 0; overflow-wrap: anywhere; color: var(--text); direction: ltr; unicode-bidi: isolate; white-space: normal; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-capture > span { color: #ffde88; border-inline-start: 1px solid #5a4d31; padding-inline-start: 7px; white-space: nowrap; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-capture.is-recording { background: #362c16; border-color: var(--yellow); }
+.settings-page #ng-gamepad-remap-root .ng-gpr-clear { flex: 0 0 auto; padding: 7px 8px; min-height: 36px; border-radius: 9px; border: 1px solid var(--stroke); background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-clear:hover, .settings-page #ng-gamepad-remap-root .ng-gpr-clear:focus-visible { color: var(--yellow); border-color: var(--yellow); }
+.settings-page #ng-gamepad-remap-root .ng-gpr-mode.controls-gamepad-note { margin: 0 0 14px; padding: 12px 14px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-actions.global-controls-actions { margin: 14px 0 8px; }
+.settings-page #ng-gamepad-remap-root .ng-gpr-actions button { min-height: 42px; padding: 9px 16px; }
+.settings-page #ng-gamepad-remap-root #ng-gpr-status.controls-feedback { color: #b9d0e1; min-height: 22px; margin-top: 4px; font-size: 12px; }
+.settings-page #ng-gamepad-remap-root #ng-gpr-status[data-type='success'] { color: var(--success); }
+.settings-page #ng-gamepad-remap-root #ng-gpr-status[data-type='error'] { color: var(--danger); }
+/* The keyboard visualizer uses the same presentation components but remains read-only. */
+.settings-page #ng-gamepad-visualizer-root .ng-kv-heading.global-controls-intro { margin: 0; align-items: center; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-heading h3 { margin: 0 0 6px; font-size: 18px; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-live-badge.control-source-badge { padding: 8px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-tabs.player-control-tabs { display: flex; grid-template-columns: none; gap: 8px; padding: 6px; margin: 0; border-radius: 14px; background: var(--void); border-color: var(--stroke); }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-tabs .ng-kv-tab { flex: 1 1 0; min-height: 44px; min-width: 0; background: transparent; color: var(--muted); border: 0; border-radius: 10px; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-tabs .ng-kv-tab[aria-selected='true'] { background: var(--surface3); color: #fff; border: 0; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-board-wrap { background: var(--void); border-color: var(--stroke); border-radius: 13px; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-mapping-list.controls-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item { display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 14px; background: var(--void); border: 1px solid var(--stroke); border-radius: 13px; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-title.control-action { display: flex; flex: 1 1 40%; align-items: center; gap: 11px; min-width: 0; line-height: 1.5; font-size: 13px; font-weight: 780; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-title .control-symbol { flex: 0 0 36px; color: var(--yellow); }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair.ng-kv-readonly.control-key { display: flex; align-items: center; flex: 0 1 auto; min-width: 0; max-width: 62%; padding: 8px 12px; min-height: 42px; border-radius: 11px; background: var(--surface3); border: 1px solid var(--stroke-strong); cursor: default; user-select: text; box-sizing: border-box; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-readonly.control-key:hover { background: var(--surface3); border-color: var(--stroke-strong); transform: none; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair kbd { min-width: 0; overflow-wrap: anywhere; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair .ng-kv-link-arrow { color: var(--muted); font-weight: 800; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair .ng-kv-link-pad { color: var(--yellow); font: 750 11px/1.35 ui-monospace,Consolas,monospace; overflow-wrap: anywhere; }
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair .ng-kv-link-native { color: var(--muted); }
+@media (max-width: 1000px) {
+  .settings-page #ng-gamepad-remap-root .ng-gpr-rows.controls-grid,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-mapping-list.controls-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 500px) {
+  .settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item { flex-wrap: wrap; }
+  .settings-page #ng-gamepad-remap-root .ng-gpr-binding,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair.ng-kv-readonly.control-key { max-width: 100%; flex: 1 1 100%; }
+  .settings-page #ng-gamepad-remap-root .ng-gpr-capture { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-page #ng-gamepad-remap-root .ng-gpr-capture.control-key { transform: none; }
+}
+
+/* v1.4.6: fit long Neo Geo Custom symbols without changing input behavior. */
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item {
+  box-sizing: border-box;
+  min-height: 66px;
+}
+.settings-page #ng-gamepad-remap-root .ng-gpr-details.control-action,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-title.control-action {
+  min-width: 0;
+  align-items: center;
+}
+.settings-page #ng-gamepad-remap-root .ng-gpr-details.control-action > span:last-child,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-title.control-action > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* Keep ordinary 36px Neo Geo Custom symbols; widen only multi-letter actions. */
+.settings-page #ng-gamepad-remap-root .ng-gpr-row[data-action="start"] .control-symbol,
+.settings-page #ng-gamepad-remap-root .ng-gpr-row[data-action="coin"] .control-symbol,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link[data-action="start"] .control-symbol,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link[data-action="coin"] .control-symbol {
+  box-sizing: border-box;
+  width: 62px;
+  min-width: 62px;
+  flex: 0 0 62px;
+  height: 36px;
+  padding-inline: 7px;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+/* The read-only visualizer also contains combinations such as A+B+C. */
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link[data-action^="combo_"] .control-symbol {
+  box-sizing: border-box;
+  width: 72px;
+  min-width: 72px;
+  flex: 0 0 72px;
+  height: 36px;
+  padding-inline: 7px;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+/* Leave the original card treatment and button behavior intact. */
+.settings-page #ng-gamepad-remap-root .ng-gpr-binding,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair.ng-kv-readonly.control-key {
+  min-width: 0;
+}
+@media (max-width: 620px) {
+  .settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .settings-page #ng-gamepad-remap-root .ng-gpr-details.control-action,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link-title.control-action {
+    flex: 1 1 100%;
+  }
+  .settings-page #ng-gamepad-remap-root .ng-gpr-binding,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link-pair.ng-kv-readonly.control-key {
+    flex: 1 1 100%;
+    max-width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* v1.4.7: use the shared Neo Geo Custom badge geometry in all three Settings editors. */
+.settings-page #global-controls-root .control-item,
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 8px;
+}
+
+/* Prefer content-sized badges over fixed 36/62/72px widths; never split START or combos. */
+.settings-page #global-controls-root .control-item .control-action > .control-symbol,
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item .ng-gpr-details.control-action > .control-symbol,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item .ng-kv-link-title.control-action > .control-symbol {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: max-content;
+  min-inline-size: 36px;
+  max-inline-size: none;
+  block-size: 36px;
+  flex: 0 0 auto;
+  padding-inline: 9px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  text-align: center;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Keep long bilingual action names in their own space, never on top of a badge. */
+.settings-page #global-controls-root .control-item .control-action,
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item .ng-gpr-details.control-action,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item .ng-kv-link-title.control-action {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 190px;
+  align-items: center;
+  min-inline-size: 0;
+  gap: 10px;
+  line-height: 1.55;
+}
+.settings-page #global-controls-root .control-item .control-action > span:last-child,
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item .ng-gpr-details.control-action > span:last-child,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item .ng-kv-link-title.control-action > span:last-child {
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Binding buttons and read-only equivalents can wrap below unusually long labels. */
+.settings-page #global-controls-root .control-item > .control-key,
+.settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item > .ng-gpr-binding,
+.settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item > .ng-kv-link-pair.ng-kv-readonly.control-key {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  flex: 0 1 auto;
+}
+.settings-page #global-controls-root .control-item > .control-key {
+  max-width: 100%;
+}
+
+@media (max-width: 540px) {
+  .settings-page #global-controls-root .control-item .control-action,
+  .settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item .ng-gpr-details.control-action,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item .ng-kv-link-title.control-action {
+    flex: 1 1 100%;
+  }
+  .settings-page #ng-gamepad-remap-root .ng-gpr-row.control-item > .ng-gpr-binding,
+  .settings-page #ng-gamepad-visualizer-root .ng-kv-link.control-item > .ng-kv-link-pair.ng-kv-readonly.control-key {
+    flex: 0 1 auto;
+    max-inline-size: 100%;
+    justify-content: flex-start;
+  }
+}

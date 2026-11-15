@@ -1,6 +1,7 @@
 /* Native Neo Geo gamepad gameplay remapping. Does not inject keyboard events or edit vendor files. */
 'use strict';
 (function (root) {
+  const VERSION = '1.4.5';
   const STORAGE_KEY = 'ng-gamepad-gameplay-mapping-v1';
   const SCHEMA = 1;
   const CAPTURE_TIMEOUT = 12000;
@@ -10,6 +11,10 @@
     ['a', 0], ['b', 8], ['c', 1], ['d', 9], ['start', 3], ['coin', 2]
   ]);
   const DIRECTIONAL = new Set(['up', 'down', 'left', 'right']);
+  const ACTION_SYMBOLS = Object.freeze({
+    up: '\u2191', down: '\u2193', left: '\u2190', right: '\u2192',
+    a: 'A', b: 'B', c: 'C', d: 'D', start: 'START', coin: 'COIN'
+  });
   const DEFAULT_CODES = Object.freeze({
     up: 'B12', down: 'B13', left: 'B14', right: 'B15',
     a: 'B1', b: 'B0', c: 'B3', d: 'B2', start: 'B9', coin: 'B8'
@@ -67,13 +72,20 @@
     try { return normalize(JSON.parse(root.localStorage.getItem(STORAGE_KEY) || 'null')); }
     catch (_) { return blank(); }
   }
+  // Confirm persistent storage before reporting success or notifying the live preview.
   function save(raw) {
     const normalized = normalize(raw);
+    const value = JSON.stringify(normalized);
     try {
-      root.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-      stateRevision++;
-      return true;
+      root.localStorage.setItem(STORAGE_KEY, value);
+      if (root.localStorage.getItem(STORAGE_KEY) !== value) return false;
     } catch (_) { return false; }
+    stateRevision++;
+    try {
+      if (typeof root.CustomEvent === 'function')
+        root.dispatchEvent?.(new root.CustomEvent('ng-gamepad-remap-changed'));
+    } catch (_) { /* A preview listener cannot undo a successful saved mapping. */ }
+    return true;
   }
   function playerBindings(player) {
     const state = load();
@@ -98,7 +110,7 @@
     const state = load();
     const profile = state.players[player] || standard();
     const oldCode = profile.bindings[action];
-    if (oldCode === code) return { ok: true };
+    if (oldCode === code && state.players[player]) return { ok: true };
     const displaced = ACTIONS.find(([other]) => other !== action && code !== null && profile.bindings[other] === code)?.[0];
     if (displaced) {
       if (oldCode?.startsWith('AX') && !DIRECTIONAL.has(displaced))
@@ -188,21 +200,18 @@
     return Array.from(pad.axes || []).flatMap((value, i) =>
       i < 8 && Number.isFinite(value) && Math.abs(value) >= 0.70 ? ['AX' + i + (value > 0 ? '+' : '-')] : []);
   }
-  function neutral(pad) {
-    if (!pad) return true;
-    const held = activeInput(pad, true);
-    const axisMoving = Array.from(pad.axes || []).some(x => Number.isFinite(x) && Math.abs(x) > 0.25);
-    return !held.length && !axisMoving;
-  }
   function elem(tag, label, className = '') {
     const e = root.document.createElement(tag);
     if (label !== undefined) e.textContent = label;
     if (className) e.className = className;
     return e;
   }
-  function feedback(msg) {
+  function feedback(msg, type = '') {
     const el = $('ng-gpr-status');
-    if (el) el.textContent = msg;
+    if (el) {
+      el.textContent = msg;
+      el.setAttribute('data-type', type);
+    }
   }
   function readable(code) {
     if (code === null) return t('unassigned');
@@ -213,65 +222,128 @@
     }
     return code.replace('AX', t('axis') + ' ');
   }
+  // Reuse the exact Neo Geo Custom component classes rather than a separate gamepad theme.
   function render() {
     const host = $('ng-gamepad-remap-root');
     if (!host || host !== frame) return;
     const profile = load().players[currentPlayer];
+    const map = profile?.bindings || DEFAULT_CODES;
     host.replaceChildren();
-    host.appendChild(elem('h3', t('title')));
-    host.appendChild(elem('p', t('description'), 'ng-gpr-note'));
-    const tabs = elem('div', undefined, 'ng-gpr-tabs');
+
+    const intro = elem('div', undefined, 'global-controls-intro ng-gpr-intro');
+    const introCopy = elem('div');
+    introCopy.append(elem('strong', t('title')), elem('p', t('description')));
+    intro.append(introCopy, elem('span', 'Neo Geo Custom', 'control-source-badge'));
+    host.appendChild(intro);
+
+    const tabs = elem('div', undefined, 'player-control-tabs ng-gpr-tabs');
+    tabs.setAttribute('role', 'tablist');
+    tabs.setAttribute('aria-label', t('title'));
     for (const player of [0, 1]) {
-      const button = elem('button', t('player' + (player + 1)), 'secondary');
+      const button = elem('button', t('player' + (player + 1)), 'ng-gpr-tab');
       button.type = 'button';
+      button.setAttribute('role', 'tab');
+      button.setAttribute('aria-selected', String(player === currentPlayer));
       button.setAttribute('aria-pressed', String(player === currentPlayer));
-      button.addEventListener('click', () => { capture = null; currentPlayer = player; render(); });
+      button.addEventListener('click', () => {
+        capture = null;
+        currentPlayer = player;
+        render();
+        if (typeof root.CustomEvent === 'function')
+          root.dispatchEvent?.(new root.CustomEvent('ng-gamepad-remap-player-changed', { detail: { player } }));
+      });
       tabs.appendChild(button);
     }
     host.appendChild(tabs);
-    host.appendChild(elem('p', t(profile ? 'custom_active' : 'native_active'), 'ng-gpr-note'));
-    const list = elem('div', undefined, 'ng-gpr-rows');
-    const map = profile?.bindings || DEFAULT_CODES;
+    host.appendChild(elem('p', t(profile ? 'custom_active' : 'native_active'), 'ng-gpr-mode controls-gamepad-note'));
+
+    const list = elem('div', undefined, 'ng-gpr-rows controls-grid');
     for (const [action] of ACTIONS) {
-      const row = elem('div', undefined, 'ng-gpr-row');
-      const details = elem('div', undefined, 'ng-gpr-details');
-      const strong = elem('strong', t('action_' + action));
-      const value = elem('span', readable(map[action]), 'ng-gpr-value');
-      details.append(strong, value);
-      const setButton = elem('button', t('capture'), 'secondary ng-gpr-capture');
+      const row = elem('div', undefined, 'ng-gpr-row control-item');
+      row.setAttribute('data-action', action);
+      const details = elem('span', undefined, 'ng-gpr-details control-action');
+      const symbol = elem('span', ACTION_SYMBOLS[action], 'control-symbol');
+      symbol.setAttribute('aria-hidden', 'true');
+      details.append(symbol, elem('span', t('action_' + action)));
+
+      const binding = elem('div', undefined, 'ng-gpr-binding');
+      const recording = capture?.player === currentPlayer && capture?.action === action;
+      const setButton = elem('button', undefined,
+        'control-key ng-gpr-capture' + (recording ? ' is-recording' : ''));
       setButton.type = 'button';
-      setButton.setAttribute('aria-label', t('capture') + ': ' + t('action_' + action));
+      setButton.setAttribute('data-action', action);
+      setButton.setAttribute('aria-label', t('capture') + ': ' + t('action_' + action) + ': ' + readable(map[action]));
+      setButton.append(elem('kbd', readable(map[action])), elem('span', t('capture')));
       setButton.addEventListener('click', () => {
         capture = { player: currentPlayer, action, since: Date.now(), ready: false, seen: null, invalid: false };
+        render();
         feedback(t('capture_hint'));
       });
-      const clear = elem('button', t('clear'), 'secondary ng-gpr-clear');
+
+      const clear = elem('button', t('clear'), 'ng-gpr-clear');
       clear.type = 'button';
+      clear.setAttribute('aria-label', t('clear') + ': ' + t('action_' + action));
       clear.addEventListener('click', () => {
         capture = null;
         const result = assign(currentPlayer, action, null);
-        render(); feedback(t(result.ok ? 'saved' : result.error));
+        render();
+        feedback(t(result.ok ? 'saved' : result.error), result.ok ? 'success' : 'error');
       });
-      row.append(details, setButton, clear);
+      binding.append(setButton, clear);
+      row.append(details, binding);
       list.appendChild(row);
     }
     host.appendChild(list);
-    const actions = elem('div', undefined, 'ng-gpr-actions');
-    const defaults = elem('button', t('standard'), 'secondary');
+
+    const actions = elem('div', undefined, 'global-controls-actions ng-gpr-actions');
+    const defaults = elem('button', t('standard'));
     defaults.type = 'button';
-    defaults.addEventListener('click', () => { capture = null; const ok = reset(currentPlayer); render(); feedback(t(ok ? 'saved' : 'storage')); });
-    const native = elem('button', t('native_restore'), 'secondary');
+    defaults.addEventListener('click', () => {
+      capture = null;
+      const ok = reset(currentPlayer);
+      render();
+      feedback(t(ok ? 'saved' : 'storage'), ok ? 'success' : 'error');
+    });
+    const native = elem('button', t('native_restore'));
     native.type = 'button';
-    native.addEventListener('click', () => { capture = null; const ok = reset(currentPlayer, true); render(); feedback(t(ok ? 'saved' : 'storage')); });
+    native.addEventListener('click', () => {
+      capture = null;
+      const ok = reset(currentPlayer, true);
+      render();
+      feedback(t(ok ? 'saved' : 'storage'), ok ? 'success' : 'error');
+    });
     actions.append(defaults, native);
     host.appendChild(actions);
-    const status = elem('p', '', 'ng-gpr-status');
+    const status = elem('p', '', 'ng-gpr-status controls-feedback');
     status.id = 'ng-gpr-status';
     status.setAttribute('role', 'status');
     status.setAttribute('aria-live', 'polite');
     host.appendChild(status);
     host.appendChild(elem('p', t('next_session'), 'ng-gpr-note'));
   }
+  // Capture physical button release independently of resting analog axes.
+  // Some controllers report trigger axes at -1/+1 while untouched.
+  function captureAxes(pad) {
+    return Array.from(pad?.axes || [], v => Number.isFinite(v) ? v : 0).slice(0, 8);
+  }
+  function axisCandidates(pad, baseline) {
+    const candidates = [];
+    const positions = captureAxes(pad);
+    for (let i = 0; i < Math.min(positions.length, baseline.length); i++) {
+      const delta = positions[i] - baseline[i];
+      if (Math.abs(delta) >= 0.70) candidates.push('AX' + i + (delta > 0 ? '+' : '-'));
+    }
+    return candidates;
+  }
+  function axisReleased(pad, baseline, code) {
+    const match = /^AX([0-7])[+-]$/.exec(code);
+    if (!match) return false;
+    const index = Number(match[1]);
+    const position = captureAxes(pad)[index];
+    return Number.isFinite(position) && Number.isFinite(baseline[index]) &&
+      Math.abs(position - baseline[index]) <= 0.24;
+  }
+  // Read controller state only while the user is actively assigning an input.
   function tickSettings() {
     if (!frame || $('ng-gamepad-remap-root') !== frame) {
       if (interval !== null) root.clearInterval?.(interval);
@@ -280,25 +352,52 @@
     }
     if (!capture || root.document?.hidden) return;
     if (Date.now() - capture.since > CAPTURE_TIMEOUT) {
-      capture = null; feedback(t('timeout')); return;
+      capture = null; render(); feedback(t('timeout'), 'error'); return;
     }
     const pad = padFor(capture.player);
-    if (!pad) { feedback(t('no_pad')); return; }
+    if (!pad) { feedback(t('no_pad'), 'error'); return; }
+    const held = activeInput(pad, false);
     if (!capture.ready) {
-      if (neutral(pad)) capture.ready = true;
+      // Establish each axis' real resting position instead of assuming zero.
+      if (!held.length) {
+        capture.baseline = captureAxes(pad);
+        capture.ready = true;
+      }
       return;
     }
-    const samples = activeInput(pad, DIRECTIONAL.has(capture.action));
-    if (samples.length > 1) { capture.invalid = true; feedback(t('one_input')); return; }
-    if (samples.length === 1 && !capture.invalid) { capture.seen = samples[0]; return; }
-    if (!neutral(pad)) return;
-    if (capture.invalid) { capture = null; feedback(t('one_input')); return; }
-    if (!capture.seen) return;
-    const { player, action, seen } = capture;
-    capture = null;
-    const result = assign(player, action, seen);
-    render();
-    feedback(t(result.ok ? (result.swapped ? 'swapped' : 'saved') : result.error));
+    if (capture.invalid) {
+      if (!held.length && (!capture.seen || !capture.seen.startsWith('AX') ||
+          axisReleased(pad, capture.baseline, capture.seen))) {
+        capture = null; render(); feedback(t('one_input'), 'error');
+      }
+      return;
+    }
+    if (capture.seen) {
+      if (capture.seen.startsWith('B')) {
+        if (held.includes(capture.seen)) return;
+        if (held.length) { capture.invalid = true; feedback(t('one_input'), 'error'); return; }
+      } else {
+        if (held.length || !axisReleased(pad, capture.baseline, capture.seen)) return;
+      }
+      const { player, action, seen } = capture;
+      capture = null;
+      const result = assign(player, action, seen);
+      render();
+      const resultText = t(result.ok ? (result.swapped ? 'swapped' : 'saved') : result.error);
+      feedback(result.ok ? resultText + ' ' + t('action_' + action) + ': ' + readable(seen) : resultText,
+        result.ok ? 'success' : 'error');
+      return;
+    }
+    if (held.length > 1) {
+      capture.invalid = true; feedback(t('one_input'), 'error'); return;
+    }
+    if (held.length === 1) { capture.seen = held[0]; return; }
+    if (!DIRECTIONAL.has(capture.action)) return;
+    const axes = axisCandidates(pad, capture.baseline);
+    if (axes.length > 1) {
+      capture.invalid = true; feedback(t('one_input'), 'error'); return;
+    }
+    if (axes.length === 1) capture.seen = axes[0];
   }
   function mount() {
     const host = $('ng-gamepad-remap-root');
@@ -314,8 +413,26 @@
     render();
     interval = root.setInterval?.(tickSettings, 80) ?? null;
   }
+  // Both editors share the selected player without changing either saved profile.
+  root.addEventListener?.('ng-gamepad-visualizer-player-changed', event => {
+    const next = event?.detail?.player;
+    if ((next === 0 || next === 1) && next !== currentPlayer) {
+      capture = null;
+      currentPlayer = next;
+      if (frame && frame === $('ng-gamepad-remap-root')) render();
+    }
+  });
+  root.addEventListener?.('storage', event => {
+    if (event?.key === STORAGE_KEY && frame && frame === $('ng-gamepad-remap-root')) {
+      capture = null;
+      render();
+    }
+  });
+  root.document?.addEventListener?.('ng-language-changed', () => {
+    if (frame && frame === $('ng-gamepad-remap-root')) render();
+  });
   root.addEventListener?.('pagehide', detach);
-  root.NGGamepadRemap = Object.freeze({ STORAGE_KEY, ACTIONS, DEFAULT_CODES, validCode,
+  root.NGGamepadRemap = Object.freeze({ VERSION, STORAGE_KEY, ACTIONS, DEFAULT_CODES, validCode,
     normalize, load, save, assign, reset, vendorLabel, attach, detach, padFor,
     activeInput, mount, tickSettings, readable });
 })(window);

@@ -239,6 +239,35 @@ self.addEventListener('fetch', event => {
   // Always fetch a fresh manifest during user-requested updates, not the old cached copy.
   if (target.pathname === new URL(manifestPath, root).pathname &&
       target.searchParams.has('offline_manifest_refresh')) return;
+  // Only a localhost development preview prefers freshly built HTML, JS and CSS.
+  // Published origins keep strict opt-in offline cache-first behavior unchanged.
+  const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(root.hostname);
+  const relative = target.pathname.slice(root.pathname.length);
+  const liveAsset = /^(?:index|settings|player)\.html$/.test(relative) ||
+    /^assets\/.+\.(?:js|css)$/.test(relative) || relative === '';
+  if (loopback && liveAsset) {
+    event.respondWith((async () => {
+      let response;
+      try {
+        response = await fetch(req, { cache: 'no-store' });
+        if (response.ok) return response;
+      } catch (_) { /* Local preview may intentionally be offline. */ }
+      // The verified installed offline package remains a fallback on localhost.
+      const state = await savedState();
+      if (state && await caches.has(state.cacheName)) {
+        const cache = await caches.open(state.cacheName);
+        const cachedURL = new URL(target.href);
+        if (cachedURL.pathname === root.pathname) cachedURL.pathname += 'index.html';
+        cachedURL.search = '';
+        const hit = await cache.match(cachedURL.href);
+        if (hit) return hit;
+      }
+      return response || new Response('Local preview unavailable and no offline copy installed.', {
+        status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+      });
+    })());
+    return;
+  }
   event.respondWith((async () => {
     const state = await savedState();
     if (state && await caches.has(state.cacheName)) {
