@@ -1,0 +1,145 @@
+/* Living Library Matrix Ambient v1.5.2. Soft visibility and asynchronous logo fades. */
+.home-page.ng-matrix-enabled .home-main {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Keep every interactive panel above the non-interactive atmospheric layer. */
+.home-page.ng-matrix-enabled .home-main > :not(#ng-matrix-ambient) {
+  position: relative;
+  z-index: 1;
+}
+
+.home-page .ng-matrix-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  contain: layout paint style;
+  background: transparent;
+  mask-image: linear-gradient(to bottom, transparent, black 16%, black 81%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 16%, black 81%, transparent);
+}
+
+.home-page .ng-matrix-column {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--ng-matrix-position, 50%);
+  width: clamp(42px, 5.5vw, 82px);
+  transform: translateX(-50%);
+  /* Increase only the atmospheric logos, not foreground game content. */
+  opacity: calc(var(--ng-matrix-opacity, .07) + .055);
+  pointer-events: none;
+}
+
+.home-page .ng-matrix-stream {
+  display: block;
+  height: 200vh;
+  height: 200dvh;
+  animation: ng-matrix-cascade var(--ng-matrix-duration, 49s) linear infinite;
+  animation-delay: var(--ng-matrix-delay, 0s);
+}
+
+.home-page .ng-matrix-reel {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.home-page .ng-matrix-mark {
+  display: block;
+  inline-size: clamp(38px, 4.7vw, 70px);
+  aspect-ratio: 1;
+  flex: none;
+  background: url('../media/neo-geo-mark.png') center / contain no-repeat;
+  transform: rotate(var(--ng-matrix-tilt, -16deg)) scale(var(--ng-matrix-scale, 1));
+  filter: saturate(.7);
+}
+
+/* One larger tilted emblem balances the falling streams without dominating content. */
+.home-page .ng-matrix-watermark {
+  position: absolute;
+  top: 20%;
+  inset-inline-end: -3%;
+  inline-size: min(30vw, 480px);
+  aspect-ratio: 1;
+  background: url('../media/neo-geo-mark.png') center / contain no-repeat;
+  opacity: .060;
+  transform: rotate(-19deg);
+  filter: saturate(.65);
+}
+
+
+/* Pulse a *subset* of marks only. The other logos remain steady as the streams fall.
+   Negative phase offsets break up synchronization, without random JS or flashing. */
+.home-page .ng-matrix-column:nth-child(3n + 1) {
+  --ng-matrix-fade-duration: 18s;
+  --ng-matrix-fade-delay: -3s;
+}
+.home-page .ng-matrix-column:nth-child(3n + 2) {
+  --ng-matrix-fade-duration: 22s;
+  --ng-matrix-fade-delay: -11s;
+}
+.home-page .ng-matrix-column:nth-child(3n) {
+  --ng-matrix-fade-duration: 26s;
+  --ng-matrix-fade-delay: -17s;
+}
+.home-page .ng-matrix-column:nth-child(3n + 1) .ng-matrix-mark:nth-child(2),
+.home-page .ng-matrix-column:nth-child(3n + 2) .ng-matrix-mark:nth-child(4),
+.home-page .ng-matrix-column:nth-child(4n + 3) .ng-matrix-mark:nth-child(1),
+.home-page .ng-matrix-column:nth-child(5n) .ng-matrix-mark:nth-child(3) {
+  animation: ng-matrix-mark-fade var(--ng-matrix-fade-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--ng-matrix-fade-delay, -3s);
+}
+.home-page .ng-matrix-column:nth-child(5n) .ng-matrix-mark:nth-child(3) {
+  animation-delay: calc(var(--ng-matrix-fade-delay, -3s) - 7s);
+}
+
+@keyframes ng-matrix-mark-fade {
+  0%, 12%, 100% { opacity: 0; }
+  32%, 57% { opacity: 1; }
+  78% { opacity: .15; }
+}
+
+@keyframes ng-matrix-cascade {
+  from { transform: translate3d(0, -50%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+/* The existing Living Library motion switch pauses this effect without a second preference. */
+.home-page.ng-living-reduced .ng-matrix-stream,
+.home-page .ng-matrix-ambient.ng-matrix-paused .ng-matrix-stream,
+.home-page .ng-matrix-ambient.ng-matrix-paused .ng-matrix-mark {
+  animation-play-state: paused !important;
+}
+/* Switching Motion: Off also restores a stable, readable logo opacity. */
+.home-page.ng-living-reduced .ng-matrix-mark {
+  animation: none !important;
+  opacity: .8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .ng-matrix-stream,
+  .home-page .ng-matrix-mark { animation: none !important; }
+  .home-page .ng-matrix-mark { opacity: .8; }
+}
+
+@media (max-width: 780px) {
+  .home-page .ng-matrix-column:nth-child(2n) { display: none; }
+  .home-page .ng-matrix-watermark { inline-size: min(48vw, 290px); opacity: .044; }
+}
+
+@media (max-width: 480px) {
+  .home-page .ng-matrix-column:nth-child(3n) { display: none; }
+  .home-page .ng-matrix-mark { inline-size: 42px; }
+}
+
+@media print {
+  .home-page .ng-matrix-ambient { display: none !important; }
+}
