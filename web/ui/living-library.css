@@ -1,0 +1,252 @@
+/* Living Library v1.5.0 - scoped presentation only; existing game cards and links remain native. */
+.home-page.ng-living-ready .hero-editorial {
+  isolation: isolate;
+  border-color: rgba(245, 197, 58, .26);
+  box-shadow: 0 28px 85px rgba(0, 0, 0, .40), inset 0 0 42px rgba(251, 211, 93, .025);
+}
+.home-page.ng-living-ready .hero-editorial::after {
+  content: '';
+  position: absolute;
+  inset: -38%;
+  z-index: 0;
+  pointer-events: none;
+  background: conic-gradient(from 30deg, transparent 0 68%, rgba(255, 205, 74, .09) 78%, transparent 88% 100%);
+  opacity: .85;
+  animation: ng-living-beam 24s linear infinite;
+}
+.home-page.ng-living-ready .hero-art,
+.home-page.ng-living-ready .hero-copy { z-index: 1; }
+.home-page.ng-living-ready .hero-copy { position: relative; }
+.home-page .ng-living-kicker {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 214, 95, .24);
+  background: rgba(255, 210, 79, .065);
+  border-radius: 999px;
+  color: #ffdc82;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.home-page .ng-living-kicker::before {
+  content: '';
+  inline-size: 7px;
+  block-size: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: #ffcd4f;
+  box-shadow: 0 0 0 3px rgba(255, 205, 79, .13);
+  animation: ng-living-pulse 3.2s ease-in-out infinite;
+}
+.home-page.ng-living-ready .art-halo { animation: ng-living-breathe 9s ease-in-out infinite alternate; }
+.home-page.ng-living-ready .hero-art-inner {
+  transform: perspective(1000px) rotateX(var(--ng-living-rx, 0deg)) rotateY(var(--ng-living-ry, 0deg));
+  will-change: auto;
+  transition: transform .28s ease-out, border-color .3s ease, box-shadow .3s ease;
+}
+.home-page.ng-living-ready .hero-editorial:hover .hero-art-inner {
+  box-shadow: 0 30px 85px rgba(0,0,0,.75), 0 0 40px rgba(243,196,57,.08);
+  border-color: rgba(255, 211, 76, .38);
+}
+.home-page .ng-living-orbit {
+  position: absolute;
+  width: min(85%, 520px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 209, 76, .14);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0 24px rgba(255, 206, 72, .018), 0 0 0 52px rgba(255, 206, 72, .012);
+  animation: ng-living-orbit 15s ease-in-out infinite alternate;
+}
+.home-page.ng-living-ready .artwork-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: .3;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 4px, rgba(0,0,0,.17) 5px 6px);
+}
+.home-page.ng-living-ready .quick-stat strong {
+  font-variant-numeric: tabular-nums;
+  transition: color .25s ease, transform .25s ease;
+}
+.home-page.ng-living-ready .quick-stat:hover strong {
+  color: var(--yellow, #ffd44f);
+  transform: translateY(-3px);
+}
+.home-page.ng-living-ready .collection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.home-page .ng-living-actions { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+.home-page .ng-living-actions button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 15px;
+  border: 1px solid rgba(255, 212, 79, .26);
+  border-radius: 12px;
+  background: #17181d;
+  color: #f6e8bc;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 780;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.home-page .ng-living-actions button:hover:not(:disabled) {
+  border-color: #f5c955;
+  background: #272419;
+  transform: translateY(-2px);
+}
+.home-page .ng-living-actions button:focus-visible { outline: 3px solid var(--yellow, #ffd44f); outline-offset: 3px; }
+.home-page .ng-living-actions button:disabled { opacity: .42; cursor: not-allowed; }
+.home-page .ng-living-actions .ng-living-pick { background: rgba(255, 212, 79, .10); color: #ffe091; }
+.home-page .ng-living-actions .ng-living-pick::before { content: '✦'; font-size: 16px; }
+.home-page .ng-living-actions .ng-living-motion::before { content: '◉'; font-size: 13px; opacity: .8; }
+.home-page .ng-living-feedback { margin: 5px 0 14px; min-height: 0; color: #c7bd9f; font-size: 12px; }
+.home-page .ng-living-feedback:empty { display: none; }
+.home-page.ng-living-ready .search-box:focus-within {
+  box-shadow: 0 0 0 3px rgba(255, 212, 79, .10), 0 0 30px rgba(255, 212, 79, .05);
+  border-color: rgba(255, 214, 80, .55);
+}
+.home-page.ng-living-ready .category-strip button { position: relative; overflow: hidden; }
+.home-page.ng-living-ready .category-strip button::after {
+  content: '';
+  position: absolute;
+  inset-inline: 17%;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 100px;
+  background: var(--yellow, #ffd44f);
+  transform: scaleX(0);
+  transition: transform .25s ease;
+}
+.home-page.ng-living-ready .category-strip button:hover::after,
+.home-page.ng-living-ready .category-strip button.active::after { transform: scaleX(1); }
+.home-page.ng-living-ready .game-card {
+  --ng-living-x: 50%;
+  --ng-living-y: 50%;
+  --ng-living-rx: 0deg;
+  --ng-living-ry: 0deg;
+  isolation: isolate;
+}
+.home-page.ng-living-ready .game-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+  background: radial-gradient(ellipse 150px 150px at var(--ng-living-x) var(--ng-living-y), rgba(255, 208, 86, .12), transparent 85%);
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+.home-page.ng-living-ready .game-card:hover::after,
+.home-page.ng-living-ready .game-card:focus-within::after { opacity: 1; }
+.home-page.ng-living-ready .game-card:hover,
+.home-page.ng-living-ready .game-card:focus-within {
+  border-color: rgba(255, 207, 74, .52);
+  box-shadow: 0 23px 45px rgba(0,0,0,.68), 0 0 0 1px rgba(255,205,68,.08);
+}
+.home-page.ng-living-ready .game-card .game-image-link {
+  transition: transform .32s ease-out;
+  transform-origin: center;
+}
+.home-page.ng-living-ready .game-card:hover .game-image-link {
+  transform: perspective(850px) rotateX(var(--ng-living-rx)) rotateY(var(--ng-living-ry)) scale(1.035);
+}
+.home-page.ng-living-ready .game-cover::after {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 44%, rgba(255,255,255,.15) 49%, transparent 55%);
+  transform: translateX(-90%) rotate(4deg);
+  opacity: 0;
+}
+.home-page.ng-living-ready .game-card:hover .game-cover::after {
+  opacity: .68;
+  animation: ng-living-sweep .85s ease-out 1 both;
+}
+.home-page.ng-living-ready .game-card.ng-living-picked {
+  border-color: #ffd04f;
+  box-shadow: 0 0 0 2px rgba(255, 208, 79, .44), 0 0 36px rgba(255, 203, 68, .19);
+}
+.home-page.ng-living-ready .game-card.ng-living-picked::before {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid rgba(255, 218, 117, .7);
+  border-radius: inherit;
+  animation: ng-living-choose 1s ease-out 2;
+}
+.home-page.ng-living-ready .game-card .game-title:focus-visible,
+.home-page.ng-living-ready .favorite-button:focus-visible { outline: 3px solid #ffd44f; outline-offset: 3px; }
+.home-page.ng-living-ready .favorite-button.is-favorite:hover { animation: ng-living-heart .36s ease-in-out 1; }
+@keyframes ng-living-beam { to { transform: rotate(360deg); } }
+@keyframes ng-living-pulse { 50% { box-shadow: 0 0 0 6px rgba(255,205,79,.05), 0 0 16px rgba(255,205,79,.19); } }
+@keyframes ng-living-breathe { to { opacity: .5; filter: brightness(1.22); } }
+@keyframes ng-living-orbit { to { transform: scale(1.085) rotate(15deg); opacity: .4; } }
+@keyframes ng-living-sweep { from { transform: translateX(-90%) rotate(4deg); } to { transform: translateX(90%) rotate(4deg); } }
+@keyframes ng-living-choose { to { opacity: 0; transform: scale(1.025); } }
+@keyframes ng-living-heart { 50% { transform: scale(1.22); } }
+@media (max-width: 780px) {
+  .home-page .ng-living-actions { width: 100%; }
+  .home-page .ng-living-actions button { flex: 1 1 auto; }
+  .home-page.ng-living-ready .hero-editorial::after { opacity: .45; }
+}
+@media (hover: none), (pointer: coarse) {
+  .home-page.ng-living-ready .game-card:hover .game-image-link { transform: none; }
+  .home-page.ng-living-ready .game-card .play-indicator { opacity: 1; transform: none; }
+  .home-page.ng-living-ready .game-card:hover .game-cover::after { animation: none; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-page.ng-living-ready .hero-editorial::after,
+  .home-page.ng-living-ready .ng-living-kicker::before,
+  .home-page.ng-living-ready .art-halo,
+  .home-page.ng-living-ready .ng-living-orbit,
+  .home-page.ng-living-ready .game-card.ng-living-picked::before,
+  .home-page.ng-living-ready .game-card:hover .game-cover::after { animation: none !important; }
+}
+.home-page.ng-living-reduced .hero-editorial::after,
+.home-page.ng-living-reduced .ng-living-kicker::before,
+.home-page.ng-living-reduced .art-halo,
+.home-page.ng-living-reduced .ng-living-orbit,
+.home-page.ng-living-reduced .game-card:hover .game-cover::after,
+.home-page.ng-living-reduced .game-card.ng-living-picked::before,
+.home-page.ng-living-reduced .ng-page-arrive,
+.home-page.ng-living-reduced .ng-card-motion.ng-card-seen { animation: none !important; }
+.home-page.ng-living-reduced .game-card:hover .game-image-link,
+.home-page.ng-living-reduced .hero-art-inner { transform: none !important; }
+.home-page.ng-living-reduced .game-card,
+.home-page.ng-living-reduced .game-image-link,
+.home-page.ng-living-reduced .hero-art-inner,
+.home-page.ng-living-reduced .ng-living-actions button,
+.home-page.ng-living-reduced .quick-stat strong,
+.home-page.ng-living-reduced .subtle-entrance { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .home-page.ng-living-ready .game-card:hover .game-image-link,
+  .home-page.ng-living-ready .hero-art-inner { transform: none !important; }
+}
+
+/* A user's motion-off choice also suppresses inherited hover lifts. */
+.home-page.ng-living-reduced .game-card:hover,
+.home-page.ng-living-reduced .game-card:focus-within,
+.home-page.ng-living-reduced .quick-stat:hover strong,
+.home-page.ng-living-reduced .ng-living-actions button:hover { transform: none !important; }

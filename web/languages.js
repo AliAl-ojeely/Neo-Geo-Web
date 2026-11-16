@@ -2,6 +2,17 @@
 'use strict';
 (function (root) {
   const CATALOG = {
+    living_library: {
+      kicker: { en: 'THE ARCADE IS YOURS', ar: 'الأركيد بين يديك' },
+      pick: { en: 'Surprise me', ar: 'اختر لي لعبة' },
+      pick_hint: { en: 'Highlight a game from the visible results', ar: 'تمييز لعبة من النتائج الظاهرة' },
+      no_results: { en: 'No visible games to choose from.', ar: 'لا توجد ألعاب ظاهرة للاختيار منها.' },
+      picked: { en: 'Your pick: {title}', ar: 'اختيارك: {title}' },
+      motion_on: { en: 'Motion: On', ar: 'الحركة: مفعّلة' },
+      motion_off: { en: 'Motion: Off', ar: 'الحركة: متوقفة' },
+      system_reduced: { en: 'Motion: System off', ar: 'الحركة: أوقفها النظام' },
+      motion_label: { en: 'Toggle decorative library motion', ar: 'تبديل الحركة الزخرفية في المكتبة' }
+    },
     offline: {
       remove_scope: { en: "Remove deletes ONLY this feature's offline cache. It does not clear your browser cache or your personal game data.", ar: "زر «إزالة» يحذف ذاكرة التخزين الخاصة بهذه الميزة فقط، دون مسح ذاكرة المتصفح بالكامل أو بيانات ألعابك الشخصية." },
       removed: { en: "Offline package removed", ar: "أُزيلت حزمة التشغيل دون إنترنت" },
