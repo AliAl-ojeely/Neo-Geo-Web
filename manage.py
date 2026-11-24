@@ -214,7 +214,7 @@ def main():
                 return 1
         return 0
     if args.action == "config":
-        settings = catalog.settings()
+        settings = {**catalog.read_config(), **catalog.settings()}
         for key, value in [("roms", args.roms), ("screenshots", args.screenshots)]:
             if value is not None:
                 resolved = value.expanduser().resolve()

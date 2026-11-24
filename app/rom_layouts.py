@@ -86,6 +86,15 @@ def apply(data, op):
         ):
             raise ValueError("Invalid block permutation")
         return b"".join(data[i * n : (i + 1) * n] for i in order)
+    if kind == "permute_bits":
+        order = op["order"]
+        if sorted(order) != list(range(8)):
+            raise ValueError("Invalid byte bit permutation")
+        table = bytes(
+            sum(((value >> source) & 1) << target for target, source in enumerate(order))
+            for value in range(256)
+        )
+        return data.translate(table)
     if kind == "byteswap":
         n = op["unit"]
         if n not in (2, 4) or len(data) % n:
@@ -134,6 +143,9 @@ def inverse(data, op):
         order = op["order"]
         inv = [order.index(i) for i in range(len(order))]
         return apply(data, {"kind": kind, "block_size": op["block_size"], "order": inv})
+    if kind == "permute_bits":
+        order = op["order"]
+        return apply(data, {"kind": kind, "order": [order.index(i) for i in range(8)]})
     if kind == "byteswap":
         return apply(data, op)
     if kind == "deinterleave2":
@@ -151,6 +163,207 @@ def inverse(data, op):
     if kind == "mirror_fold":
         return data * op["factor"]
     raise ValueError(kind)
+
+
+def restore_short_text_rom(archive, z, missing, data):
+    """Use an erased region already present in the dump for an exact S-ROM match."""
+    block_size = 64 * 1024
+    targets = {
+        m["crc32"]: m["name"]
+        for m in missing
+        if m["type"] & 255 == 2 and m["size"] == 2 * block_size
+    }
+    short_text = {
+        name: value for name, value in data.items()
+        if role(name) == "s" and len(value) == block_size
+    }
+    if not targets or not short_text:
+        return []
+    members = {m["name"]: m for m in archive["members"] if m.get("sha256")}
+    for name, info in members.items():
+        if info["size"] < block_size:
+            continue
+        source = z.read(name)
+        for offset in range(0, len(source) - block_size + 1, block_size):
+            tail = source[offset : offset + block_size]
+            if tail.count(255) != block_size:
+                continue
+            solutions = []
+            for short_name, head in short_text.items():
+                output = head + tail
+                crc = f"{zlib.crc32(output):08x}"
+                if crc not in targets:
+                    continue
+                segments = []
+                for part_name, start, chunk in (
+                    (short_name, 0, head), (name, offset, tail)
+                ):
+                    segments.append({
+                        "name": part_name, "offset": start, "length": len(chunk),
+                        "sha256": digest(chunk),
+                        "source_sha256": members[part_name]["sha256"],
+                        "source_size": members[part_name]["size"],
+                    })
+                solutions.append({
+                    "archive": archive["filename"], "name": short_name,
+                    "size": len(output), "crc32": crc, "sha256": digest(output),
+                    "transform": {"kind": "segments", "segments": segments,
+                                  "inverse_pass": "MUST_VERIFY_WHOLE_DERIVED_SET"},
+                    "expected_example": targets[crc],
+                })
+            return solutions
+    return []
+
+
+def restore_reference_segments(archive, z, missing):
+    """Rejoin local ROM segments and check the independent MAME SHA-1."""
+    recipes = {
+        "legendos.zip": (
+            "029-m1.m1", "6f2843f0",
+            "975fb1598b87a2798fff05e951fca2e2e0329e79",
+            (("legendos.zip", "029-m1.rom", 0, 0x10000),
+             ("legendos.zip", "029-v1.rom", 0x70000, 0x10000)),
+        ),
+        "crsword.zip": (
+            "037-m1.m1", "9504b2c6",
+            "9ce8e681b9df6eacd0d23a36bad836bd5074233d",
+            (("crsword.zip", "037-m1.rom", 0, 0x10000),
+             ("2020bb.zip", "030-c3.rom", 0x80000, 0x10000)),
+        ),
+        "mahretsu.zip": (
+            "004-s1.s1", "2bd05a06",
+            "876deadd4645373d82a503154eeddf18f440d743",
+            (("mahretsu.zip", "004-s1.rom", 0, 0x10000),
+             ("kf10thep.zip", "5008d-p3.rom", 0x92000, 0x10000)),
+        ),
+        "flipshot.zip": (
+            "247-p1.p1", "95779094",
+            "a985e033bc6f137fa65855d3eed245d66d5b244a",
+            (("flipshot.zip", "247-p1.rom", 0, 0x80000),
+             ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000)),
+        ),
+        "strhoop.zip": (
+            "079-v2.v2", "720774eb",
+            "e4926f01322d0a15e700fb150b368152f2091146",
+            (("strhoop.zip", "079-v2.rom", 0, 0x80000),
+             ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000)),
+        ),
+        "mslug3.zip": (
+            "256-ph1.p1", "9c42ca85",
+            "7a8f77a89867b889295ae9b9dfd4ba28f02d234d",
+            (("mslug3.zip", "256d-p1.rom", 0, 0x2880),
+             ("mslug3-5a.zip", "256d-p1.rom", 0x2880, 0x80),
+             ("mslug3.zip", "256d-p1.rom", 0x2900, 0xFD700)),
+        ),
+        "neocup98.zip": (
+            "244-c1.c1", "c7a62b23",
+            "4534ecc9ade69c543188c66229dcad89dbc48668",
+            (("neocup98.zip", "244-c1.rom", 0, 0x200000),
+             ("ssideki3.zip", "081-c3.rom", 0, 0x80000),
+             ("neocup98.zip", "244-c1.rom", 0x280000, 0x580000)),
+        ),
+    }
+    name = archive["filename"]
+    additional = {
+        "neomrdo.zip": ((
+            "207-p1.p1", "334ea51e", "0a642f8565ec6e9587ed767bcf177f4677547162",
+            (("neomrdo.zip", "207-p1.rom", 0, 0x80000),
+             ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000)),
+        ),),
+        "miexchng.zip": (
+            ("231-c3.c3", "4f6f7a63", "10935dbc1f52b95979a097b13a114cff18d4d446",
+             (("miexchng.zip", "231-c3.rom", 0, 0x80000),
+              ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000))),
+            ("231-c4.c4", "2e35e71b", "6f248191c2c60ca1b1b4f2ebf08756e036682144",
+             (("miexchng.zip", "231-c4.rom", 0, 0x80000),
+              ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000))),
+        ),
+        "samsho3.zip": (
+            ("087-c7.c7", "ae450e3d", "ec482632cc347ec3f9e68df0ebcaa16ebe41b9f9",
+             (("samsho3.zip", "087-c7.rom", 0, 0x80000),
+              ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000))),
+            ("087-c8.c8", "a9e82717", "e39ee15d5140dbe7f06eea945cce9984a5e8b06a",
+             (("samsho3.zip", "087-c8.rom", 0, 0x80000),
+              ("2020bb.zip", "030-c3.rom", 0x80000, 0x80000))),
+        ),
+    }
+    candidates = (recipes[name],) if name in recipes else additional.get(name, ())
+    solutions = []
+    for expected, crc, reference_sha1, inputs in candidates:
+        if name == "mslug3.zip" or any(m["name"] == expected and m["crc32"] == crc for m in missing):
+            solutions.extend(join_reference_segments(name, z, expected, crc, reference_sha1, inputs))
+    return solutions
+
+
+def join_reference_segments(name, z, expected, crc, reference_sha1, inputs):
+    segments = []
+    pieces = []
+    for archive_name, member_name, offset, length in inputs:
+        try:
+            if archive_name == name:
+                member = z.read(member_name)
+            else:
+                source = catalog.pick_rom(archive_name)
+                if source is None:
+                    return []
+                with zipfile.ZipFile(source) as secondary:
+                    member = secondary.read(member_name)
+        except (KeyError, zipfile.BadZipFile):
+            return []
+        chunk = member[offset : offset + length]
+        if len(chunk) != length:
+            return []
+        pieces.append(chunk)
+        segments.append({
+            "archive": archive_name, "name": member_name, "offset": offset,
+            "length": len(chunk), "sha256": digest(chunk),
+            "source_size": len(member), "source_sha256": digest(member),
+        })
+    output = b"".join(pieces)
+    if f"{zlib.crc32(output):08x}" != crc or hashlib.sha1(output).hexdigest() != reference_sha1:
+        return []
+    return [{
+        "archive": name, "name": inputs[0][1], "size": len(output),
+        "crc32": crc, "sha256": digest(output),
+        "transform": {"kind": "segments", "segments": segments,
+                      "inverse_pass": "MUST_VERIFY_WHOLE_DERIVED_SET"},
+        "expected_example": expected,
+    }]
+
+
+def pcm2_solutions(archive, drivers):
+    from .pcm2_layout import RECIPES, restore
+
+    name = archive["filename"]
+    if name not in RECIPES:
+        return []
+    driver_id = {"samsho5.zip": "samsho5h", "samsh5sp.zip": "samsh5sp", "mslug4.zip": "mslug4"}[name]
+    targets = {(m["size"], m["crc32"]): m["name"] for m in drivers[driver_id]["members"]}
+    prefix = RECIPES[name][0]
+    audited = {m["name"]: m for m in archive["members"] if m.get("sha256")}
+    solutions = []
+    for role in (("v",) if name == "mslug4.zip" else ("p", "v")):
+        names = [f"{prefix}-{role}{number}.rom" for number in (1, 2)]
+        if any(member not in audited for member in names):
+            continue
+        hashes = tuple(audited[member]["sha256"] for member in names)
+        for index, content in enumerate(restore(name, role, hashes)):
+            crc = f"{zlib.crc32(content):08x}"
+            target = targets.get((len(content), crc))
+            if not target:
+                continue
+            solutions.append({
+                "archive": name, "name": names[index], "size": len(content),
+                "crc32": crc, "sha256": digest(content),
+                "expected_example": target,
+                "transform": {
+                    "kind": "pcm2", "role": role, "part": index,
+                    "sources": [{"name": member, "sha256": sha}
+                                for member, sha in zip(names, hashes)],
+                    "inverse_pass": True,
+                },
+            })
+    return solutions
 
 
 # Search bounded local layout transformations for exact reference signatures and save reversible plans.
@@ -193,7 +406,7 @@ def discover(force=False, only=None):
         if (
             not force
             and old
-            and old.get("schema") == 4
+            and old.get("schema") == 13
             and old["source_sha256"] == a["sha256"]
             and old["core_sha256"] == manifest["core_sha256"]
         ):
@@ -208,7 +421,7 @@ def discover(force=False, only=None):
         )
         if not wanted_roles:
             wanted_roles = set()
-        solutions = []
+        solutions = pcm2_solutions(a, drivers)
         seen = set()
         data = {}
         with zipfile.ZipFile(catalog.pick_rom(a["filename"])) as z:
@@ -233,6 +446,9 @@ def discover(force=False, only=None):
                     if len(b) % 4 == 0
                     else []
                 )
+                if typ == "s":
+                    # FBNeo's mslug3b6 text callback exchanges data lines D0 and D5.
+                    ops.append({"kind": "permute_bits", "order": [5, 1, 2, 3, 4, 0, 6, 7]})
                 if len(b) % 4 == 0:
                     for unit in (2, 4):
                         ops.append(
@@ -354,6 +570,10 @@ def discover(force=False, only=None):
                             "expected_example": targets[typ][key]["name"],
                         }
                     )
+            solutions.extend(
+                restore_short_text_rom(a, z, game["static_original"]["missing"], data)
+            )
+            solutions.extend(restore_reference_segments(a, z, game["static_original"]["missing"]))
         # NeoRAGEx C layouts commonly transpose 1/2-ROM blocks between C1/C3 and C2/C4.
         # Bounded pair combinations are accepted only at exact reference CRC and size.
         if "c" in wanted_roles and data:
@@ -485,7 +705,7 @@ def discover(force=False, only=None):
                     }
                 )
         record = {
-            "schema": 4,
+            "schema": 13,
             "source_sha256": a["sha256"],
             "core_sha256": manifest["core_sha256"],
             "solutions": solutions,
@@ -509,6 +729,15 @@ def required_without_bios(driver):
 
 # Reconstruct a recorded local member and verify source, output, and applicable inverse hashes.
 def materialize(src):
+    if src.get("transform", {}).get("kind") == "pcm2":
+        from .pcm2_layout import restore
+
+        transform = src["transform"]
+        hashes = tuple(item["sha256"] for item in transform["sources"])
+        output = restore(src["archive"], transform["role"], hashes)[transform["part"]]
+        if digest(output) != src["sha256"]:
+            raise ValueError("PCM2 output hash mismatch")
+        return output
     if src.get("transform", {}).get("kind") == "cmc":
         from tools.compatibility_lab.cmc_inverse_lab import derive_archive
 
@@ -547,7 +776,15 @@ def materialize(src):
         else:
             pieces = []
             for part in t["segments"]:
-                b = z.read(part["name"])
+                archive = part.get("archive", src["archive"])
+                if archive == src["archive"]:
+                    b = z.read(part["name"])
+                else:
+                    path = catalog.pick_rom(archive)
+                    if path is None:
+                        raise ValueError("Missing segment source archive")
+                    with zipfile.ZipFile(path) as other:
+                        b = other.read(part["name"])
                 if digest(b) != part["source_sha256"]:
                     raise ValueError("Source component changed")
                 chunk = b[part["offset"] : part["offset"] + part["length"]]
@@ -571,7 +808,7 @@ def verify_group_inverse(output_members, preserve_remainders=False):
             continue
         position = 0
         for part in t["segments"]:
-            key = (src["archive"], part["name"])
+            key = (part.get("archive", src["archive"]), part["name"])
             n = part["source_size"]
             reconstructed.setdefault(key, bytearray(n))
             coverage.setdefault(key, bytearray(n))

@@ -9,7 +9,7 @@
 [![Version](https://img.shields.io/badge/Version-0.1.5.1-e55353?style=for-the-badge)](https://github.com/AliAl-ojeely/Neo-Geo-Web)
 [![EmulatorJS](https://img.shields.io/badge/EmulatorJS-4.2.3-725ac1?style=for-the-badge)](https://github.com/EmulatorJS/EmulatorJS)
 [![FBNeo](https://img.shields.io/badge/Core-FBNeo%20WebAssembly-008f9b?style=for-the-badge)](https://github.com/finalburnneo/FBNeo)
-[![Boot-tested](https://img.shields.io/badge/Boot%20tested-127%20games-239e70?style=for-the-badge)](#game-compatibility)
+[![Boot-tested](https://img.shields.io/badge/Boot%20tested-144%20games-239e70?style=for-the-badge)](#game-compatibility)
 [![Localization](https://img.shields.io/badge/Languages-English%20%7C%20Arabic-efbb33?style=for-the-badge)](#english--arabic)
 [![License](https://img.shields.io/badge/Frontend-GPL--3.0--or--later-467a36?style=for-the-badge)](LICENSE)
 
@@ -19,7 +19,7 @@
 
 **Status: Active development · Partial validation · Noncommercial core restrictions apply**
 
-[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Fully Offline / دون إنترنت**](#fully-offline-emulator) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#127-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
+[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Fully Offline / دون إنترنت**](#fully-offline-emulator) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#144-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
 
 </div>
 
@@ -65,10 +65,10 @@ Four featured games from the project's local Neo Geo catalog. The images are inc
 
 | Metric | Evidence-based status |
 | :--- | :--- |
-| **127 games** | Historically recorded with `BOOT PASS` and included in the active catalog |
-| **64 more candidates** | Deferred for further compatibility, archive, or driver investigation |
+| **144 games** | 127 historical boot passes and 17 verified recoveries |
+| **49 more candidates** | Deferred for further compatibility, archive, or driver investigation |
 | **191 candidates total** | Original assessment scope (not all listed on the active public catalog) |
-| **Complete gameplay** | **Not verified across all 127 games**; boot success is not a guarantee of playable sessions |
+| **Complete gameplay** | **Not verified across all 144 games**; boot success is not a guarantee of playable sessions |
 | **Public hosting** | GitHub Pages preparation is available; the published deployment requires its own acceptance checks |
 | **Offline browser testing** | A recorded hosted-site game session exists; this does not establish full-catalog or cross-browser offline compatibility |
 
@@ -191,7 +191,7 @@ Neo-Geo-Web/
 ├── tools/                          # Local companion, preview and preflight tools
 ├── web/                            # First-party frontend source
 │   ├── controls/                   # Custom controls, UI and Tab pause
-│   ├── data/catalog.json           # 127 boot-verified catalog entries and identities
+│   ├── data/catalog.json           # 144 boot-verified catalog entries and identities
 │   ├── library/                    # Source linking, storage, validation and recovery
 │   ├── offline/                    # Install, update and selective removal UI
 │   ├── media/                      # Frontend icon/logo assets
@@ -325,40 +325,55 @@ The public [GitHub Pages site](https://alial-ojeely.github.io/Neo-Geo-Web/) **ne
 
 ## Game Compatibility
 
-The catalog currently contains **127 titles with a historical `BOOT PASS` result**. This is the project's **boot-verified active catalog**, not a claim that all 127 games have passed full playthroughs, input, graphics and audio validation. The original assessment tracked **191 candidates**; the remaining **64** are deferred for additional compatibility work. The game's `game_compatibility` metadata is still `NOT VERIFIED` for most active titles.
+The catalog contains **144 titles with boot evidence**. The historical assessment verified 127 boots. Seventeen subsequent recoveries used locally derived archives with SHA-256 values recorded in the catalog. Of 191 assessed candidates, 47 remain deferred. Full gameplay testing is incomplete across the catalog. Metal Slug 3 (NGH-2560) has additional static-site evidence in Chrome, Brave, and Edge for keyboard input, digital audio, save/load, return to library, and offline boot and save restoration with the preview server stopped.
 
-### 127 Boot-Verified Catalog Titles
+The project’s completion target is the **22 original Neo Geo entries in The King of Fighters, Metal Slug, and Samurai Shodown**. Current browser boot coverage is **19/22** (KOF 8/10, Metal Slug 5/6, Samurai Shodown 6/6). Full acceptance includes in-game controls, graphics and digital audio, save/load, offline reopen, and stability in Chrome, Brave, and Edge. Physical audio and controller checks are tracked separately. The release remains **PARTIAL_VALIDATION**. KOF 2003 and Metal Slug 5 passed three-browser runtime and offline checks, including 120-second sessions. The Offline Manifest generator now derives the service worker build ID, asset hashes, and byte totals in one build step.
+
+For the three remaining games (KOF ’99, KOF 2000, and Metal Slug 4), use [the local priority importer](import_priority_games.py) with authorized sources:
+
+```powershell
+py -3 import_priority_games.py "D:\path\to\owned-files" --game mslug4
+py -3 import_priority_games.py "D:\path\to\owned-files" --game mslug4 --output "work\priority-import"
+```
+
+The default mode audits loose files, ZIPs, and one layer of nested ZIPs. The output option writes a complete, verified cartridge only when all required members are present. Pass `--project-layouts` and explicitly include the legacy source archive to reuse audited project conversions. Imported archives still need browser validation with the project's BIOS.
+
+### 144 Boot-Verified Catalog Titles
 
 The entries below were extracted from `web/data/catalog.json`, retaining the project's actual titles and driver identifiers. Open any category to see every title. These groupings reflect the catalog's classifications, not necessarily original publisher genres.
 
 <details>
-<summary><strong>Fighting — 37 games</strong></summary>
+<summary><strong>Fighting — 41 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
 | Aggressors of Dark Kombat | `aodk` | Boot PASS only |
-| Art of Fighting | `aof` | Boot PASS only |
+| The King of Fighters 2003 | `kof2k3fd` | Three-browser runtime and offline PASS |
 | Art of Fighting 2 | `aof2` | Boot PASS only |
 | Art of Fighting 3 | `aof3` | Boot PASS only |
-| Breakers | `breakers` | Gameplay check recorded |
+| Art of Fighting | `aof` | Boot PASS only |
 | Breakers Revenge | `breakrev` | Boot PASS only |
+| Breakers | `breakers` | Gameplay check recorded |
 | Double Dragon | `doubledr` | Boot PASS only |
-| Fatal Fury | `fatfury1` | Boot PASS only |
 | Fatal Fury 2 | `fatfury2` | Boot PASS only |
 | Fatal Fury 3 | `fatfury3` | Boot PASS only |
 | Fatal Fury Special | `fatfursp` | Boot PASS only |
+| Fatal Fury | `fatfury1` | Boot PASS only |
 | Galaxy Fight | `galaxyfg` | Boot PASS only |
 | Kabuki Klash | `kabukikl` | Boot PASS only |
 | Karnov’s Revenge | `karnovr` | Boot PASS only |
 | Kizuna Encounter | `kizuna` | Boot PASS only |
 | Ninja Master’s | `ninjamas` | Boot PASS only |
 | Ragnagard | `ragnagrd` | Boot PASS only |
-| Real Bout Fatal Fury | `rbff1` | Boot PASS only |
 | Real Bout Fatal Fury 2 | `rbff2` | Boot PASS only |
 | Real Bout Fatal Fury Special | `rbffspec` | Boot PASS only |
-| Samurai Shodown | `samsho` | Boot PASS only |
+| Real Bout Fatal Fury | `rbff1` | Boot PASS only |
 | Samurai Shodown II | `samsho2` | Boot PASS only |
+| Samurai Shodown III (NGH-087) | `samsho3h` | Boot PASS only |
 | Samurai Shodown IV | `samsho4` | Boot PASS only |
+| Samurai Shodown V (NGH-270) | `samsho5h` | Boot PASS only |
+| Samurai Shodown V Special | `samsh5sp` | Boot PASS only |
+| Samurai Shodown | `samsho` | Boot PASS only |
 | Savage Reign | `savagere` | Boot PASS only |
 | The King of Fighters 2001 | `kof2001` | Boot PASS only |
 | The King of Fighters 2002 | `kof2002` | Boot PASS only |
@@ -369,40 +384,45 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 | The King of Fighters ’97 · Mod | `kof97-5a` | Boot PASS only |
 | The King of Fighters ’98 | `kof98` | Boot PASS only |
 | Waku Waku 7 | `wakuwak7` | Boot PASS only |
-| World Heroes | `wh1` | Boot PASS only |
-| World Heroes 2 | `wh2` | Boot PASS only |
 | World Heroes 2 Jet | `wh2j` | Boot PASS only |
+| World Heroes 2 | `wh2` | Boot PASS only |
 | World Heroes Perfect | `whp` | Boot PASS only |
+| World Heroes | `wh1` | Boot PASS only |
 
 </details>
 
 <details>
-<summary><strong>Action — 24 games</strong></summary>
+<summary><strong>Action — 29 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
 | Blue’s Journey | `bjourney` | Boot PASS only |
 | Burning Fight | `burningf` | Boot PASS only |
+| Crossed Swords | `crsword` | Boot PASS only |
 | Cyber-Lip | `cyberlip` | Boot PASS only |
 | Eight Man | `eightman` | Boot PASS only |
 | Ganryu | `ganryu` | Boot PASS only |
-| King of the Monsters | `kotm` | Boot PASS only |
 | King of the Monsters 2 | `kotm2` | Boot PASS only |
+| King of the Monsters | `kotm` | Boot PASS only |
 | Magician Lord | `maglord` | Boot PASS only |
-| Metal Slug | `mslug` | Gameplay check recorded |
 | Metal Slug 2 | `mslug2` | Boot PASS only |
+| Metal Slug 5 | `mslug5fd` | Three-browser runtime and offline PASS |
+| Metal Slug 3 (NGH-2560) | `mslug3h` | Browser gameplay check recorded |
+| Metal Slug 6 (Metal Slug 3 bootleg) | `mslug3b6` | Boot PASS only |
+| Metal Slug X | `mslugx` | Boot PASS only |
+| Metal Slug | `mslug` | Gameplay check recorded |
 | Mutation Nation | `mutnat` | Boot PASS only |
 | Neo Bomberman | `neobombe` | Boot PASS only |
 | Ninja Combat | `ncombat` | Boot PASS only |
 | Ninja Commando | `ncommand` | Boot PASS only |
 | Robo Army | `roboarmy` | Boot PASS only |
-| Sengoku | `sengoku` | Boot PASS only |
 | Sengoku 2 | `sengoku2` | Boot PASS only |
+| Sengoku | `sengoku` | Boot PASS only |
 | Shock Troopers | `shocktro` | Boot PASS only |
 | Shock Troopers: 2nd Squad | `shocktr2` | Boot PASS only |
 | Spin Master | `spinmast` | Boot PASS only |
-| The Last Blade | `lastblad` | Boot PASS only |
 | The Last Blade 2 | `lastbld2` | Boot PASS only |
+| The Last Blade | `lastblad` | Boot PASS only |
 | The Super Spy | `superspy` | Boot PASS only |
 | Top Hunter | `tophuntr` | Boot PASS only |
 
@@ -429,7 +449,7 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 </details>
 
 <details>
-<summary><strong>Sports — 22 games</strong></summary>
+<summary><strong>Sports — 24 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
@@ -441,17 +461,19 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 | Jockey Grand Prix | `jockeygp` | Boot PASS only |
 | League Bowling | `lbowling` | Boot PASS only |
 | Neo Drift Out | `neodrift` | Boot PASS only |
+| Neo Geo Cup '98: The Road to the Victory | `neocup98` | Boot PASS only |
 | Neo Turf Masters | `turfmast` | Boot PASS only |
 | Over Top | `overtop` | Boot PASS only |
 | Pleasure Goal | `pgoal` | Gameplay check recorded |
 | Power Spikes II | `pspikes2` | Boot PASS only |
 | Riding Hero | `ridhero` | Boot PASS only |
 | Soccer Brawl | `socbrawl` | Boot PASS only |
-| Stakes Winner | `stakwin` | Boot PASS only |
 | Stakes Winner 2 | `stakwin2` | Boot PASS only |
-| Super Sidekicks | `ssideki` | Boot PASS only |
+| Stakes Winner | `stakwin` | Boot PASS only |
+| Street Hoop | `strhoop` | Boot PASS only |
 | Super Sidekicks 2 | `ssideki2` | Boot PASS only |
 | Super Sidekicks 3 | `ssideki3` | Boot PASS only |
+| Super Sidekicks | `ssideki` | Boot PASS only |
 | The Ultimate 11 | `ssideki4` | Boot PASS only |
 | Top Player’s Golf | `tpgolf` | Boot PASS only |
 | Windjammers | `wjammers` | Boot PASS only |
@@ -459,35 +481,41 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 </details>
 
 <details>
-<summary><strong>Puzzles — 9 games</strong></summary>
+<summary><strong>Puzzles — 12 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
 | Bang Bead | `bangbead` | Boot PASS only |
+| Battle Flip Shot | `flipshot` | Boot PASS only |
 | Captain Tomaday | `ctomaday` | Boot PASS only |
 | Magical Drop II | `magdrop2` | Gameplay check recorded |
 | Magical Drop III | `magdrop3` | Boot PASS only |
+| Money Puzzle Exchanger | `miexchng` | Boot PASS only |
 | Panic Bomber | `panicbom` | Boot PASS only |
 | Pop ’n Bounce | `popbounc` | Boot PASS only |
-| Puzzle Bobble | `pbobblen` | Boot PASS only |
 | Puzzle Bobble 2 | `pbobbl2n` | Boot PASS only |
+| Puzzle Bobble | `pbobblen` | Boot PASS only |
+| Puzzle De Pon! R! | `puzzldpr` | Boot PASS only |
 | Puzzle de Pon! | `puzzledp` | Boot PASS only |
 
 </details>
 
 <details>
-<summary><strong>Other — 23 games</strong></summary>
+<summary><strong>Other — 26 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
 | Bakatonosama Mahjong Manyuki | `bakatono` | Boot PASS only |
 | Bang Bang Busters | `bbbuster` | Boot PASS only |
 | Crouching Tiger Hidden Dragon | `cnbe` | Boot PASS only |
+| Digger Man (prototype) | `diggerma` | Boot PASS only |
 | fbfrenzy | `fbfrenzy` | Boot PASS only |
 | frogfest | `frogfest` | Boot PASS only |
 | Ghostlop | `ghostlop` | Boot PASS only |
 | joyjoy | `joyjoy` | Boot PASS only |
+| Legend of Success Joe | `legendos` | Boot PASS only |
 | ltorb1 | `ltorb1` | Boot PASS only |
+| Mahjong Kyo Retsuden | `mahretsu` | Boot PASS only |
 | marukodq | `marukodq` | Boot PASS only |
 | minasan | `minasan` | Boot PASS only |
 | mosyougi | `mosyougi` | Boot PASS only |
@@ -508,7 +536,7 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 
 ### Still under investigation
 
-The **64 deferred candidates** have not been added to the active catalog. Further research includes ROM composition and dependencies, driver mapping, BIOS compatibility, boot validation, and real-browser play testing. They will be added only after evidence supports the change. **No date or blanket compatibility guarantee is implied.**
+The **49 deferred candidates** have not been added to the active catalog. Further research includes ROM composition and dependencies, driver mapping, BIOS compatibility, boot validation, and real-browser play testing. They will be added only after evidence supports the change. **No date or blanket compatibility guarantee is implied.**
 
 ---
 
@@ -571,7 +599,7 @@ AI contributions are **assistive, not a replacement for the emulator core or ind
 
 **Planned improvements**
 
-- Continue resolving the 64 deferred candidates with reproducible compatibility evidence.
+- Resolve the five ROM blockers in the 22-game KOF, Metal Slug, and Samurai Shodown acceptance list.
 - Expand real-game audio, input, rendering and save-state testing.
 - Improve recovery and permission feedback in supported browsers.
 - Polish localization, accessibility and mobile layout behavior.

@@ -12,17 +12,22 @@ SHOT_EXT = (".png", ".webp", ".jpg", ".jpeg", ".gif", ".bmp")
 INI_LINE = re.compile(r"^\s*(\d+)\s*,\s*([^,\\/]+\.zip)\s*$", re.IGNORECASE)
 
 
-# Load configured ROM and screenshot directories, retaining defaults for invalid configuration.
+# Load the private local configuration, including optional archive overrides.
+def read_config():
+    try:
+        data = json.loads(CONFIG.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+# Retain default directories when configuration does not supply them.
 def settings():
     defaults = {"roms": str(ROOT / "ROMs"), "screenshots": str(ROOT / "Screenshots")}
-    if CONFIG.is_file():
-        try:
-            data = json.loads(CONFIG.read_text(encoding="utf-8"))
-            for key in ("roms", "screenshots"):
-                if isinstance(data.get(key), str) and data[key].strip():
-                    defaults[key] = data[key]
-        except (OSError, ValueError):
-            pass
+    data = read_config()
+    for key in ("roms", "screenshots"):
+        if isinstance(data.get(key), str) and data[key].strip():
+            defaults[key] = data[key]
     return defaults
 
 
@@ -77,7 +82,10 @@ def scan():
             ):
                 continue
             try:
-                size = file.stat().st_size
+                selected = pick_rom(file.name)
+                if selected is None:
+                    continue
+                size = selected.stat().st_size
                 if size == 0:
                     continue
             except OSError:
@@ -100,7 +108,7 @@ def scan():
     return games
 
 
-# Return an existing game ZIP only when its name and resolved path stay inside the ROM directory.
+# Resolve an existing catalog entry, applying an override explicitly configured on disk.
 def pick_rom(name):
     if (
         not isinstance(name, str)
@@ -115,7 +123,14 @@ def pick_rom(name):
         return None
     base = folder("roms")
     p = base / name
-    return p if p.is_file() and p.resolve().is_relative_to(base) else None
+    if not p.is_file() or not p.resolve().is_relative_to(base):
+        return None
+    overrides = read_config().get("rom_overrides", {})
+    if isinstance(overrides, dict) and isinstance(overrides.get(name), str):
+        alternate = Path(overrides[name]).expanduser()
+        if alternate.is_absolute() and alternate.name == p.name and alternate.is_file():
+            return alternate
+    return p
 
 
 # Locate the BIOS ZIP case-insensitively while enforcing the configured directory boundary.

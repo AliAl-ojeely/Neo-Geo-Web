@@ -20,6 +20,20 @@ NeoGeo_*_Package.zip
 /Screenshots/
 /vendor/fbneo-selected-bios/*.data
 
+# Local libraries, browser profiles and tool outputs.
+PREVIEWS/
+BIOS/
+profile-*/
+browser-profile*/
+*.zip
+*.7z
+*.rar
+*.npz
+*.exe
+*.log
+*.tmp
+.env.local
+
 # Explicit reviewed engine allowlist: software assets, never user ROM/BIOS.
 !/vendor/emulatorjs/data/
 /vendor/emulatorjs/data/**

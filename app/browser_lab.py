@@ -85,9 +85,10 @@ def classify(raw, static, evidence):
     }
     if (
         init
-        and last
-        and not last["error_screen_likely"]
-        and not last["black_screen"]
+        and raw.get("bootObserved")
+        and not raw.get("runnerError")
+        and not raw.get("exceptions")
+        and confirmed
         and final.get("frames", 0) > 20
     ):
         result["status"] = "PASS"
@@ -277,7 +278,7 @@ def write_matrix(matrix):
     reviews = compatibility.load(REPORTS / "visual_reviews_v014.json", {})
     for row in matrix["games"]:
         review = reviews.get(row["filename"], {})
-        if review.get("fingerprint") == row.get("fingerprint"):
+        if review and review.get("fingerprint") == row.get("fingerprint"):
             row["visual_review"] = review["status"]
             row["visual_review_note"] = review["note"]
             if review["status"] == "BIOS_ONLY_REQUIRES_LONGER_OBSERVATION":
@@ -410,6 +411,8 @@ def _test_games(
         raise ValueError("Run compatibility scan first")
     matrix = initial_matrix(static)
     lookup = {g["filename"]: g for g in static["games"]}
+    bios = catalog.pick_bios()
+    bios_sha256 = compatibility.sha(bios) if bios else None
     chosen = []
     for row in matrix["games"]:
         if names and row["filename"] not in names:
@@ -428,24 +431,13 @@ def _test_games(
             if phase == "resolved"
             else None
         )
-        if (
-            phase == "resolved"
-            and not plan
-            and row.get("tested_at")
-            and row.get("source_sha256") == g["archive_sha256"]
-            and row.get("core_sha256") == static["core_sha256"]
-            and observe <= 12
-            and not force
-        ):
-            continue
-        if phase == "resolved" and not plan and retry_failed and not force:
-            continue
         expected_driver = plan["driver"] if plan else g["driver_declared"]
         launch_fingerprint = hashlib.sha256(
             json.dumps(
                 {
                     "rom": g["archive_sha256"],
                     "core": static["core_sha256"],
+                    "bios": bios_sha256,
                     "derived": plan.get("derived_sha256") if plan else None,
                     "driver": expected_driver,
                     "policy": "MVS_EUR-strict-v013",
@@ -465,10 +457,11 @@ def _test_games(
                 {
                     "rom": g["archive_sha256"],
                     "core": static["core_sha256"],
+                    "bios": bios_sha256,
                     "phase": phase,
                     "derived": plan.get("derived_sha256") if plan else None,
                     "observe": observe,
-                    "protocol": "v014-boot-1",
+                    "protocol": "v014-boot-2",
                 },
                 sort_keys=True,
             ).encode()

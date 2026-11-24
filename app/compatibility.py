@@ -57,7 +57,8 @@ def audit_archive(path, force=False):
         not force
         and old
         and old.get("file_stat") == signature
-        and old.get("audit_version") == 1
+        and old.get("audit_version") == 2
+        and old.get("source_directory") == str(path.parent.resolve())
     ):
         return old
     r = {
@@ -66,7 +67,8 @@ def audit_archive(path, force=False):
         "file_stat": signature,
         "sha256": sha(path),
         "audited_at": now(),
-        "audit_version": 1,
+        "audit_version": 2,
+        "source_directory": str(path.parent.resolve()),
         "integrity": "PASS",
         "members": [],
         "errors": [],
@@ -133,9 +135,15 @@ def audit_archive(path, force=False):
 # Audit configured ZIPs, save the library manifest, and resolve its pinned driver requirements.
 def scan(force=False):
     games = catalog.scan()
-    paths = sorted(
-        catalog.folder("roms").glob("*.zip"), key=lambda p: p.name.casefold()
-    )
+    paths_by_name = {
+        path.name: path for path in catalog.folder("roms").glob("*.zip")
+    }
+    for game in games:
+        name = game["filename"]
+        selected = catalog.pick_rom(name)
+        if selected is not None:
+            paths_by_name[name] = selected
+    paths = sorted(paths_by_name.values(), key=lambda path: path.name.casefold())
     archives = []
     for n, path in enumerate(paths, 1):
         archives.append(audit_archive(path, force))
@@ -674,19 +682,22 @@ def enrich_plan_sources(plan):
     }
     for member in plan["members"]:
         t = member.get("transform")
-        names = (
-            list(dict.fromkeys(p["name"] for p in t["segments"]))
-            if t and t["kind"] == "segments"
-            else [v["name"] for v in t["sources"]]
-            if t and t["kind"] == "cmc"
-            else [member["original_member"]]
-        )
+        source_archive = member["original_archive"]
+        if t and t["kind"] == "segments":
+            originals = dict.fromkeys(
+                (part.get("archive", source_archive), part["name"])
+                for part in t["segments"]
+            )
+        elif t and t["kind"] in ("cmc", "pcm2"):
+            originals = [(source_archive, part["name"]) for part in t["sources"]]
+        else:
+            originals = [(source_archive, member["original_member"])]
         sources = []
-        for name in names:
-            original = index[(member["original_archive"], name)]
+        for archive, name in originals:
+            original = index[(archive, name)]
             sources.append(
                 {
-                    "archive": member["original_archive"],
+                    "archive": archive,
                     "member": name,
                     "size": original["size"],
                     "crc32": original["crc32"],

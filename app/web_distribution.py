@@ -55,6 +55,41 @@ def catalog():
                 "_source": str(source),
             }
         )
+    # Explicit owner acceptance is separate from automated browser evidence.
+    accepted = c.load(c.REPORTS / "USER_ACCEPTED_GAME_PACKAGES.json", {})
+    # Selective runtime reruns replace the boot matrix; preserve the established public library.
+    established = c.load(c.ROOT / "web/data/catalog.json", {}).get("games", [])
+    roots = {Path(r["source"]).parent for r in accepted.get("games", [])}
+    preserved = []
+    for entry in established:
+        plan = plans.get(entry["filename"], {})
+        candidates = [*(folder / entry["selected_filename"] for folder in roots)]
+        if plan.get("derived_file"):
+            candidates.append(c.ROOT / plan["derived_file"])
+        original = c.catalog.pick_rom(entry["filename"])
+        if original:
+            candidates.append(original)
+        source = next((p for p in candidates if p.is_file() and p.stat().st_size == entry["size"]
+                       and c.sha(p) == entry["sha256"]), None)
+        if source is None:
+            raise RuntimeError("Established package source unavailable: " + entry["filename"])
+        preserved.append({**entry, "_source": str(source)})
+    known = {g["filename"] for g in preserved}
+    games = preserved + [g for g in games if g["filename"] not in known]
+    for record in accepted.get("games", []):
+        if record.get("acceptance") != "PASS_USER_REPORTED":
+            raise RuntimeError("Unconfirmed manual acceptance record")
+        entry = record["catalog_entry"]
+        source = Path(record["source"])
+        if source.stat().st_size != entry["size"] or c.sha(source) != entry["sha256"]:
+            raise RuntimeError("Accepted package changed: " + entry["filename"])
+        existing = next((g for g in games if g["filename"] == entry["filename"]), None)
+        if existing:
+            if existing["sha256"] != entry["sha256"]:
+                raise RuntimeError("Accepted package conflicts with existing identity")
+            existing.update({**entry, "_source": str(source)})
+        else:
+            games.append({**entry, "_source": str(source)})
     assert len({g["selected_filename"] for g in games}) == len(games), (
         "Driver filename collision"
     )
@@ -328,39 +363,8 @@ def build():
     copy(c.ROOT / "vendor/emulatorjs/LICENSE", "vendor/emulatorjs/LICENSE")
     (PUBLIC / ".nojekyll").write_text("", encoding="utf-8")
     # A deterministic asset index makes the user-approved offline download exhaustive and verifiable.
-    import hashlib
-    existing = sorted(
-        p for p in PUBLIC.rglob('*') if p.is_file() and p.relative_to(PUBLIC).as_posix()
-        not in {'.nojekyll', 'offline-sw.js', 'offline-manifest.json'}
-    )
-    signature = '\n'.join(
-        p.relative_to(PUBLIC).as_posix() + ':' + c.sha(p) for p in existing
-    )
-    build_id = hashlib.sha256(signature.encode('utf-8')).hexdigest()[:16]
-    template = (c.ROOT / 'tools/offline-sw.template.js').read_text(encoding='utf-8')
-    if template.count('__NG_OFFLINE_BUILD_ID__') != 1:
-        raise RuntimeError('Offline Service Worker build token is missing or ambiguous')
-    (PUBLIC / 'offline-sw.js').write_text(
-        template.replace('__NG_OFFLINE_BUILD_ID__', build_id), encoding='utf-8'
-    )
-    offline_paths = existing + [PUBLIC / 'offline-sw.js']
-    offline_files = [
-        {
-            'path': p.relative_to(PUBLIC).as_posix(),
-            'sha256': c.sha(p),
-            'bytes': p.stat().st_size,
-        }
-        for p in offline_paths
-    ]
-    (PUBLIC / 'offline-manifest.json').write_text(
-        json.dumps({
-            'schema': 1,
-            'id': build_id,
-            'files': offline_files,
-            'totalBytes': sum(x['bytes'] for x in offline_files),
-        }, ensure_ascii=False, indent=2) + '\n',
-        encoding='utf-8',
-    )
+    from .offline_manifest import write_bundle
+    write_bundle(PUBLIC, c.ROOT / "tools/offline-sw.template.js")
     files = {
         p.relative_to(PUBLIC).as_posix(): {
             "sha256": c.sha(p),

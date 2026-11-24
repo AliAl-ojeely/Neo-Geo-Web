@@ -60,7 +60,8 @@ test('the UI, bilingual labels and static builder include fully offline assets',
   assert.match(file('web/settings.js'),/id="ng-offline-action"/);
   assert.match(file('web/settings.html'),/offline\/offline-ui\.js/);
   assert.match(file('web/languages.js'),/دون الحاجة الى الاتصال بالانترنت بشكل كامل/);
-  assert.match(file('app/web_distribution.py'),/offline-manifest\.json/);
+  assert.match(file('app/web_distribution.py'),/write_bundle\(PUBLIC/);
+  assert.match(file('app/offline_manifest.py'),/offline-manifest\.json/);
 });
 
 test('offline package is verified and pages/core are served without network calls',async()=>{
