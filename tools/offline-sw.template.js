@@ -243,6 +243,18 @@ self.addEventListener('fetch', event => {
   // Published origins keep strict opt-in offline cache-first behavior unchanged.
   const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(root.hostname);
   const relative = target.pathname.slice(root.pathname.length);
+  // The loopback companion is a live user library, separate from verified cached assets.
+  if (loopback && !target.search) {
+    if (/^__ng_local__\/(?:status|list\/(?:roms|previews|bios))$/.test(relative)) return;
+    const file = /^__ng_local__\/file\/(roms|previews|bios)\/([^/]+)$/.exec(relative);
+    if (file) {
+      try {
+        const leaf = decodeURIComponent(file[2]);
+        const extension = file[1] === 'previews' ? /\.(?:bmp|png|jpe?g|webp)$/i : /\.zip$/i;
+        if (!/[\\/\x00]/.test(leaf) && extension.test(leaf)) return;
+      } catch (_) { /* Malformed paths remain under the offline policy. */ }
+    }
+  }
   const liveAsset = /^(?:index|settings|player)\.html$/.test(relative) ||
     /^assets\/.+\.(?:js|css)$/.test(relative) || relative === '';
   if (loopback && liveAsset) {

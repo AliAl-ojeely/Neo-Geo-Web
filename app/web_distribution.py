@@ -87,7 +87,10 @@ def catalog():
         if existing:
             if existing["sha256"] != entry["sha256"]:
                 raise RuntimeError("Accepted package conflicts with existing identity")
-            existing.update({**entry, "_source": str(source)})
+            previews = {
+                key: existing[key] for key in ("screenshot", "original_preview_id") if key in existing
+            }
+            existing.update({**entry, **previews, "_source": str(source)})
         else:
             games.append({**entry, "_source": str(source)})
     assert len({g["selected_filename"] for g in games}) == len(games), (
@@ -151,6 +154,22 @@ def recovery():
     return report
 
 
+def preview_files(data):
+    """Resolve exact catalog preview names from configured or approved local libraries."""
+    configured = c.catalog.folder("screenshots")
+    roots = {Path(game["_source"]).parent.parent / "PREVIEWS" for game in data["games"]}
+    for name in sorted({game["screenshot"] for game in data["games"] if game["screenshot"]}):
+        if Path(name).name != name or "/" in name or chr(92) in name:
+            raise ValueError("Invalid preview filename: " + name)
+        for folder in [configured, *sorted(roots)]:
+            path = folder / name
+            if path.is_file():
+                yield name, path
+                break
+        else:
+            raise FileNotFoundError("Catalog preview not found: " + name)
+
+
 # Write private local game packages and manifests, then verify their member hashes.
 def package():
     PRIVATE.mkdir(exist_ok=True)
@@ -159,15 +178,7 @@ def package():
     records = []
     package_specs = [
         ("ROMs", [(g["selected_filename"], Path(g["_source"])) for g in data["games"]]),
-        (
-            "PREVIEWS",
-            [
-                (name, c.catalog.folder("screenshots") / name)
-                for name in sorted(
-                    {g["screenshot"] for g in data["games"] if g["screenshot"]}
-                )
-            ],
-        ),
+        ("PREVIEWS", list(preview_files(data))),
         ("BIOS", [("neogeo.zip", c.catalog.folder("roms") / "neogeo.zip")]),
     ]
     for folder, files in package_specs:

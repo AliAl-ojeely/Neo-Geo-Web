@@ -9,7 +9,8 @@ const root = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'tools/offline-sw.template.js'), 'utf8');
 const site = 'https://example.invalid/Neo-Geo-Web/';
 
-function fakeWorker(corrupt = false, badTotal = false) {
+function fakeWorker(corrupt = false, badTotal = false, origin = site) {
+  const site = origin;
   const contents = new Map([
     ['index.html','HOME'], ['settings.html','SETTINGS'], ['player.html','PLAYER'],
     ['assets/offline/offline-ui.js','SCRIPT'],
@@ -121,4 +122,17 @@ test('an inconsistent manifest total cannot activate an offline package',async()
   const w=fakeWorker(false,true);
   assert.match((await w.send('INSTALL')).at(-1).message,/TOTAL_BYTES_MISMATCH/);
   assert.equal((await w.send('STATUS')).at(-1).ready,false);
+});
+
+test('installed loopback pack defers approved companion preview reads to the browser without caching',async()=>{
+  const local=fakeWorker(false,false,'http://127.0.0.1:8820/Neo-Geo-Web/');
+  const publicSite=fakeWorker();
+  for(const worker of [local,publicSite]) assert.equal((await worker.send('INSTALL')).at(-1).type,'complete');
+  assert.equal(await local.get('__ng_local__/status'),undefined);
+  assert.equal(await local.get('__ng_local__/list/previews'),undefined);
+  assert.equal(await local.get('__ng_local__/file/previews/Example.WEBP'),undefined);
+  for(const url of ['__ng_local__/file/previews/%2Fsecret.png','__ng_local__/file/previews/x.exe',
+    '__ng_local__/file/previews/x.bmp?unexpected=1','https://external.invalid/x.png'])
+    assert.equal((await local.get(url)).status,503);
+  assert.equal((await publicSite.get('__ng_local__/file/previews/Example.WEBP')).status,503);
 });

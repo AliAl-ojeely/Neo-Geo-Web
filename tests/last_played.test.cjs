@@ -46,7 +46,7 @@ test('ignores bad input, broken records and unavailable storage', () => {
 });
 
 test('feature prioritizes last-played game over static pick and updates its image/button', () => {
-  const source = read('web/app.js');
+  const source = read('web/app.js').replace(/\r\n/g, '\n');
   const start = source.indexOf('function feature() {');
   const end = source.indexOf('\n\n// Load browser-linked', start);
   assert(start > 0 && end > start, 'hero function must be extractable');
@@ -88,6 +88,16 @@ test('feature prioritizes last-played game over static pick and updates its imag
   vm.runInContext('feature()', context);
   assert.equal(elements['featured-title'].textContent, 'The King of Fighters 98');
   assert.equal(elements['featured-description'].textContent, 'app.a_verified_arcade_game_from_your_local');
+  context.state.games = [];
+  vm.runInContext('feature()', context);
+  assert.equal(elements['featured-image'].src, '');
+  assert.equal(elements['featured-image'].hidden, true);
+  assert.equal(elements['feature-placeholder'].hidden, false);
+  context.state.games = [];
+  vm.runInContext('feature()', context);
+  assert.equal(elements['featured-image'].src, '');
+  assert.equal(elements['featured-image'].hidden, true);
+  assert.equal(elements['feature-placeholder'].hidden, false);
 });
 
 test('player hook records only after start and both pages load one shared module', () => {

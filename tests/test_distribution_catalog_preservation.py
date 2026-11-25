@@ -53,5 +53,25 @@ class DistributionCatalogPreservationTests(unittest.TestCase):
                 distribution.catalog()
 
 
+    def test_resolves_exact_preview_name_from_approved_rom_library(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = root / "historical"
+            previews = root / "library" / "PREVIEWS"
+            original.mkdir()
+            previews.mkdir(parents=True)
+            (original / "photo.bmp").write_bytes(b"historical fixture")
+            (previews / "photo.png").write_bytes(b"replacement fixture")
+            data = {"games": [{"screenshot": "photo.png",
+                               "_source": str(root / "library" / "ROMs" / "game.zip")}]}
+            with patch.object(distribution.c.catalog, "folder", return_value=original):
+                self.assertEqual(list(distribution.preview_files(data)), [
+                    ("photo.png", previews / "photo.png")
+                ])
+                data["games"][0]["screenshot"] = "../photo.bmp"
+                with self.assertRaisesRegex(ValueError, "Invalid preview filename"):
+                    list(distribution.preview_files(data))
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import mimetypes
 import os
 import re
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -23,6 +22,13 @@ DEFAULT_CONFIG = (
     else Path.home() / ".neogeo-web-emu" / "library.json"
 )
 ROLES = ("roms", "previews", "bios")
+PREVIEW_TYPES = {
+    ".bmp": "image/bmp",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+}
 VALID_NAME = re.compile(r"^[^\\/\x00-\x1f]{1,199}$")
 
 
@@ -89,7 +95,7 @@ def listing(roots: dict[str, Path], role: str):
     else:
         paths = (p for p in folder.iterdir() if p.is_file() and not p.is_symlink())
     extensions = (
-        (".bmp", ".png", ".jpg", ".jpeg", ".webp") if role == "previews" else (".zip",)
+        PREVIEW_TYPES if role == "previews" else (".zip",)
     )
     items = []
     for path in paths:
@@ -192,7 +198,7 @@ def make_handler(roots: dict[str, Path], port: int):
             self.send_response(200)
             self.send_header(
                 "Content-Type",
-                mimetypes.guess_type(name)[0] or "application/octet-stream",
+                PREVIEW_TYPES.get(Path(name).suffix.lower(), "application/zip"),
             )
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(size))

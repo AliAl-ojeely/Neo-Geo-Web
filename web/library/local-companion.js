@@ -46,11 +46,12 @@
           { cache: 'no-store', credentials: 'same-origin' }
         );
         if (!response.ok)
-          throw new Error(
+          throw Object.assign(new Error(
             NGI18n.t('local_companion.could_not_read_the_file_from_the') + ' ' + response.status
-          );
-        return new File([await response.blob()], name, {
-          type: role === 'previews' ? 'image/bmp' : 'application/zip'
+          ), { status: response.status });
+        const blob = await response.blob();
+        return new File([blob], name, {
+          type: role === 'previews' ? blob.type : 'application/zip'
         });
       }
     };

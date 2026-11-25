@@ -239,6 +239,12 @@ function feature() {
     ['mslug3', 'kof98', 'blazstar', 'samsho2', 'garou', 'mslug']
       .map(id => games.find(g => g.id.toLowerCase() === id && g.screenshot))
       .find(Boolean) || games.find(g => g.screenshot);
+  const img = $('featured-image');
+  const placeholder = $('feature-placeholder');
+  img.hidden = true;
+  if (window.NG_STATIC) NGPreviews.detach?.(img);
+  img.removeAttribute('src');
+  placeholder.hidden = Boolean(featured?.screenshot);
   if (!featured) return;
   $('featured-title').setAttribute('data-no-i18n', '');
   $('featured-title').textContent = featured.title;
@@ -246,15 +252,7 @@ function feature() {
     recent ? 'app.last_played_game_description' : 'app.a_verified_arcade_game_from_your_local'
   );
   $('featured-play').href = gameLink(featured);
-  const img = $('featured-image');
-  const placeholder = $('feature-placeholder');
-  img.hidden = true;
-  placeholder.hidden = true;
-  img.removeAttribute('src');
-  if (!featured.screenshot) {
-    placeholder.hidden = false;
-    return;
-  }
+  if (!featured.screenshot) return;
   // Bind one stable image failure handler even across library rescans.
   if (!img.dataset.ngFeaturedErrorBound) {
     img.addEventListener('error', () => {

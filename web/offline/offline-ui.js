@@ -38,8 +38,27 @@
       ? await navigator.serviceWorker.register(new URL('offline-sw.js', base()), { scope })
       : await navigator.serviceWorker.getRegistration(scope);
     if (!reg) return null;
-    if (create) return navigator.serviceWorker.ready;
-    return reg;
+    if (!create) return reg;
+    // An older active worker cannot verify the newer manifest while its replacement is installing.
+    try { await reg.update?.(); } catch (_) { /* Let the active worker report a failed network update. */ }
+    const pending = reg.installing || reg.waiting || (reg.active?.state === 'activating' ? reg.active : null);
+    if (pending && !['activated', 'redundant'].includes(pending.state)) {
+      await new Promise((resolve, reject) => {
+        const finish = () => {
+          if (!['activated', 'redundant'].includes(pending.state)) return;
+          clearTimeout(timer);
+          pending.removeEventListener('statechange', finish);
+          resolve();
+        };
+        const timer = setTimeout(() => {
+          pending.removeEventListener('statechange', finish);
+          reject(Error(t('timeout')));
+        }, 15000);
+        pending.addEventListener('statechange', finish);
+        finish();
+      });
+    }
+    return navigator.serviceWorker.ready;
   }
   async function command(reg, name, progress) {
     const worker = reg.active || reg.waiting || reg.installing;
