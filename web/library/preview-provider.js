@@ -116,6 +116,7 @@
       img.src = url;
       img.dataset.previewStatus = 'PASS';
       failures.delete(binding.name);
+      document.dispatchEvent(new CustomEvent('ng-preview-decoded', { detail: { name: binding.name } }));
     } catch (e) {
       if (!current()) return;
       const status = e.code || 'RENDERING_FAILED';
@@ -134,14 +135,14 @@
   }
 
   const api = {
-    attach(img, name) {
+    attach(img, name, { eager = false } = {}) {
       detach(img);
       img.removeAttribute('src');
       img.dataset.preview = name;
       img.dataset.previewStatus = 'PENDING';
       const binding = { name: name.toLowerCase(), generation, entry: null };
       bindings.set(img, binding);
-      if (observer) observer.observe(img);
+      if (observer && !eager) observer.observe(img);
       else queueMicrotask(() => load(img, binding));
     },
     detach,

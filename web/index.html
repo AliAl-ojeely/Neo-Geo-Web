@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <script src="/assets/languages.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#090B0F" />
     <meta name="color-scheme" content="dark" />
     <meta
       name="description"
@@ -15,18 +15,20 @@
     <link rel="stylesheet" href="/assets/style.css" />
     <link rel="stylesheet" href="/assets/ui/living-library.css?v=1.5.0" />
     <link rel="stylesheet" href="/assets/ui/matrix-ambient.css?v=1.5.2" />
+    <link rel="stylesheet" href="/assets/ui/arcade-renaissance.css" />
     <script src="/assets/ui/startup-screen.js"></script>
     <script src="/assets/ui/message-box.js" defer></script>
     <script src="/assets/ui/shortcut-guide.js" defer></script>
     <script src="/assets/library/last-played.js" defer></script>
     <script src="/assets/preferences.js" defer></script>
     <script src="/assets/ui/library-motion.js" defer></script>
+    <script src="/assets/ui/arcade-home.js" defer></script>
     <script src="/assets/app.js" defer></script>
     <script src="/assets/ui/living-library.js?v=1.5.0" defer></script>
     <script src="/assets/ui/matrix-ambient.js?v=1.5.1" defer></script>
     <script src="/assets/ui/site-extras.js" defer></script>
   </head>
-  <body class="home-page">
+  <body class="home-page arcade-home">
     <!-- Entry splash: display only on a new tab session; scripts run behind it. -->
     <section id="ng-startup-screen" class="ng-startup-screen" role="status" aria-live="polite">
       <div class="ng-startup-inner">
@@ -42,30 +44,16 @@
       </div>
     </section>
     <div class="obsidian-shell">
-      <!-- شريط التنقل العلوي الموحد -->
-      <header class="global-header">
-        <a class="brand" href="/" aria-label="Back to home" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.back_to_home&quot;}">
-          <img
-            src="/assets/media/neo-geo-mark.png"
-            width="56"
-            height="56"
-            alt="Neo Geo"
-            class="brand-logo logo-motion"
-          />
-          <span class="brand-name">Neo-Geo Web Port</span>
+      <header class="arcade-header" id="home">
+        <a class="arcade-brand" href="/" aria-label="Neo Geo home" data-i18n-attrs='{"aria-label":"index.back_to_home"}'>
+          <img src="/assets/media/neo-geo-mark.png" width="500" height="500" alt="" />
         </a>
-
-        <nav class="global-nav" aria-label="Main navigation" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.main_navigation&quot;}">
-          <button type="button" class="nav-action active" data-view="all">
-            <span data-i18n-text="index.library">Library</span>
-            <span id="side-count" class="nav-number">—</span>
-          </button>
-          <button type="button" class="nav-action" data-view="favorites">
-            <span data-i18n-text="index.favorites">Favorites</span>
-            <span id="favorite-count" class="nav-number">0</span>
-          </button>
-        </nav>
-
+        <a class="arcade-nav-link" href="#collection" data-i18n-text="index.library">Library</a>
+        <label class="arcade-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg>
+          <input id="search" type="search" autocomplete="off" placeholder="Search games…" aria-label="Search library" data-i18n-attrs='{"placeholder":"arcade.search_short","aria-label":"index.search_library"}' />
+          <kbd>/</kbd>
+        </label>
         <div class="header-actions">
           <button id="ng-shortcuts-trigger" class="ng-shortcuts-trigger" type="button"
             aria-label="Keyboard shortcuts" title="Keyboard shortcuts" aria-haspopup="dialog"
@@ -76,128 +64,111 @@
               <path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7 16h10"></path>
             </svg>
           </button>
-          <a class="header-link" href="#local-library" data-i18n-text="index.local_sources">Local sources</a>
-          <a class="icon-link" href="/settings.html" title="Settings" aria-label="Settings" data-i18n-attrs="{&quot;title&quot;:&quot;index.settings&quot;,&quot;aria-label&quot;:&quot;index.settings&quot;}">
-            <span data-i18n-text="index.settings">Settings</span>
-          </a>
+          <a class="arcade-settings arcade-gamepad" href="/settings.html" data-i18n-text="arcade.gamepads">Gamepads</a>
+          <a class="arcade-settings" href="/settings.html" data-i18n-text="index.settings">Settings</a>
+          <button id="arcade-download" type="button" class="arcade-settings arcade-download" aria-haspopup="dialog" data-i18n-attrs='{"aria-label":"arcade.download_assets"}'>
+            <svg class="arcade-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>
+            <span class="arcade-download-full" data-i18n-text="arcade.download_assets">Download Assets</span>
+            <span class="arcade-download-short" aria-hidden="true" data-i18n-text="arcade.assets_short">Assets</span>
+          </button>
+          <select id="arcade-language" aria-label="Language" data-i18n-attrs='{"aria-label":"arcade.language"}'><option value="en">EN</option><option value="ar">العربية</option></select>
         </div>
       </header>
 
-      <!-- المحتوى الرئيسي للمنصة -->
-      <main class="home-main">
-        <div id="banner" class="banner" role="alert" hidden></div>
+      <div class="arcade-layout">
+        <aside class="arcade-left">
+          <details class="arcade-menu" id="arcade-menu" open>
+            <summary data-i18n-text="arcade.menu">Arcade menu</summary>
+            <nav class="arcade-rail" aria-label="Library navigation" data-i18n-attrs='{"aria-label":"index.main_navigation"}'>
 
-        <!-- الواجهة الترحيبية للعبة المميزة -->
-        <section class="hero-editorial feature" aria-label="Featured game" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.featured_game&quot;}">
-          <div class="hero-copy feature-copy">
-            <div class="hero-heading-group">
-              <h1 class="hero-heading" data-i18n-text="index.arcade">Arcade, <em data-i18n-text="index.without_limits">without limits.</em></h1>
-              <h2 id="featured-title">Neo Geo, the way you love to play.</h2>
-              <p id="featured-description">
-                Link your local games for a focused arcade experience. Your files stay on your
-                device.
-              </p>
-            </div>
-            <div class="hero-actions feature-buttons">
-              <a id="featured-play" class="primary-button" href="#collection" data-i18n-text="index.start_playing">Start playing</a>
-              <a class="secondary-button" href="#local-library" data-i18n-text="index.manage_library">Manage library</a>
-            </div>
-            <span class="visually-hidden" id="engine-health" role="status"
-              >Checking engine…</span
-            >
-          </div>
+              <a href="#home"><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10H3zM9 20v-6h6v6"/></svg><span data-i18n-text="arcade.home">Home</span></a>
+              <button type="button" data-view="all" class="active"><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span data-i18n-text="app.all_games">All games</span><b id="side-count">—</b></button>
+              <button type="button" data-view="favorites"><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6c0 4-8.8 9.6-8.8 9.6S3.2 12.6 3.2 8.6a4.8 4.8 0 0 1 8.8-2.5 4.8 4.8 0 0 1 8.8 2.5Z"/></svg><span data-i18n-text="index.favorites">Favorites</span><b id="favorite-count">0</b></button>
+              <button type="button" data-view="images"><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span data-i18n-text="app.games_with_previews">Games with previews</span></button>
+              <button id="arcade-last" type="button" disabled><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6h4"/></svg><span data-i18n-text="arcade.last">Last played</span></button>
+              <a id="arcade-manage" href="#local-library"><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h7l2 3h9v9H3zM3 7V5h7"/></svg><span data-i18n-text="index.manage_library">Manage library</span></a>
+            </nav>
+            <section class="arcade-engine">
+              <strong>FBNeo</strong>
+              <span id="engine-health" role="status"></span>
+              <div><span data-i18n-text="index.bios_status">BIOS status</span><strong id="stat-bios">—</strong></div>
+              <div><span data-i18n-text="index.library_status">Library status</span><strong id="arcade-connection">—</strong></div>
+            </section>
+          </details>
+        </aside>
 
-          <div class="hero-art feature-visual">
-            <div class="art-halo" aria-hidden="true"></div>
-            <div class="hero-art-inner">
-              <div class="artwork-frame">
-                <img id="featured-image" alt="Featured game image" hidden  data-i18n-attrs="{&quot;alt&quot;:&quot;index.featured_game_image&quot;}"/>
-                <div id="feature-placeholder" class="artwork-placeholder">
-                  <span class="placeholder-monogram">NG</span>
-                </div>
+        <main class="home-main arcade-main">
+          <div id="banner" class="banner" role="alert" hidden></div>
+          <section class="arcade-hero hero-editorial feature" id="arcade-hero" aria-label="Featured game" data-i18n-attrs='{"aria-label":"index.featured_game"}'>
+            <div class="hero-copy feature-copy">
+              <h1 dir="auto" id="featured-title" data-i18n-text="arcade.setup">Connect your library</h1>
+              <p id="arcade-feature-category"></p>
+              <p id="featured-description"></p>
+              <div class="feature-buttons arcade-hero-actions">
+                <a id="featured-play" class="primary-button" href="#local-library" data-i18n-text="index.start_playing">Start playing</a>
+                <button id="arcade-feature-favorite" type="button" class="arcade-control" hidden>♡</button>
               </div>
             </div>
-          </div>
-        </section>
-
-        <!-- شريط إحصائيات حالة المكتبة -->
-        <section class="quick-stats stats-row" aria-label="Library status" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.library_status&quot;}">
-          <div class="quick-stat">
-            <span data-i18n-text="index.known_games">Known games</span>
-            <strong id="stat-games">—</strong>
-          </div>
-          <div class="quick-stat">
-            <span data-i18n-text="index.game_previews">Game previews</span>
-            <strong id="stat-shots">—</strong>
-          </div>
-          <div class="quick-stat">
-            <span data-i18n-text="index.archive_size">Archive size</span>
-            <strong id="stat-size" dir="ltr">—</strong>
-          </div>
-          <div class="quick-stat">
-            <span data-i18n-text="index.bios_status">BIOS status</span>
-            <strong id="stat-bios">—</strong>
-          </div>
-        </section>
-
-        <!-- ملاحظة: يقوم library-ui.js بحقن قسم #local-library تلقائيًا قبل #collection -->
-        <section class="collection" id="collection">
-          <div class="collection-heading section-heading">
-            <div class="section-title-wrap">
-              <h2 id="collection-title">
-                All games <span id="results" class="result-count">—</span>
-              </h2>
-              <p id="filter-description" hidden></p>
+            <div class="hero-art feature-visual">
+              <div class="artwork-frame">
+                <img id="featured-image" alt="Featured game image" hidden data-i18n-attrs='{"alt":"index.featured_game_image"}' />
+                <div id="feature-placeholder" class="artwork-placeholder" aria-hidden="true">NEO·GEO</div>
+              </div>
             </div>
-          </div>
-
-          <!-- شريط البحث والفرز والتصنيفات المدمج -->
-          <div class="collection-controls-bar">
-            <div class="collection-toolbar filters">
-              <label class="search-box">
-                <span class="search-icon" aria-hidden="true">⌕</span>
-                <input
-                  id="search"
-                  type="search"
-                  autocomplete="off"
-                  placeholder="Search games, series, or ROM filenames…"
-                  aria-label="Search library"
-                 data-i18n-attrs="{&quot;placeholder&quot;:&quot;index.search_games_series_or_rom_filenames&quot;,&quot;aria-label&quot;:&quot;index.search_library&quot;}"/>
-                <kbd>/</kbd>
-              </label>
-              <label class="sort-label">
-                <span data-i18n-text="index.sort">Sort</span>
-                <select id="sort" aria-label="Sort games" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.sort_games&quot;}">
-                  <option value="name" data-i18n-text="index.by_name">By name</option>
-                  <option value="size" data-i18n-text="index.by_size">By size</option>
-                  <option value="filename" data-i18n-text="index.by_rom_filename">By ROM filename</option>
-                </select>
-              </label>
+            <div class="arcade-carousel" id="arcade-carousel" hidden>
+              <button class="arcade-control arcade-prev" type="button" id="arcade-prev" aria-label="Previous game" data-i18n-attrs='{"aria-label":"arcade.previous"}'><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg></button>
+              <div id="arcade-dots" class="arcade-dots"></div>
+              <button class="arcade-control arcade-next" type="button" id="arcade-next" aria-label="Next game" data-i18n-attrs='{"aria-label":"arcade.next"}'><svg class="arcade-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6 6 6-6 6"/></svg></button>
             </div>
+          </section>
 
-            <nav class="category-strip" aria-label="Game categories" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.game_categories&quot;}">
-              <button type="button" data-category="fighting" data-i18n-text="app.fighting">Fighting</button>
-              <button type="button" data-category="action" data-i18n-text="app.action">Action</button>
-              <button type="button" data-category="shooter" data-i18n-text="app.shooters">Shooters</button>
-              <button type="button" data-category="sports" data-i18n-text="app.sports">Sports</button>
-              <button type="button" data-category="puzzle" data-i18n-text="app.puzzles">Puzzles</button>
-              <button type="button" data-category="other" data-i18n-text="app.other">Other</button>
-            </nav>
-          </div>
+          <section class="collection arcade-collection" id="collection">
+            <div class="collection-controls-bar arcade-filters">
+              <label><span data-i18n-text="arcade.genre">Category</span><select id="arcade-genre">
+                <option value="" data-i18n-text="arcade.filter_all">All</option>
+                <option value="fighting" data-i18n-text="app.fighting">Fighting</option><option value="action" data-i18n-text="app.action">Action</option>
+                <option value="shooter" data-i18n-text="app.shooters">Shooters</option><option value="sports" data-i18n-text="app.sports">Sports</option>
+                <option value="puzzle" data-i18n-text="app.puzzles">Puzzles</option><option value="other" data-i18n-text="app.other">Other</option>
+              </select></label>
+              <label><span data-i18n-text="arcade.series">Series</span><select id="arcade-series"><option value="" data-i18n-text="arcade.filter_all">All</option></select></label>
+              <label><span data-i18n-text="index.sort">Sort</span><select id="sort">
+                <option value="name" data-i18n-text="index.by_name">By name</option><option value="size" data-i18n-text="index.by_size">By size</option>
+                <option value="filename" data-i18n-text="index.by_rom_filename">By ROM filename</option>
+              </select></label>
+            </div>
+            <div class="collection-heading section-heading">
+              <div class="section-title-wrap"><h2 id="collection-title">All games <span id="results" class="result-count">—</span></h2><p id="filter-description" hidden></p></div>
+            </div>
+            <div id="game-grid" class="game-grid" aria-live="polite"><div class="empty-state" data-i18n-text="index.loading_your_local_library">Loading your local library…</div></div>
+            <div class="ng-load-more" id="ng-load-more" hidden><p id="ng-game-progress" role="status" aria-live="polite"></p><button id="ng-load-more-btn" type="button" data-i18n-text="app.load_more_games">Load More Games</button></div>
+          </section>
+        </main>
 
-          <!-- شبكة عرض الألعاب -->
-          <div id="game-grid" class="game-grid" aria-live="polite">
-            <div class="empty-state" data-i18n-text="index.loading_your_local_library">Loading your local library…</div>
-          </div>
-          <div class="ng-load-more" id="ng-load-more" hidden>
-            <p id="ng-game-progress" role="status" aria-live="polite"></p>
-            <button id="ng-load-more-btn" type="button" data-i18n-text="app.load_more_games">Load More Games</button>
-          </div>
-        </section>
-      </main>
+        <aside class="arcade-right">
+          <section class="arcade-panel">
+            <h2 data-i18n-text="arcade.collection">My collection</h2>
+            <div class="arcade-meter">
+              <div id="arcade-ring" class="arcade-ring"><strong id="arcade-percent">—</strong><small data-i18n-text="arcade.connected">Connected</small></div>
+              <dl>
+                <div><dt data-i18n-text="arcade.catalog">Catalog</dt><dd id="arcade-catalog">—</dd></div>
+                <div><dt data-i18n-text="arcade.roms">Connected ROMs</dt><dd id="stat-games">—</dd></div>
+                <div><dt data-i18n-text="index.favorites">Favorites</dt><dd id="arcade-favorites">—</dd></div>
+              </dl>
+            </div>
+            <dl class="arcade-stats">
+              <div><dt data-i18n-text="arcade.preview_files">Preview files</dt><dd id="stat-shots">—</dd></div>
+              <div><dt data-i18n-text="arcade.decoded">Decoded this session</dt><dd id="arcade-decoded">—</dd></div>
+              <div><dt data-i18n-text="index.archive_size">Archive size</dt><dd id="stat-size" dir="ltr">—</dd></div>
+              <div class="arcade-offline-row"><dt data-i18n-text="arcade.offline">Offline</dt><dd id="arcade-offline">—</dd></div>
+            </dl>
+          </section>
+          <section class="arcade-panel arcade-series-panel"><h2 data-i18n-text="arcade.supported">Supported series</h2><div id="arcade-series-links"></div></section>
+          <div class="arcade-controller" aria-hidden="true"><img src="/assets/media/neo-geo-mark.png" width="500" height="500" alt="" /><div class="arcade-controls-art"><span class="arcade-stick"></span><i></i><i></i><i></i><i></i></div></div>
+        </aside>
+      </div>
 
       <!-- تذييل الصفحة -->
-      <footer class="global-footer site-footer" aria-label="Site footer" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.site_footer&quot;}">
+      <footer class="global-footer site-footer arcade-footer" aria-label="Site footer" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.site_footer&quot;}">
         <a href="/" class="footer-brand" aria-label="Neo-Geo Web Port — Home" data-i18n-attrs="{&quot;aria-label&quot;:&quot;index.neo_geo_web_port_home&quot;}">
           <img
             src="/assets/media/neo-geo-mark.png"
@@ -208,6 +179,12 @@
           />
           <span class="footer-site-name">Neo-Geo Web Port</span>
         </a>
+        <nav class="arcade-footer-links" aria-label="Quick links" data-i18n-attrs='{"aria-label":"arcade.footer_links"}'>
+          <a href="#collection" data-i18n-text="index.library">Library</a>
+          <a href="/settings.html" data-i18n-text="index.settings">Settings</a>
+          <a href="./?guide=1" data-i18n-text="index.library_setup_guide">Library setup guide</a>
+          <a href="https://github.com/AliAl-ojeely/Neo-Geo-Web" data-i18n-text="arcade.github">GitHub repository</a>
+        </nav>
         <div class="footer-rights">
           <strong
              data-i18n-text="index.2026_neo_geo_web_port_website_design">© 2026 Neo-Geo Web Port — Website design and development by the project
@@ -217,7 +194,6 @@
              data-i18n-text="index.neo_geo_games_and_trademarks_belong_to">Neo Geo games and trademarks belong to their respective owners. Your files are not
             uploaded.</span
           >
-          <a class="footer-help" href="./?guide=1" data-i18n-text="index.library_setup_guide">Library setup guide</a>
         </div>
         <button
           class="back-to-top"

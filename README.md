@@ -268,6 +268,35 @@ Then open `http://127.0.0.1:8777/Neo-Geo-Web/`. The companion is bound to loopba
 
 ---
 
+## Web Browser Compatibility
+
+The desktop checks below were run on Windows. The browser engine versions come from the captured browser evidence. A full library-rendering check covers catalog cards and their previews. The gameplay checks apply to the listed samples.
+
+| Browser | Library rendering | Preview rendering | Game boot | Local library integration | Offline mode | Save / Load | Input validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Google Chrome** (Chromium 158.0.8127.88) | 160 cards | 160/160 | KOF ’98 sample | Companion and local session files | 160 previews with the local server stopped; KOF ’98 sample boot | KOF ’98 sample | Keyboard sample; emulated multi-touch/rotation on KOF ’98 |
+| **Brave Browser** (Chromium 158.0.8127.42) | 160 cards | 160/160 | Metal Slug sample | Companion and local session files | 160 previews with the local server stopped | Metal Slug sample | Keyboard sample |
+| **Microsoft Edge** (158.0.4370.33) | 160 cards | 160/160 | Samurai Shodown IV sample | Companion and local session files | 160 previews with the local server stopped | Samurai Shodown IV sample | Keyboard sample |
+
+The preview checks use the local library and the installed offline package. Native directory permission retention can vary by device, browser settings and installation. The table records the v2.0 gameplay samples and the v2.2–v2.3 library and offline checks.
+
+### Playing with touch controls
+
+1. Open a game and tap **Start Game**. On compatible mobile browsers the player requests fullscreen and landscape. Rotate the device manually if prompted, or continue in portrait.
+2. Select **Player 1** or **Player 2** in the touch toolbar. A new session starts with Player 1. The selector changes only the local touch controller port.
+3. In arcade modes that request credits, tap **Insert Coin**, then **Start P1** or **Start P2**. Insert Coin uses the original Neo Geo Select input. A game may use shared credits or require an additional credit or a specific screen for the second player to join. AES modes may start without coins.
+4. Open **Touch controls** to adjust joystick, action and auxiliary button sizes, spacing, opacity, or position. Changes apply while playing and are saved locally.
+
+### Mobile Browser Testing
+
+The v2.5 desktop touch checks used emulated input in Chrome (KOF ’98), Brave (Metal Slug), and Edge (Samurai Shodown IV). In KOF ’98, Insert Coin increased the credit counter and both players reached team order selection. In Metal Slug, both players entered a stage. In Samurai Shodown IV, both ports received input and the versus screen appeared. All three sessions exercised in-session save/load and return to the library. The v2.5 offline check covered all 160 previews in each browser with the local server stopped. A full offline gameplay session with the new touch controls remains **Not Yet Verified**.
+
+The v2.3 portrait, landscape, fullscreen and rotation checks ran in **Chrome Desktop with Android device emulation**. **Not Yet Verified** on physical devices: Chrome Android, Brave Android, Edge Android, Safari on iOS, tablets, touch-enabled laptops, and native screen orientation lock.
+
+### Future Browser Validation
+
+Future coverage may include Mozilla Firefox, Opera and Opera GX, Apple Safari, Samsung Internet, and additional Android and iOS browsers. Compatibility of an untested browser remains open.
+
 ## Browser Compatibility & Saved Library Access
 
 **Browser testing scope (Windows):** The project has been tested with **Google Chrome, Brave, and Microsoft Edge**. These are the only browsers in the project's reported manual browser-testing scope so far; the Node.js/Python tests are not a substitute for browser-by-browser gameplay verification. **Firefox, Safari, Opera, Vivaldi, and other browsers have not been verified**. Additional browser testing is planned for future releases. Support and permission behavior may also differ across browser versions, operating systems, and privacy settings.

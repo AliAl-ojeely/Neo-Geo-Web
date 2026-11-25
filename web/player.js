@@ -261,6 +261,7 @@
 
     // Enable pause and input/state guards after EmulatorJS announces game startup.
     window.EJS_onGameStart = () => {
+      document.dispatchEvent(new Event('ng-touch-game-start'));
       // Update the local hero only for a successfully started game.
       if (!diag.report.failureStage) window.NGLastPlayed?.record(game?.filename);
       window.NGTabPause?.enable();

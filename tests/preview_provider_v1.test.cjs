@@ -19,7 +19,8 @@ function fixture() {
     removeAttribute() {}
   }
   const sandbox = {
-    Blob, Event, Uint8Array, Image: Probe, document: { documentElement: {} },
+    Blob, Event, CustomEvent, Uint8Array, Image: Probe,
+    document: { documentElement: {}, dispatchEvent() {} },
     NGLocal: { maps: { previews } },
     addEventListener: (_, callback) => { pagehide = callback; },
     URL: {

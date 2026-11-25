@@ -47,7 +47,7 @@ test('ignores bad input, broken records and unavailable storage', () => {
 
 test('feature prioritizes last-played game over static pick and updates its image/button', () => {
   const source = read('web/app.js').replace(/\r\n/g, '\n');
-  const start = source.indexOf('function feature() {');
+  const start = source.indexOf('function feature(refresh = false) {');
   const end = source.indexOf('\n\n// Load browser-linked', start);
   assert(start > 0 && end > start, 'hero function must be extractable');
   const snippet = source.slice(start, end);
@@ -114,6 +114,6 @@ test('player hook records only after start and both pages load one shared module
     assert(last > 0 && last < next);
   }
   assert.match(js, /window\.EJS_onGameStart = \(\) => \{[\s\S]{0,250}if \(!diag\.report\.failureStage\) window\.NGLastPlayed\?\.record\(game\?\.filename\)/);
-  assert.match(app, /addEventListener\('ng-library-return', feature\)/);
+  assert.match(app, /addEventListener\('ng-library-return', \(\) => \{[^\n]*feature\(\)/);
   assert.match(languages, /last_played_game_description:\s*\{ en: '[^']+', ar: '[^']+' \}/);
 });

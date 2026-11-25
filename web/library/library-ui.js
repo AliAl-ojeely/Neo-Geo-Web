@@ -6,7 +6,7 @@
 
     const panel = document.createElement('details');
     panel.id = 'local-library';
-    panel.open = true;
+    panel.open = !document.body.classList.contains('arcade-home');
     panel.className = 'player-diagnostics local-library-deck';
     panel.innerHTML = `
       <summary>

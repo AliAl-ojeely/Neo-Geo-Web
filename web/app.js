@@ -8,6 +8,7 @@ const state = {
   engine: null,
   view: 'all',
   category: null,
+  series: null,
   query: '',
   visibleCount: 30
 };
@@ -19,14 +20,15 @@ try {
   if (Array.isArray(list)) favorites = new Set(list.filter(s => typeof s === 'string'));
 } catch (_) {}
 
-const categoryNames = {
-  fighting: NGI18n.t('app.fighting'),
-  action: NGI18n.t('app.action'),
-  shooter: NGI18n.t('app.shooters'),
-  sports: NGI18n.t('app.sports'),
-  puzzle: NGI18n.t('app.puzzles'),
-  other: NGI18n.t('app.other')
+const categoryKeys = {
+  fighting: 'app.fighting',
+  action: 'app.action',
+  shooter: 'app.shooters',
+  sports: 'app.sports',
+  puzzle: 'app.puzzles',
+  other: 'app.other'
 };
+const categoryName = category => NGI18n.t(categoryKeys[category] || categoryKeys.other);
 
 // Format library sizes in gigabytes or megabytes for display.
 const bytes = n =>
@@ -65,22 +67,27 @@ function updateNavigation() {
   document
     .querySelectorAll('[data-view]')
     .forEach(el =>
-      el.classList.toggle('active', !state.category && el.dataset.view === state.view)
+      el.classList.toggle('active', !state.category && !state.series && el.dataset.view === state.view)
     );
   document
     .querySelectorAll('[data-category]')
     .forEach(el => el.classList.toggle('active', state.category === el.dataset.category));
-  $('favorite-count').textContent = state.games.filter(g => favorites.has(g.filename)).length;
+  const favoriteCount = state.games.filter(g => favorites.has(g.filename)).length;
+  $('favorite-count').textContent = favoriteCount;
+  if ($('arcade-favorites')) $('arcade-favorites').textContent = favoriteCount;
+  if ($('arcade-genre')) $('arcade-genre').value = state.category || '';
+  window.NGArcade?.setFilter(state.series);
 }
 
 // Apply the chosen filter, redraw the grid, and scroll to it on narrow screens.
-function switchView(view, category) {
+function switchView(view, category, series = null, scroll = false) {
   state.view = view;
   state.category = category || null;
+  state.series = series;
   state.visibleCount = 30;
   updateNavigation();
   render();
-  if (innerWidth < 780) $('collection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (scroll || innerWidth < 780) $('collection').scrollIntoView({ block: 'start' });
 }
 
 // Toggle the in-memory favorite, attempt persistence, and refresh the library view.
@@ -91,6 +98,7 @@ function toggleFavorite(g) {
     localStorage.setItem(favoriteKey, JSON.stringify([...favorites]));
   } catch (_) {}
   updateNavigation();
+  window.NGArcade?.setFeature(state.featured, favorites.has(state.featured?.filename), state.featured && categoryName(state.featured.category));
   render();
 }
 
@@ -106,6 +114,7 @@ function card(g) {
 
   if (g.screenshot) {
     const img = node('img', 'game-image');
+    img.dataset.preview = g.screenshot;
     img.loading = 'lazy';
     img.decoding = 'async';
     img.alt = NGI18n.t('common.imageNamed', { title: g.title });
@@ -136,31 +145,42 @@ function card(g) {
   fav.type = 'button';
   fav.title = isFav ? NGI18n.t('app.remove_from_favorites') : NGI18n.t('app.add_to_favorites');
   fav.setAttribute('aria-label', fav.title);
-  fav.addEventListener('click', () => toggleFavorite(g));
-  cover.appendChild(fav);
+  fav.setAttribute('aria-pressed', String(isFav));
+  fav.addEventListener('click', () => {
+    const restoreFocus = document.activeElement === fav;
+    toggleFavorite(g);
+    if (restoreFocus) {
+      const cardLink = document.querySelector(`#game-grid a[href="${CSS.escape(gameLink(g))}"]`);
+      (cardLink?.closest('.game-card')?.querySelector('.favorite-button') ||
+        document.querySelector('[data-view="favorites"]'))?.focus({ preventScroll: true });
+    }
+  });
+
 
   const category = node(
     'span',
     'cover-category',
-    categoryNames[g.category] || NGI18n.t('app.other')
+    categoryName(g.category)
   );
-  cover.appendChild(category);
+
   item.appendChild(cover);
 
   const details = node('div', 'game-details');
   const title = node('a', 'game-title', g.title);
   title.href = gameLink(g);
   title.title = g.title;
-  details.appendChild(title);
+  title.dir = 'auto';
+  const heading = node('div', 'arcade-card-heading');
+  heading.append(title, fav);
+  details.appendChild(heading);
 
   const meta = node('div', 'game-meta');
-  const short = node('span', 'file-name', g.filename);
-  short.title =
+  meta.title =
     g.selected_filename && g.selected_filename !== g.filename
       ? `${g.filename} → ${g.selected_filename}`
       : g.filename;
   const size = node('span', 'game-size', bytes(g.size));
-  meta.append(short, size);
+  meta.append(category, size);
   details.appendChild(meta);
   item.appendChild(details);
 
@@ -172,11 +192,12 @@ function render(appendOnly = false) {
   const query = state.query.trim().toLocaleLowerCase();
   let games = state.games.filter(g => {
     if (state.category && g.category !== state.category) return false;
+    if (state.series && !window.NGArcade?.matches(state.series, g)) return false;
     if (state.view === 'favorites' && !favorites.has(g.filename)) return false;
     if (state.view === 'images' && !g.screenshot) return false;
     return (
       !query ||
-      (g.title + ' ' + g.filename + ' ' + (g.driver || '')).toLocaleLowerCase().includes(query)
+      (g.title + ' ' + g.filename + ' ' + (g.driver || '') + ' ' + (window.NGArcade?.seriesFor(g)?.name || '')).toLocaleLowerCase().includes(query)
     );
   });
 
@@ -191,7 +212,7 @@ function render(appendOnly = false) {
   );
 
   const label = state.category
-    ? categoryNames[state.category] || NGI18n.t('app.other')
+    ? categoryName(state.category)
     : state.view === 'favorites'
       ? NGI18n.t('app.favorite_games')
       : state.view === 'images'
@@ -231,39 +252,60 @@ function render(appendOnly = false) {
 }
 
 // Prefer a featured game with a screenshot, falling back to any illustrated game.
-function feature() {
+function feature(refresh = false) {
   const games = state.games;
   const last = window.NGLastPlayed?.read();
   const recent = last ? games.find(g => g.filename === last.filename) : null;
-  const featured = recent ||
+  const featured = window.NGArcade ? window.NGArcade.choose(games, recent) : recent ||
     ['mslug3', 'kof98', 'blazstar', 'samsho2', 'garou', 'mslug']
       .map(id => games.find(g => g.id.toLowerCase() === id && g.screenshot))
       .find(Boolean) || games.find(g => g.screenshot);
-  const img = $('featured-image');
-  const placeholder = $('feature-placeholder');
-  img.hidden = true;
-  if (window.NG_STATIC) NGPreviews.detach?.(img);
-  img.removeAttribute('src');
-  placeholder.hidden = Boolean(featured?.screenshot);
-  if (!featured) return;
-  $('featured-title').setAttribute('data-no-i18n', '');
-  $('featured-title').textContent = featured.title;
-  $('featured-description').textContent = NGI18n.t(
-    recent ? 'app.last_played_game_description' : 'app.a_verified_arcade_game_from_your_local'
-  );
-  $('featured-play').href = gameLink(featured);
-  if (!featured.screenshot) return;
-  // Bind one stable image failure handler even across library rescans.
-  if (!img.dataset.ngFeaturedErrorBound) {
-    img.addEventListener('error', () => {
-      img.hidden = true;
-      placeholder.hidden = false;
-    });
-    img.dataset.ngFeaturedErrorBound = '1';
+  if (window.NGArcade) {
+    window.NGArcade.present(featured, commit, refresh);
+  } else {
+    commit($('featured-image'), false);
   }
-  if (window.NG_STATIC) NGPreviews.attach(img, featured.screenshot);
-  else img.src = shot(featured);
-  img.hidden = false;
+
+  function commit(img, prepared) {
+    const placeholder = $('feature-placeholder');
+    if (!prepared) {
+      img.hidden = true;
+      if (window.NG_STATIC) NGPreviews.detach?.(img);
+      img.removeAttribute('src');
+    }
+    placeholder.hidden = Boolean(featured?.screenshot && (!prepared || img.naturalWidth));
+    if (window.NGArcade) {
+      state.featured = featured;
+      window.NGArcade.setFeature(featured, favorites.has(featured?.filename), featured && categoryName(featured.category));
+    }
+    if (!featured) return;
+    $('featured-title').setAttribute('data-no-i18n', '');
+    $('featured-title').textContent = featured.title;
+    $('featured-description').textContent = NGI18n.t(
+      featured === recent ? 'app.last_played_game_description' : 'app.a_verified_arcade_game_from_your_local'
+    );
+    $('featured-play').href = gameLink(featured);
+    if (prepared || !featured.screenshot) return;
+    // Bind one stable image failure handler even across library rescans.
+    if (!img.dataset.ngFeaturedErrorBound) {
+      img.addEventListener('error', () => {
+        img.hidden = true;
+        placeholder.hidden = false;
+      });
+      img.dataset.ngFeaturedErrorBound = '1';
+    }
+    img.dataset.preview = featured.screenshot;
+    if (window.NG_STATIC) NGPreviews.attach(img, featured.screenshot);
+    else img.src = shot(featured);
+    img.hidden = false;
+  }
+}
+
+// Reflect the local installation and bundled-core status in the active language.
+function updateEngineLabel() {
+  $('engine-health').textContent = state.engine?.ready
+    ? NGI18n.t(window.NG_STATIC ? 'app.fbneo_is_included' : 'app.engine_ready')
+    : NGI18n.t('app.engine_installation_required');
 }
 
 // Load browser-linked or server library data and update counters, notices, and game cards.
@@ -275,6 +317,7 @@ async function load() {
       await NGLocal.init();
       data = NGLocal.data();
       NGPreviews.clear();
+      window.NGArcade?.resetDecoded();
     } else {
       const response = await fetch('/api/games', { cache: 'no-store' });
       if (!response.ok) throw Error('HTTP ' + response.status);
@@ -290,11 +333,7 @@ async function load() {
       ? NGI18n.t('app.ready')
       : NGI18n.t('app.missing');
     $('side-count').textContent = data.summary.games;
-    $('engine-health').textContent = window.NG_STATIC
-      ? NGI18n.t('app.fbneo_is_included')
-      : data.engine.ready
-        ? NGI18n.t('app.engine_ready')
-        : NGI18n.t('app.engine_installation_required');
+    updateEngineLabel();
 
     const notices = [];
     if (!data.engine.ready) notices.push(NGI18n.t('app.fbneo_files_are_incomplete_run_py_3'));
@@ -314,7 +353,8 @@ async function load() {
     }
     showBanner(notices.join('  •  '));
     updateNavigation();
-    feature();
+    window.NGArcade?.updateCollection(state.games, window.NGLocal?.manifest?.games, Number($('favorite-count').textContent));
+    feature(true);
     render();
   } catch (err) {
     state.games = [];
@@ -375,9 +415,15 @@ document.addEventListener('keydown', event => {
 });
 
 // Refresh the hero when a same-origin game iframe returns to its parent library.
-document.addEventListener('ng-library-return', feature);
+document.addEventListener('ng-library-return', () => { window.NGArcade?.resetFeature(); feature(); });
 document.addEventListener('ng-language-changed', () => {
-  if (state.games.length) feature();
+  if (state.summary) {
+    updateEngineLabel();
+    $('stat-bios').textContent = NGI18n.t(state.summary.bios_present ? 'app.ready' : 'app.missing');
+    window.NGArcade?.updateCollection(state.games, window.NGLocal?.manifest?.games, Number($('favorite-count').textContent));
+  }
+  feature();
+  render();
 });
 
 if (window.NG_STATIC) {
@@ -387,4 +433,11 @@ if (window.NG_STATIC) {
   });
 }
 
+window.NGArcade?.mount({
+  feature,
+  favorite: toggleFavorite,
+  available: () => state.games.filter(game => game.screenshot).length,
+  genre: category => switchView(state.view, category, state.series),
+  series: (series, scroll) => switchView('all', scroll ? null : state.category, series || null, scroll)
+});
 load();

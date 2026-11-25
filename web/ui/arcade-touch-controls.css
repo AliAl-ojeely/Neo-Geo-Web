@@ -1,0 +1,444 @@
+/* Restyle the existing EmulatorJS touch controls without changing their events or mappings. */
+.player-page #game .ejs_virtualGamepad_parent {
+  --touch-size: clamp(40px, calc(clamp(44px, 13.9cqw, 58px) * var(--touch-action-scale, 1)), 70px);
+  --touch-gap: var(--touch-gap-pref, 4px);
+  --touch-cluster: calc(3 * var(--touch-size) + 2 * var(--touch-gap));
+  container-type: inline-size;
+  bottom: calc(39px + env(safe-area-inset-bottom, 0px));
+  height: calc(var(--touch-cluster) + 54px);
+  left: 0;
+  direction: ltr;
+  pointer-events: none;
+}
+
+.player-page #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right) {
+  bottom: 51px;
+  width: var(--touch-cluster);
+  height: var(--touch-cluster);
+}
+.player-page #game .ejs_virtualGamepad_left { left: clamp(5px, 2cqw, 20px); }
+.player-page #game .ejs_virtualGamepad_right { right: clamp(5px, 2cqw, 20px); }
+
+.player-page #game :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right):has(> .b_y) {
+  display: grid;
+  grid-template: repeat(3, var(--touch-size)) / repeat(3, var(--touch-size));
+  gap: var(--touch-gap);
+}
+.player-page #game .ejs_virtualGamepad_parent .ejs_virtualGamepad_button {
+  pointer-events: auto;
+  touch-action: none;
+  display: grid;
+  place-items: center;
+  position: relative;
+  inset: auto !important;
+  box-sizing: border-box;
+  width: var(--touch-size);
+  height: var(--touch-size) !important;
+  padding: 0;
+  border: 1px solid var(--touch-accent, #94aabd) !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 38% 18%, #334a60ed, #101824ed 76%);
+  box-shadow: inset 0 1px #fff4, 0 3px 0 #080c13e0;
+  color: #f4faff;
+  font: 800 clamp(1rem, 4.5cqw, 1.35rem)/1 system-ui !important;
+  text-shadow: 0 1px #000;
+  transition: background-color .13s, transform .13s, box-shadow .13s;
+}
+.player-page #game .ejs_virtualGamepad_button.b_y { grid-area: 1 / 2; --touch-accent: #65cdfb; }
+.player-page #game .ejs_virtualGamepad_button.b_x { grid-area: 2 / 1; --touch-accent: #ffce6c; }
+.player-page #game .ejs_virtualGamepad_button.b_b { grid-area: 2 / 3; --touch-accent: #ff8ba6; }
+.player-page #game .ejs_virtualGamepad_button.b_a { grid-area: 3 / 2; --touch-accent: #72e6ba; }
+
+.player-page #game .ejs_virtualGamepad_parent .ejs_virtualGamepad_bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  bottom: 0;
+  width: 100%;
+  height: 44px;
+  left: 0;
+  margin: 0;
+}
+.player-page #game .ejs_virtualGamepad_bottom .ejs_virtualGamepad_button {
+  width: auto;
+  min-width: 44px;
+  height: 44px !important;
+  padding-inline: clamp(5px, 1.2cqw, 11px);
+  border-radius: 9px !important;
+  font: 720 clamp(.69rem, 2.9cqw, .86rem)/1.1 system-ui !important;
+  background: #132130eb;
+}
+.player-page #game .ejs_virtualGamepad_bottom .b_speed_fast { order: -2; }
+.player-page #game .ejs_virtualGamepad_bottom .b_select { order: -1; }
+.player-page #game .ejs_virtualGamepad_bottom .b_speed_slow { order: 1; }
+
+.player-page #game .ejs_virtualGamepad_parent .ejs_virtualGamepad_button_down,
+.player-page #game .ejs_virtualGamepad_parent .ejs_virtualGamepad_button:active {
+  background: #26748a;
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 4px #0007;
+}
+@media (hover: hover) {
+  .player-page #game .ejs_virtualGamepad_button:hover { filter: brightness(1.15); }
+}
+
+/* The direction zone and stick keep the vendor hit-testing geometry and transform. */
+.player-page #game .ejs_virtualGamepad_parent :is(.b_dpad,.ejs_dpad_main) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  pointer-events: auto;
+}
+.player-page #game .ejs_virtualGamepad_parent .b_dpad:not(.ejs_dpad_main) {
+  background: radial-gradient(circle, #141f2a5c 35%, #101b299e 68%);
+  border: 1px solid #6a8ca394;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 4px #0a111a60;
+}
+.player-page #game .ejs_virtualGamepad_parent .b_dpad .back {
+  background: #182739 !important;
+  border: 1px solid #7ca4bb;
+  box-sizing: border-box;
+}
+.player-page #game .ejs_virtualGamepad_parent .b_dpad .front {
+  background: radial-gradient(circle at 38% 29%, #61dbee, #1a728f 70%) !important;
+  border: 1px solid #a4eaff;
+  box-sizing: border-box;
+}
+.player-page #game .ejs_dpad_bar { background: #283d50; }
+.player-page #game .ejs_dpad_horizontal { height: 38%; }
+.player-page #game .ejs_dpad_vertical { width: 38%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .player-page #game .ejs_virtualGamepad_button { transition: none; }
+}
+
+/* In portrait, reserve a separate deck so the controls do not sit over the game. */
+@media (max-width: 600px) and (orientation: portrait) and (pointer: coarse) {
+  .player-page .emulator-stage:has(#game.ejs_parent:not(:fullscreen)) {
+    aspect-ratio: auto;
+  }
+  .player-page .emulator-stage #game.ejs_parent:not(:fullscreen) {
+    height: auto;
+  }
+  .player-page #game.ejs_parent:not(:fullscreen) > :is(.ejs_game, .ejs_canvas_parent) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+  .player-page #game:not(:fullscreen) .ejs_virtualGamepad_parent {
+    position: relative;
+    bottom: auto;
+    padding-block-end: env(safe-area-inset-bottom, 0px);
+    height: calc(var(--touch-cluster) + 73px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(155deg, #192638, #0a101a 75%);
+    border-block-start: 1px solid #3d566e;
+  }
+  .player-page #game:not(:fullscreen) .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right) {
+    bottom: calc(61px + env(safe-area-inset-bottom, 0px));
+  }
+  .player-page #game:not(:fullscreen) .ejs_virtualGamepad_parent .ejs_virtualGamepad_bottom {
+    bottom: calc(9px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.player-page #game .ng-touch-tools {
+  position: absolute;
+  z-index: 7;
+  top: max(5px, env(safe-area-inset-top, 0px));
+  right: max(8px, env(safe-area-inset-right, 0px));
+  display: flex;
+  gap: 5px;
+  max-width: calc(100% - 62px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.player-page #game :is(.ng-touch-tools,.ng-touch-panel) button {
+  border: 1px solid #52718b;
+  background: #112033;
+  color: #f0f6fd;
+  border-radius: 6px;
+  padding: .35rem .55rem;
+  min-height: 34px;
+  font: 650 .76rem/1.2 system-ui;
+}
+.player-page #game .ng-touch-panel {
+  position: absolute;
+  z-index: 10;
+  top: max(44px, calc(env(safe-area-inset-top, 0px) + 40px));
+  right: max(8px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: .45rem;
+  width: min(285px, calc(100% - 18px));
+  max-height: calc(100% - 50px);
+  overflow: auto;
+  background: #111e2d;
+  color: #f1f6fa;
+  border: 1px solid #55718a;
+  border-radius: 9px;
+  padding: .65rem;
+}
+.player-page #game .ng-touch-panel label { display: grid; gap: .18rem; }
+.player-page #game .ng-touch-panel input { width: 100%; accent-color: #00d9f5; }
+.player-page #game .ng-touch-panel select { background: #152437; color: inherit; }
+.player-page #game :is(.ng-touch-panel,.ng-rotate-note)[hidden] { display: none !important; }
+.player-page #game .ng-rotate-note {
+  position: absolute;
+  inset-inline: 10px;
+  top: 42px;
+  z-index: 6;
+  margin: 0;
+  padding: .35rem .54rem;
+  border: 1px solid #506277;
+  border-radius: 6px;
+  color: #eef6fc;
+  background: #111d2bee;
+  font: .79rem/1.4 system-ui;
+}
+.player-page #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right):has(> .b_dpad) {
+  --stick-size: min(calc(clamp(108px, 35cqw, 158px) * var(--touch-stick-scale, 1)), 45cqw);
+  width: var(--stick-size);
+  height: var(--stick-size);
+  max-width: 47%;
+}
+.player-page #game .ejs_virtualGamepad_parent :is(.ejs_virtualGamepad_button,.b_dpad,.ejs_dpad_main) {
+  opacity: var(--touch-opacity,1);
+}
+.player-page #game[data-touch-position="higher"] { --touch-lift: 13px; }
+.player-page #game[data-touch-position="lower"] { --touch-lift: -10px; }
+.player-page #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right) {
+  margin-block-end: var(--touch-lift, 0px);
+}
+.player-page #game.ng-touch-portrait:not(:fullscreen) .ejs_virtualGamepad_parent {
+  height: calc(var(--touch-cluster) * max(var(--touch-stick-scale, 1),1) + 87px + env(safe-area-inset-bottom,0px));
+}
+
+@media (orientation: landscape) {
+  html:has(.player-page.ng-touch-landscape), .player-page.ng-touch-landscape { overflow: hidden; }
+  .player-page.ng-touch-landscape #game {
+    --left-safe: max(8px, env(safe-area-inset-left, 0px));
+    --right-safe: max(8px, env(safe-area-inset-right, 0px));
+    --bottom-safe: max(5px, env(safe-area-inset-bottom, 0px));
+    --side: clamp(132px, 23vw, 238px);
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    width: 100vw;
+    height: 100dvh;
+    min-height: 0;
+    background: #080e16;
+  }
+  .player-page.ng-touch-landscape #game > .ejs_canvas_parent {
+    position: absolute;
+    top: max(38px, calc(env(safe-area-inset-top, 0px) + 37px));
+    bottom: calc(49px + var(--bottom-safe));
+    left: calc(var(--side) + var(--left-safe));
+    right: calc(var(--side) + var(--right-safe));
+    width: auto;
+    height: auto;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #05080d;
+    border: 1px solid #334963;
+    border-radius: 8px;
+  }
+  .player-page.ng-touch-landscape #game canvas.ejs_canvas { width: 100%; height: 100%; object-fit: contain; }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_parent {
+    --touch-size: clamp(40px, calc(clamp(44px, 6.4vw, 60px) * var(--touch-action-scale, 1)), 70px);
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    background: transparent;
+    border: 0;
+  }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right) {
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    margin-top: calc(0px - var(--touch-lift, 0px));
+  }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right):has(> .b_dpad) {
+    --stick-size: min(calc(clamp(122px, 19vw, 191px) * var(--touch-stick-scale, 1)), var(--side));
+  }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_left { left: var(--left-safe); }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_right { right: var(--right-safe); }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_parent .ejs_virtualGamepad_bottom { bottom: var(--bottom-safe); }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_open { left: var(--left-safe); right: auto; }
+  .player-page.ng-touch-landscape #game .ng-touch-tools { right: var(--right-safe); }
+  .player-page.ng-touch-landscape #game .ng-touch-panel { right: var(--right-safe); }
+  .player-page.ng-touch-landscape #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right) {
+    --touch-size: min(clamp(40px, calc(clamp(44px, 6.4vw, 60px) * var(--touch-action-scale, 1)),70px),
+      calc((var(--side) - 2 * var(--touch-gap)) / 3));
+  }
+}
+
+/* Keep chrome outside input zones; the game viewport is a single centered canvas. */
+.player-page #game:has(.ng-touch-tools) .ejs_virtualGamepad_open { display: none !important; }
+.player-page #game .ng-touch-tools {
+  left: max(6px, env(safe-area-inset-left, 0px));
+  right: max(6px, env(safe-area-inset-right, 0px));
+  max-width: none;
+  flex-wrap: nowrap;
+}
+.player-page #game [data-touch-menu] { margin-inline-end: auto; min-width: 34px; }
+.player-page #game .ng-touch-tools button:focus-visible,
+.player-page #game .ng-touch-panel :focus-visible { outline: 2px solid #00d9f5; outline-offset: 2px; }
+.player-page #game .ng-touch-tools button:hover { border-color: #00d9f5; }
+.player-page #game .ng-touch-panel label { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.player-page #game .ng-touch-panel label :is(input,select) { grid-column: 1 / -1; }
+.player-page #game .ng-touch-panel output { color: #a5f4ff; font-variant-numeric: tabular-nums; direction: ltr; }
+.player-page #game .ng-touch-panel input { margin: 0; }
+.player-page #game .ejs_virtualGamepad_parent .b_dpad:not(.ejs_dpad_main) {
+  background: radial-gradient(circle, #233a51 34%, #131e2d 35%, #172b40 66%, #253f55 67%, #101d2c 72%);
+  box-shadow: inset 0 1px 4px #a0daef45, 0 3px 7px #0007;
+}
+.player-page #game .b_dpad:not(.ejs_dpad_main)::before {
+  content: ""; position: absolute; inset: 9%; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%239dd7f0'%3E%3Cpath d='M50 1l5 7H45zM50 99l-5-7h10zM1 50l7-5v10zM99 50l-7 5V45z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.player-page #game .b_dpad:active .front { box-shadow: 0 0 10px #6ce8ff90; }
+.player-page #game .ejs_virtualGamepad_button { box-shadow: inset 0 1px #fff6, inset 0 0 12px #87bad62a, 0 3px 0 #070c15; }
+.player-page #game .ejs_virtualGamepad_parent .ejs_virtualGamepad_button_down {
+  background: color-mix(in srgb, var(--touch-accent, #84d9ee) 40%, #101822);
+}
+.player-page #game .ejs_virtualGamepad_bottom .ejs_virtualGamepad_button { width: clamp(48px, 9vw, 72px); }
+@media (orientation: landscape) {
+  .player-page.ng-touch-landscape #game { --side: clamp(132px, 20vw, 224px); }
+  .player-page.ng-touch-landscape #game > .ejs_canvas_parent { display: block; }
+  .player-page.ng-touch-landscape #game .ejs_canvas_parent > canvas.ejs_canvas {
+    position: absolute; inset: 0; width: 100% !important; height: 100% !important; object-fit: contain;
+  }
+}
+@media (max-width:600px) and (orientation:portrait) and (pointer:coarse) {
+  .player-page #game.ng-touch-portrait:not(:fullscreen) .ejs_virtualGamepad_parent {
+    height: calc(max(var(--touch-cluster), clamp(108px, 35cqw, 158px) * var(--touch-stick-scale, 1)) + 73px + env(safe-area-inset-bottom,0px));
+  }
+}
+
+.player-page #game .b_dpad[data-touch-direction]::after {
+  content: ""; position: absolute; pointer-events: none;
+  width: 8px; height: 8px; border-radius: 50%; background: #c4f9ff;
+  box-shadow: 0 0 8px #54cfff;
+}
+.player-page #game .b_dpad[data-touch-direction="up"]::after { top: 9%; left: calc(50% - 4px); }
+.player-page #game .b_dpad[data-touch-direction="down"]::after { bottom: 9%; left: calc(50% - 4px); }
+.player-page #game .b_dpad[data-touch-direction="left"]::after { left: 9%; top: calc(50% - 4px); }
+.player-page #game .b_dpad[data-touch-direction="right"]::after { right: 9%; top: calc(50% - 4px); }
+@media (max-width:600px) and (orientation:portrait) and (pointer:coarse) {
+  .player-page #game .ejs_virtualGamepad_parent > :is(.ejs_virtualGamepad_left,.ejs_virtualGamepad_right):has(> .b_y) {
+    --touch-size: min(clamp(40px, calc(clamp(44px,13.9cqw,58px) * var(--touch-action-scale,1)),70px),
+      calc((46cqw - 2 * var(--touch-gap)) / 3));
+  }
+}
+
+/* Portrait fullscreen keeps the touch deck directly below the aspect-fitted screen. */
+@media (orientation: portrait) {
+  .player-page #game.ng-touch-portrait:fullscreen {
+    --portrait-top: max(100px, calc(env(safe-area-inset-top, 0px) + 93px));
+    --portrait-screen: min(75vw, max(110px, calc(100dvh - 340px)));
+  }
+  .player-page #game.ng-touch-portrait:fullscreen > .ejs_canvas_parent {
+    position: absolute;
+    inset: var(--portrait-top) max(6px, env(safe-area-inset-right, 0px)) auto max(6px, env(safe-area-inset-left, 0px));
+    width: auto;
+    height: var(--portrait-screen);
+    overflow: hidden;
+  }
+  .player-page #game.ng-touch-portrait:fullscreen .ejs_virtualGamepad_parent {
+    top: calc(var(--portrait-top) + var(--portrait-screen) + 6px);
+    bottom: auto;
+    height: calc(max(var(--touch-cluster), clamp(108px, 35vw, 158px) * var(--touch-stick-scale, 1)) + 62px);
+  }
+}
+.player-page #game:is(.ng-touch-portrait:fullscreen, .ng-touch-landscape) .ejs_canvas_parent > canvas.ejs_canvas,
+.player-page.ng-touch-landscape #game .ejs_canvas_parent > canvas.ejs_canvas {
+  position: absolute !important;
+  inset: 50% auto auto 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important; height: 100% !important;
+  object-fit: contain !important; object-position: center !important;
+}
+
+/* Size the emulator viewport itself, so FBNeo does not render into a tall letterboxed canvas. */
+@media (orientation: landscape) {
+  .player-page.ng-touch-landscape #game {
+    --screen-top: max(38px, calc(env(safe-area-inset-top, 0px) + 37px));
+    --screen-bottom: calc(49px + var(--bottom-safe));
+    --screen-height: calc(100dvh - var(--screen-top) - var(--screen-bottom));
+    --screen-width: calc(100vw - 2 * var(--side) - var(--left-safe) - var(--right-safe));
+  }
+  .player-page.ng-touch-landscape #game > .ejs_canvas_parent {
+    inset: calc(var(--screen-top) + var(--screen-height) / 2) auto auto
+      calc((100vw + var(--left-safe) - var(--right-safe)) / 2);
+    width: min(var(--screen-width), calc(var(--screen-height) * 4 / 3));
+    height: auto;
+    aspect-ratio: 4 / 3;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* The existing Select hit target represents arcade coin input for FBNeo. */
+.player-page #game .ng-touch-players {
+  position: absolute;
+  top: 39px;
+  left: 0;
+  display: flex;
+  gap: 4px;
+  direction: inherit;
+}
+.player-page #game .ng-touch-players button[aria-pressed="true"] {
+  color: #03131b;
+  background: #00d9f5;
+  border-color: #7cf3ff;
+}
+.player-page #game .ejs_virtualGamepad_bottom .ejs_virtualGamepad_button {
+  width: clamp(42px, calc(66px * var(--touch-aux-scale, 1)), 80px);
+  height: clamp(40px, calc(44px * var(--touch-aux-scale, 1)), 54px) !important;
+  white-space: normal;
+  padding-inline: 3px;
+}
+.player-page #game .ejs_virtualGamepad_bottom .ng-touch-coin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  width: clamp(75px, calc(90px * var(--touch-aux-scale,1)), 108px);
+  flex: 0 0 auto;
+  background: #35281b;
+  color: #ffe6a4;
+  border-color: #e9ad42 !important;
+}
+.player-page #game .ng-touch-coin > span { pointer-events: none; }
+.player-page #game .ng-touch-coin::before {
+  content: ""; inline-size: 12px; block-size: 12px; flex: 0 0 12px;
+  border-radius: 50%; border: 1px solid #ffe5a1;
+  background: #de9f24; box-shadow: inset 0 0 0 2px #91601b;
+}
+.player-page #game .ejs_virtualGamepad_bottom .ng-touch-coin.ejs_virtualGamepad_button_down { background: #97651b; }
+.player-page #game .ng-rotate-note { top: 80px; }
+.player-page #game .ng-touch-panel { z-index: 12; }
+@media (orientation: landscape) {
+  .player-page.ng-touch-landscape #game .ng-touch-players { top: 0; left: 40px; }
+}
+@media (max-width: 420px) and (orientation: portrait) {
+  .player-page #game .ejs_virtualGamepad_bottom { padding-inline: 4px; gap: 3px; }
+  .player-page #game .ejs_virtualGamepad_bottom .ejs_virtualGamepad_button:not(.ng-touch-coin) { flex: 0 1 auto; min-width: 40px; }
+}
+@media (orientation: portrait) {
+  .player-page #game.ng-touch-portrait:fullscreen {
+    --portrait-top: max(137px, calc(env(safe-area-inset-top, 0px) + 130px));
+  }
+}
+
+/* The native toolbar can appear on mouse movement. Keep its hit area above the credit row. */
+.player-page #game:has(.ng-touch-tools) .ejs_menu_bar {
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  transform: none;
+  transition: opacity .2s ease;
+}

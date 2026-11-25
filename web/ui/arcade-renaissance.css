@@ -1,0 +1,610 @@
+.arcade-home {
+  --arcade-background: #090b0f;
+  --arcade-panel: #151a22;
+  --arcade-cyan: #00d9f5;
+  --arcade-red: #ff315b;
+  --arcade-gold: #ffc83d;
+  --arcade-border: #343d49;
+  --arcade-text: #f3f5f8;
+  --arcade-muted: #adb9c7;
+  min-inline-size: 0;
+  background: var(--arcade-background);
+  color: var(--arcade-text);
+  font-family: system-ui, sans-serif;
+}
+.arcade-home [hidden] { display: none !important; }
+.arcade-home :where(button, a, select, summary, input):focus-visible { outline: 2px solid var(--arcade-cyan); outline-offset: 3px; }
+.arcade-home .obsidian-shell { background: var(--arcade-background); width: 100%; max-width: none; margin: 0; }
+.arcade-home .arcade-header {
+  display: flex;
+  align-items: center;
+  gap: clamp(.65rem, 2.2vw, 2.6rem);
+  min-height: 74px;
+  padding: .65rem clamp(.8rem, 2vw, 2.2rem);
+  border-block-end: 1px solid var(--arcade-border);
+  background: #0d1116;
+}
+.arcade-home .arcade-brand { display: flex; align-items: center; gap: .75rem; color: var(--arcade-text); text-decoration: none; flex: 0 0 auto; }
+.arcade-home .arcade-brand strong, .arcade-home .arcade-cabinet strong, .arcade-home .arcade-controller > strong { font: 900 clamp(1.25rem, 2.15vw, 2.35rem)/1 Georgia, serif; letter-spacing: -.035em; white-space: nowrap; }
+.arcade-home .arcade-brand small { display: block; margin-block-start: .28rem; color: var(--arcade-gold); font: 800 .66rem/1 system-ui; letter-spacing: .13em; }
+.arcade-home .arcade-stripes { display: block; width: 27px; height: 38px; transform: skew(-24deg); border-inline: 7px solid var(--arcade-red); }
+.arcade-home .arcade-nav-link, .arcade-home .arcade-settings, .arcade-home .arcade-control, .arcade-home #arcade-language {
+  background: #171e27;
+  border: 1px solid var(--arcade-border);
+  color: var(--arcade-text);
+  border-radius: .58rem;
+  padding: .55rem .75rem;
+  font: inherit;
+  text-decoration: none;
+}
+.arcade-home .arcade-nav-link { border-color: #237581; color: var(--arcade-cyan); }
+.arcade-home .arcade-header .header-actions { display: flex; align-items: center; gap: .45rem; }
+.arcade-home .arcade-search {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  min-width: 0;
+  flex: 1;
+  max-width: 40rem;
+  margin-inline-start: auto;
+  padding: .35rem .7rem;
+  background: #151b22;
+  border: 1px solid var(--arcade-border);
+  border-radius: 40px;
+}
+.arcade-home .arcade-search svg { flex: 0 0 20px; width: 20px; }
+.arcade-home .arcade-search input { color: inherit; flex: 1; width: 0; min-width: 0; background: transparent; border: 0; padding: .3rem; font: inherit; }
+.arcade-home .arcade-search input::placeholder { color: var(--arcade-muted); opacity: 1; }
+.arcade-home .arcade-search kbd { color: var(--arcade-muted); border: 1px solid var(--arcade-border); border-radius: .28rem; padding: 0 .36rem; }
+.arcade-home .arcade-layout {
+  display: grid;
+  grid-template-columns: minmax(170px, .72fr) minmax(0, 3.55fr) minmax(228px, 1.06fr);
+  align-items: start;
+  gap: clamp(.7rem, 1.35vw, 1.5rem);
+  max-width: 2200px;
+  margin-inline: auto;
+  padding: clamp(.7rem, 1.35vw, 1.5rem);
+}
+.arcade-home :is(.arcade-left, .arcade-main, .arcade-right) { min-width: 0; }
+.arcade-home :is(.arcade-menu, .arcade-panel, .arcade-controller, #local-library) {
+  border: 1px solid var(--arcade-border);
+  border-radius: .85rem;
+  background: var(--arcade-panel);
+}
+.arcade-home .arcade-menu { padding: .7rem; }
+.arcade-home .arcade-menu > summary { display: none; }
+.arcade-home .arcade-rail { display: grid; gap: .25rem; }
+.arcade-home .arcade-cabinet {
+  display: grid;
+  justify-items: center;
+  gap: .35rem;
+  background: #0e1218;
+  border: 1px solid #5c3442;
+  border-radius: .8rem;
+  padding: 1.45rem .6rem;
+  margin-block-end: .75rem;
+  box-shadow: inset 0 2px #a72b4a;
+}
+.arcade-home .arcade-cabinet strong { font-size: clamp(1.25rem, 1.55vw, 1.8rem); }
+.arcade-home .arcade-cabinet small { color: var(--arcade-muted); letter-spacing: .15em; }
+.arcade-home .arcade-rail :is(a, button) {
+  display: grid;
+  grid-template-columns: 1.2rem minmax(0, 1fr) auto;
+  gap: .5rem;
+  text-align: start;
+  align-items: center;
+  padding: .7rem .54rem;
+  min-height: 42px;
+  font: inherit;
+  font-size: .88rem;
+  text-decoration: none;
+  color: var(--arcade-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: .55rem;
+}
+.arcade-home .arcade-rail b { color: var(--arcade-muted); font-size: .78rem; }
+.arcade-home :is(.arcade-control, .arcade-header select, .arcade-rail button):not(:disabled) { cursor: pointer; }
+.arcade-home .arcade-rail :is(.active, a:hover, button:hover:not(:disabled)) { border-color: #237581; color: var(--arcade-cyan); background: #10262e; }
+.arcade-home .arcade-rail :disabled { color: var(--arcade-muted); opacity: .65; }
+.arcade-home .arcade-engine { display: grid; gap: .55rem; border-block-start: 1px solid var(--arcade-border); margin-block-start: .9rem; padding: .9rem .35rem .35rem; font-size: .78rem; color: var(--arcade-muted); }
+.arcade-home .arcade-engine #engine-health { display: block !important; }
+.arcade-home .arcade-engine > strong { color: var(--arcade-text); font-size: .98rem; }
+.arcade-home .arcade-engine > div { display: flex; gap: .45rem; justify-content: space-between; }
+.arcade-home .arcade-engine div strong { color: var(--arcade-cyan); text-align: end; }
+.arcade-home .arcade-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(.6rem, 2vw, 2rem);
+  min-height: clamp(275px, 23vw, 404px);
+  margin: 0 0 1rem;
+  padding: clamp(1rem, 3.2vw, 3.5rem);
+  padding-block-end: clamp(2.6rem, 4vw, 3.8rem);
+  border: 1px solid #435267;
+  border-radius: 1rem;
+  background: linear-gradient(116deg, #101722 50%, #20344c 50%, #20344c 66%, #742741 66%, #742741 68%, #17283d 68%);
+}
+.arcade-home .arcade-hero::before { position: absolute; content: ""; inset: 0; pointer-events: none; z-index: -1; background: repeating-linear-gradient(0deg, #0002 0 1px, transparent 1px 4px); }
+.arcade-home .arcade-hero .hero-copy { padding: 0; max-width: none; min-width: 0; display: block; }
+.arcade-home .arcade-hero .ng-living-kicker { display: none; }
+.arcade-home .arcade-feature-label { margin: 0 0 .7rem; color: var(--arcade-gold); font-size: .78rem; font-weight: 800; }
+.arcade-home #featured-title { display: block; margin: 0; color: var(--arcade-text); max-width: 16ch; font: 900 clamp(1.6rem, 3.1vw, 4rem)/1.04 system-ui; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.arcade-home :is(#arcade-feature-category, #featured-description) { margin: .55rem 0; color: var(--arcade-muted); font-size: clamp(.82rem, 1vw, 1rem); }
+.arcade-home #arcade-feature-category { color: var(--arcade-gold); }
+.arcade-home #arcade-feature-category:empty, .arcade-home #featured-description:empty { display: none; }
+.arcade-home .arcade-hero-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-block-start: 1.15rem; }
+.arcade-home #featured-play {
+  display: inline-flex; align-items: center; gap: .55rem; min-height: 42px; padding: .55rem .95rem;
+  color: #051018; background: var(--arcade-cyan); border: 1px solid var(--arcade-cyan); border-radius: .55rem;
+  font-size: .91rem; font-weight: 850; box-shadow: 0 0 16px #00d9f531;
+}
+.arcade-home #featured-play[href*="player.html"]::before { content: "▶"; font-size: .78rem; }
+.arcade-home #arcade-feature-favorite { min-width: 44px; font-size: 1.2rem; }
+.arcade-home #arcade-feature-favorite[aria-pressed="true"] { color: var(--arcade-red); }
+.arcade-home .arcade-hero .hero-art { display: grid; place-items: center; grid-template-columns: minmax(0,1fr); min-width: 0; width: 100%; padding: 0; margin: 0; min-height: 0; transform: none; }
+.arcade-home .arcade-hero .artwork-frame {
+  position: relative; isolation: isolate; overflow: hidden; display: grid; place-items: center; width: 100%;
+  max-width: 415px; height: auto; aspect-ratio: 4 / 3; padding: .65rem; border: 1px solid #70829a;
+  border-radius: .7rem; background: #080c13; box-shadow: 0 0 0 4px #131c289c, 0 12px 35px #06091290;
+}
+.arcade-home #featured-image { position: static; width: 100%; height: 100%; min-height: 0; display: block; object-fit: contain; image-rendering: auto; }
+.arcade-home #feature-placeholder { color: var(--arcade-muted); font: 900 clamp(1.25rem, 2.4vw, 2.6rem)/1 Georgia, serif; }
+.arcade-home .arcade-carousel { position: absolute; inset: auto 0 .52rem; padding-inline: 1rem; display: flex; justify-content: space-between; align-items: center; gap: .6rem; }
+.arcade-home .arcade-carousel .arcade-control { min-width: 38px; min-height: 36px; line-height: 1; font-size: 1.35rem; padding: .25rem; }
+.arcade-home #arcade-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: .1rem; }
+.arcade-home #arcade-dots button { display: grid; place-items: center; width: 25px; height: 30px; padding: 0; margin: 0; border: 0; border-radius: .35rem; background: transparent; cursor: pointer; }
+.arcade-home #arcade-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #8d9cae; }
+.arcade-home #arcade-dots button[aria-pressed="true"]::before { background: var(--arcade-cyan); box-shadow: 0 0 6px #00d9f577; }
+.arcade-home[dir="rtl"] .arcade-carousel > button, [dir="rtl"] .arcade-home .arcade-carousel > button { transform: scaleX(-1); }
+.arcade-home .arcade-collection { width: 100%; margin: 0; padding: 0; }
+.arcade-home .arcade-filters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .55rem; margin-block: 0 1.1rem; }
+.arcade-home .arcade-filters label { display: grid; min-width: 0; padding: .39rem .58rem; border: 1px solid var(--arcade-border); border-radius: .6rem; background: var(--arcade-panel); color: var(--arcade-muted); font-size: .74rem; }
+.arcade-home .arcade-filters select { color: var(--arcade-text); max-width: 100%; min-width: 0; width: 100%; border: 0; padding: .15rem 0; background: var(--arcade-panel); font: 650 .85rem system-ui; }
+.arcade-home .collection-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .55rem; margin-block: 0 .7rem; }
+.arcade-home #collection-title, .arcade-home .arcade-panel h2 { margin: 0; font: 800 1.4rem/1.25 system-ui; letter-spacing: -.02em; }
+.arcade-home :is(#collection-title, .arcade-panel h2)::before { content: ""; display: inline-block; margin-inline-end: .58rem; width: .64rem; height: .9rem; transform: skew(-23deg); border-inline: 3px solid var(--arcade-red); }
+.arcade-home .result-count { margin-inline-start: .4rem; color: var(--arcade-muted); font: 650 .78rem system-ui; }
+.arcade-home .game-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: clamp(.6rem, 1.25vw, 1.2rem); }
+.arcade-home .game-card { display: flex; flex-direction: column; min-width: 0; padding: 0; border: 1px solid var(--arcade-border); border-radius: .72rem; background: var(--arcade-panel); overflow: hidden; box-shadow: none; }
+.arcade-home .game-card:hover, .arcade-home .game-card:focus-within { border-color: var(--arcade-cyan); transform: translateY(-2px); box-shadow: none; }
+.arcade-home .game-cover { position: relative; width: 100%; display: block; height: auto; min-height: 0; aspect-ratio: 4 / 3; border: 0; border-radius: 0; background: #080d15; overflow: hidden; }
+.arcade-home .game-image-link { position: absolute; inset: 0; display: grid; place-items: center; }
+.arcade-home .game-image[data-preview-status="PENDING"] { visibility: hidden; }
+.arcade-home .game-image-link::after { display: none; }
+.arcade-home .game-image { position: static; display: block; width: 100%; height: 100%; max-height: 100%; object-fit: contain; transform: none; }
+.arcade-home .game-card:hover .game-image { transform: none; }
+.arcade-home .play-indicator { font-size: .75rem; }
+.arcade-home .game-details { display: grid; gap: .45rem; flex: 1; padding: .55rem .65rem; min-width: 0; }
+.arcade-home .arcade-card-heading { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: .35rem; }
+.arcade-home .game-title { display: block; overflow-wrap: anywhere; white-space: normal; font: 750 .86rem/1.38 system-ui; color: var(--arcade-text); }
+.arcade-home .favorite-button { position: static; min-width: 29px; min-height: 29px; height: auto; width: auto; margin: -.2rem -.17rem 0 0; padding: .08rem .25rem; background: transparent; color: var(--arcade-muted); border: 1px solid transparent; font-size: 1.22rem; line-height: 1; }
+.arcade-home .favorite-button.is-favorite { color: var(--arcade-red); }
+.arcade-home .game-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .3rem; color: var(--arcade-muted); font-size: .7rem; }
+.arcade-home .cover-category { position: static; color: #cbd6e3; background: #202936; border: 1px solid #384451; border-radius: 2rem; padding: .15rem .37rem; font: 650 .68rem system-ui; }
+.arcade-home .arcade-right { display: grid; gap: .8rem; }
+.arcade-home .arcade-panel { padding: .85rem; min-width: 0; }
+.arcade-home .arcade-panel h2 { font-size: 1rem; border-block-end: 1px solid var(--arcade-border); padding-block-end: .7rem; }
+.arcade-home .arcade-meter { display: grid; grid-template-columns: minmax(55px,.7fr) minmax(0,1fr); align-items: center; gap: .7rem; margin-block: .9rem; }
+.arcade-home .arcade-ring {
+  position: relative; aspect-ratio: 1; width: 100%; max-width: 106px; display: grid; place-content: center;
+  text-align: center; border-radius: 50%; background: radial-gradient(circle,#151a22 59%,transparent 61%),conic-gradient(var(--arcade-cyan) var(--completion,0%),#394553 0);
+}
+.arcade-home .arcade-ring strong { font-size: clamp(1rem, 1.65vw, 1.75rem); line-height: 1.12; }
+.arcade-home .arcade-ring small { font-size: .62rem; color: var(--arcade-muted); }
+.arcade-home .arcade-panel dl { margin: 0; font-size: .75rem; }
+.arcade-home .arcade-panel dl div { display: flex; justify-content: space-between; align-items: baseline; gap: .45rem; padding-block: .3rem; }
+.arcade-home .arcade-panel dt { color: var(--arcade-muted); }
+.arcade-home .arcade-panel dd { margin: 0; text-align: end; overflow-wrap: anywhere; font-weight: 750; }
+.arcade-home .arcade-stats { border-block-start: 1px solid var(--arcade-border); padding-block-start: .45rem; }
+.arcade-home #arcade-series-links button { width: 100%; display: flex; justify-content: space-between; gap: .5rem; align-items: center; text-align: start; padding: .65rem .1rem; border: 0; border-block-end: 1px solid var(--arcade-border); background: transparent; color: var(--arcade-text); font: 650 .83rem system-ui; cursor: pointer; }
+.arcade-home #arcade-series-links button:is(:hover,[aria-pressed="true"]) { color: var(--arcade-cyan); }
+.arcade-home #arcade-series-links small { color: var(--arcade-cyan); white-space: nowrap; }
+.arcade-home .arcade-controller { overflow: hidden; isolation: isolate; background: linear-gradient(#151a22,#090d13 70%,#26303c); border-color: #98384e; box-shadow: inset 0 -3px #ad3451; text-align: center; padding: 1rem .6rem .65rem; }
+.arcade-home .arcade-controller > strong { display: block; color: var(--arcade-gold); font-size: clamp(1.3rem, 2vw, 2rem); }
+.arcade-home .arcade-controller small { color: var(--arcade-gold); letter-spacing: .22em; font-size: .62rem; }
+.arcade-home .arcade-controls-art { direction: ltr; display: flex; align-items: end; justify-content: center; gap: .43rem; height: 49px; padding-block-end: .2rem; }
+.arcade-home .arcade-stick { position: relative; display: block; flex: 0 0 32px; height: 12px; margin-inline-end: .6rem; border-radius: 50%; background: #070a0d; border: 1px solid #637184; }
+.arcade-home .arcade-stick::before, .arcade-home .arcade-stick::after { content: ""; position: absolute; inset-inline-start: 50%; transform: translateX(-50%); }
+.arcade-home .arcade-stick::before { width: 6px; height: 29px; bottom: 4px; border-radius: 4px; background: #748397; }
+.arcade-home .arcade-stick::after { width: 24px; height: 24px; bottom: 24px; border-radius: 50%; background: radial-gradient(circle at 34% 30%,#ff9ca1,var(--arcade-red) 46%,#780b24); }
+.arcade-home .arcade-controls-art i { width: 18px; height: 13px; background: var(--arcade-gold); border-radius: 50%; border-block-end: 3px solid #0007; box-shadow: 0 2px #000; }
+.arcade-home .arcade-controls-art i:nth-of-type(2) { background: #20ca81; }
+.arcade-home .arcade-controls-art i:nth-of-type(3) { background: #2787ef; }
+.arcade-home .arcade-controls-art i:nth-of-type(4) { background: var(--arcade-red); }
+.arcade-home #local-library { margin: 0 0 1rem; }
+.arcade-home #local-library > summary { padding: .55rem .85rem; }
+.arcade-home .deck-action-group { flex-wrap: wrap; }
+.arcade-home .slot-state-pill { white-space: normal; overflow-wrap: anywhere; }
+.arcade-home .subtle-entrance { animation: none; }
+.arcade-home.ng-living-ready .arcade-hero::after { animation: none; opacity: .55; }
+.arcade-home.ng-living-reduced .ng-living-orbit { animation-play-state: paused; }
+.arcade-home .global-footer { max-width: 2200px; margin-inline: auto; }
+@media (max-width: 1190px) {
+  .arcade-home .arcade-layout { grid-template-columns: minmax(150px,.8fr) minmax(0,3.2fr) minmax(195px,1fr); }
+  .arcade-home .game-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 975px) {
+  .arcade-home .arcade-layout { grid-template-columns: 158px minmax(0,1fr); }
+  .arcade-home .arcade-right { grid-column: 2; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .arcade-home .arcade-controller { display: none; }
+}
+@media (max-width: 760px) {
+  .arcade-home .arcade-header { flex-wrap: wrap; justify-content: space-between; }
+  .arcade-home .arcade-header .arcade-nav-link { display: none; }
+  .arcade-home .arcade-gamepad { display: none; }
+  .arcade-home .arcade-search { order: 1; flex: 1 0 100%; max-width: none; margin-inline-start: 0; }
+  .arcade-home .arcade-layout { grid-template-columns: minmax(0,1fr); }
+  .arcade-home .arcade-right { grid-column: auto; }
+  .arcade-home .arcade-menu > summary { display: list-item; padding: .25rem .45rem; cursor: pointer; }
+  .arcade-home .arcade-menu[open] > summary { margin-block-end: .5rem; }
+  .arcade-home .arcade-rail { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .arcade-home .arcade-cabinet { display: none; }
+  .arcade-home .arcade-hero { min-height: 245px; padding: 1rem .9rem 2.8rem; }
+  .arcade-home .game-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 510px) {
+  .arcade-home .arcade-header { gap: .55rem; }
+  .arcade-home .arcade-header .header-actions { gap: .25rem; }
+  .arcade-home :is(.arcade-settings,#arcade-language) { font-size: .74rem; padding: .4rem; }
+  .arcade-home .arcade-hero { grid-template-columns: minmax(0,1fr); background: linear-gradient(145deg,#111b29 57%,#233852 57%,#233852 69%,#663249 69%,#663249 72%,#152339 72%); }
+  .arcade-home #featured-title { max-width: none; }
+  .arcade-home .arcade-hero .hero-art { justify-items: center; }
+  .arcade-home .arcade-hero .artwork-frame { max-width: 245px; }
+  .arcade-home .game-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .arcade-home .arcade-right { grid-template-columns: minmax(0,1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arcade-home :is(.arcade-hero, .game-card, .game-image, .arcade-control) { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Cabinet materials, shared controls, and scoped atmosphere. */
+.arcade-home .arcade-header {
+  background: linear-gradient(180deg, #151a21, #0a0d11);
+  box-shadow: inset 0 -1px #000, 0 3px 14px #0005;
+}
+.arcade-home .arcade-stripes { opacity: .95; filter: drop-shadow(2px 0 0 #671128); }
+.arcade-home .arcade-nav-link {
+  min-inline-size: 6rem;
+  text-align: center;
+  background: #0d2128;
+  box-shadow: inset 0 -2px var(--arcade-cyan), inset 0 0 12px #00d9f51a;
+}
+.arcade-home .arcade-header .header-actions > :is(a, button, select) {
+  display: inline-grid;
+  place-items: center;
+  min-block-size: 42px;
+  line-height: 1.2;
+}
+.arcade-home .arcade-header .header-actions > :is(a, button):hover {
+  border-color: #5a7084;
+  color: var(--arcade-cyan);
+}
+.arcade-home .arcade-search { background: #0c1117; }
+.arcade-home .arcade-search:focus-within { border-color: var(--arcade-cyan); }
+.arcade-home .arcade-search input:focus-visible { outline: 0; }
+.arcade-home .arcade-icon { inline-size: 1.2rem; block-size: 1.2rem; flex: none; }
+.arcade-home .arcade-menu {
+  background: linear-gradient(165deg, #19212b, #10151c 58%);
+  box-shadow: inset 1px 0 #ffffff16, inset -1px 0 #000, 0 12px 22px #0003;
+}
+.arcade-home .arcade-cabinet {
+  border-color: #803047;
+  background: radial-gradient(ellipse at top, #301724 0%, #11161e 63%);
+  box-shadow: inset 0 2px #ca3158, inset 0 0 18px #0008;
+}
+.arcade-home .arcade-rail :is(a,button) { position: relative; gap: .65rem; }
+.arcade-home .arcade-rail .active::before {
+  content: ""; position: absolute; inset-block: .55rem; inset-inline-start: 0;
+  width: 2px; background: var(--arcade-cyan);
+}
+.arcade-home .arcade-rail .active { box-shadow: inset 0 0 14px #00d9f511; }
+.arcade-home .arcade-rail :is(a,button) .arcade-icon { color: #a9b9c8; }
+.arcade-home .arcade-rail :is(.active,:hover) .arcade-icon { color: inherit; }
+.arcade-home .arcade-engine {
+  background: #0d131a;
+  border: 1px solid #303d49;
+  border-radius: .65rem;
+  padding: .85rem .7rem;
+}
+.arcade-home .arcade-engine > strong::before {
+  content: ""; display: inline-block; inline-size: .42rem; block-size: .42rem;
+  border: 1px solid var(--arcade-cyan); border-radius: 50%; margin-inline-end: .45rem;
+}
+.arcade-home .arcade-main { position: relative; isolation: isolate; width: 100%; max-width: none; margin: 0; padding: 0; }
+.arcade-home .arcade-main > :not(#ng-matrix-ambient) { position: relative; z-index: 1; }
+.arcade-home :is(.arcade-left, .arcade-right) { position: relative; z-index: 1; }
+.arcade-home .ng-matrix-ambient { opacity: .36; }
+.arcade-home .ng-matrix-column:nth-child(3n) { display: none; }
+.arcade-home:has(#ng-session-player) :is(.ng-matrix-stream, .ng-matrix-mark, .ng-living-orbit) {
+  animation-play-state: paused !important;
+}
+
+/* Borrow the active preview underneath a directional scrim, with CRT detail on the bezel only. */
+.arcade-home .arcade-hero {
+  --hero-direction: 90deg;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  min-block-size: clamp(260px, 22vw, 368px);
+  padding: clamp(1rem, 2.2vw, 2.7rem);
+  padding-block-end: 3.2rem;
+  background: linear-gradient(116deg, #0d1621 59%, #192a3d 59%, #192a3d 81%, #4a2538 81%, #4a2538 82%, #101b2a 82%);
+}
+[dir="rtl"] .arcade-home .arcade-hero { --hero-direction: 270deg; }
+.arcade-home.ng-living-ready .arcade-hero { border-color: #414b5d; box-shadow: 0 14px 25px #0004; }
+.arcade-home .arcade-hero::before {
+  background: var(--arcade-artwork, none) center 42% / cover no-repeat;
+  inset: -12px;
+  filter: blur(10px) saturate(.96);
+  opacity: 0;
+  transition: opacity .26s ease;
+}
+.arcade-home .arcade-hero.has-artwork::before { opacity: .72; }
+.arcade-home .arcade-hero::after,
+.arcade-home.ng-living-ready .arcade-hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(var(--hero-direction), #0a101bef 5%, #0b1321e6 31%, #0b132183 62%, #111b233d 100%);
+  pointer-events: none; opacity: 1;
+}
+.arcade-home .arcade-hero > :is(.hero-copy, .hero-art, .arcade-carousel) { z-index: 1; }
+.arcade-home .arcade-feature-label {
+  display: flex; gap: .55rem; align-items: center;
+  font-size: .73rem; letter-spacing: .06em;
+}
+.arcade-home .arcade-feature-label::before {
+  content: ""; inline-size: .7rem; block-size: .82rem;
+  transform: skew(-24deg); border-inline: 3px solid var(--arcade-red);
+}
+.arcade-home #featured-title { max-width: 15ch; font-size: clamp(1.75rem, 3.1vw, 3.8rem); text-align: match-parent; }
+.arcade-home #featured-description { color: #c1ccda; max-width: 40ch; }
+.arcade-home #featured-play { min-block-size: 44px; box-shadow: 0 3px 13px #00d9f535; }
+.arcade-home #featured-play:hover { background: #63edff; }
+.arcade-home #arcade-feature-favorite { background: #101922; color: #e2e8ee; }
+.arcade-home #arcade-feature-favorite[aria-pressed="true"] { color: var(--arcade-red); }
+.arcade-home .arcade-hero .artwork-frame {
+  max-width: 390px;
+  padding: .64rem;
+  border: 1px solid #8192a7;
+  border-radius: .74rem;
+  background: #0a0f16;
+  box-shadow: 0 0 0 4px #182332, 0 0 0 5px #0009, inset 0 2px #ffffff18, 0 9px 24px #0008;
+}
+.arcade-home.ng-living-ready .arcade-hero .artwork-frame::after { opacity: .18; }
+.arcade-home .arcade-hero .ng-living-orbit { opacity: .6; }
+.arcade-home .arcade-carousel { inset-block-end: .56rem; padding-inline: .74rem; }
+.arcade-home .arcade-carousel .arcade-control {
+  display: grid; place-items: center; min-inline-size: 42px; min-block-size: 40px;
+  background: #0c131df5; border-color: #4d5c6d;
+}
+.arcade-home .arcade-carousel .arcade-control:hover { border-color: var(--arcade-cyan); }
+.arcade-home .arcade-dots { padding-inline: .36rem; border-radius: 2rem; background: #080d16b5; }
+.arcade-home #arcade-dots button { inline-size: 25px; block-size: 36px; }
+.arcade-home #arcade-dots button[aria-pressed="true"]::before { inline-size: 15px; border-radius: 6px; }
+.arcade-home #featured-image:not([src]) { visibility: hidden; }
+.arcade-home .has-artwork #featured-image { animation: arcade-preview-arrive .24s ease-out both; }
+@keyframes arcade-preview-arrive { from { opacity: .62; } to { opacity: 1; } }
+
+/* Game cards and collection meters are built from library data. */
+.arcade-home .game-card {
+  border-color: #3c4754;
+  background: linear-gradient(180deg, #1a222d, var(--arcade-panel) 55%);
+}
+.arcade-home .game-card:is(:hover,:focus-within) { box-shadow: 0 0 0 1px #00d9f53d, 0 3px 13px #00d9f518; }
+.arcade-home.ng-living-ready .game-card:hover .game-image-link { transform: none; }
+.arcade-home .game-cover { border-block-end: 1px solid #333e4c; }
+.arcade-home .game-details { padding: .62rem .7rem; gap: .48rem; }
+.arcade-home .game-title { min-inline-size: 0; font-size: .91rem; text-align: match-parent; }
+.arcade-home .favorite-button {
+  min-inline-size: 36px; min-block-size: 36px; margin: -.23rem -.2rem 0 0;
+  font-size: 1.35rem;
+}
+.arcade-home .favorite-button:hover { background: #28313e; border-color: #526173; }
+.arcade-home .cover-category { background: #232d3b; border-color: #46566a; font-size: .7rem; }
+.arcade-home .play-indicator {
+  inset: auto; inset-block-end: .64rem; inset-inline-end: .64rem;
+  padding: .48rem .7rem; color: #effbff; background: #0a1520eb; border: 1px solid #65d5e1;
+  border-radius: .44rem; box-shadow: 0 2px 10px #0009;
+}
+.arcade-home .game-image-link .play-indicator { opacity: 0; transform: translateY(4px); }
+.arcade-home .game-image-link:focus-visible .play-indicator { opacity: 1; transform: none; }
+@media (hover: hover) {
+  .arcade-home .game-card:hover .game-image-link .play-indicator { opacity: 1; transform: none; }
+}
+.arcade-home .play-indicator::before {
+  content: ""; inline-size: 0; block-size: 0; border-block: .32rem solid transparent;
+  border-inline-start: .46rem solid var(--arcade-cyan);
+}
+.arcade-home .arcade-panel {
+  padding: .92rem;
+  background: linear-gradient(165deg, #19212a, #121820 50%, #11161d);
+  box-shadow: inset 0 1px #ffffff12, 0 8px 16px #0002;
+}
+.arcade-home .arcade-panel h2 { font-size: 1.09rem; }
+.arcade-home .arcade-panel dl { font-size: .81rem; }
+.arcade-home .arcade-panel dd { font-variant-numeric: tabular-nums; }
+.arcade-home .arcade-ring {
+  max-width: 108px;
+  background: radial-gradient(circle, #15202c 62%, transparent 63%), conic-gradient(var(--arcade-cyan) var(--completion,0%), #374352 0);
+  box-shadow: 0 0 0 1px #748d9f2e, 0 0 11px #00d9f518;
+}
+.arcade-home .arcade-meter dd, .arcade-home #stat-shots { color: #c6f7ff; }
+.arcade-home .arcade-panel dl .arcade-offline-row {
+  border-block-start: 1px solid #394554; margin-block-start: .36rem; padding-block-start: .5rem;
+}
+.arcade-home #arcade-offline { color: #ffe28d; }
+.arcade-home #arcade-series-links button { min-block-size: 42px; }
+.arcade-home #arcade-series-links small { padding: .14rem .42rem; border-radius: 12px; background: #102530; }
+.arcade-home .arcade-controller {
+  border: 1px solid #676f7e;
+  background: linear-gradient(161deg, #535c68 0%,#252d37 20%,#111923 21%,#111820 70%,#333b48 71%,#151c27 100%);
+  box-shadow: inset 0 -3px #a63350, inset 0 2px #ffffff36, 0 10px 17px #0005;
+  padding-block-end: .9rem;
+}
+.arcade-home .arcade-controls-art i {
+  box-shadow: inset 0 2px #ffffff65, 0 3px #000, 0 0 0 2px #10141a;
+}
+.arcade-home .arcade-stick { box-shadow: inset 0 1px #ffffff22, 0 2px #000; }
+
+@media (max-width: 760px) {
+  .arcade-home .arcade-header .header-actions > .arcade-gamepad { display: none; }
+  .arcade-home .arcade-menu > summary { min-block-size: 32px; line-height: 1.8; }
+  .arcade-home .arcade-hero { min-block-size: 0; padding: 1rem .75rem 3rem; }
+  .arcade-home .arcade-hero .artwork-frame { padding: .32rem; }
+}
+@media (max-width: 510px) {
+  .arcade-home .arcade-hero { grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr); gap: .6rem; }
+  .arcade-home #featured-title { font-size: clamp(1.18rem, 5.3vw, 1.6rem); }
+  .arcade-home #featured-description { display: none; }
+  .arcade-home .arcade-hero-actions { margin-block-start: .5rem; gap: .35rem; }
+  .arcade-home #featured-play { padding: .5rem .56rem; font-size: .77rem; }
+  .arcade-home #arcade-feature-favorite { min-inline-size: 40px; min-block-size: 42px; padding: .25rem; }
+  .arcade-home .arcade-filters { grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); padding: .52rem; gap: .4rem; }
+  .arcade-home .arcade-filters label { padding: .3rem .45rem; }
+  .arcade-home .arcade-filters label:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+  .arcade-home .arcade-filters select { min-block-size: 29px; font-size: .81rem; }
+  .arcade-home .arcade-search kbd { display: none; }
+  .arcade-home .arcade-carousel { inset-block-end: .32rem; padding-inline: .58rem; }
+}
+.arcade-home.ng-living-reduced .arcade-hero::before { transition: none; }
+.arcade-home.ng-living-reduced #featured-image,
+.arcade-home:has(#ng-session-player) #featured-image { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .arcade-home .arcade-hero::before { transition: none; }
+  .arcade-home #featured-image:not([src]) { visibility: hidden; }
+.arcade-home .has-artwork #featured-image { animation: none; }
+}
+
+/* v2.2 — use the existing brand mark and keep the download action visible at every width. */
+.arcade-home .arcade-header { gap: clamp(.45rem, 1.25vw, 1.25rem); }
+.arcade-home .arcade-brand img {
+  inline-size: clamp(52px, 4.3vw, 70px);
+  block-size: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+.arcade-home .arcade-search { margin-inline-start: 0; max-width: none; }
+.arcade-home .arcade-header .header-actions { flex: 0 0 auto; }
+.arcade-home .arcade-header .header-actions > .arcade-download {
+  display: inline-flex;
+  gap: .4rem;
+  align-items: center;
+  justify-content: center;
+  background: #10222b;
+  border-color: #39717c;
+  color: #bff8ff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.arcade-home .arcade-download-short { display: none; }
+.arcade-home .arcade-rail { padding-block: .2rem .35rem; }
+.arcade-home :is(#collection-title, .arcade-panel h2)::before { content: none; }
+.arcade-home #collection-title::before {
+  content: "";
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+  vertical-align: -.12em;
+  border: 0;
+  transform: none;
+  background: url('../media/neo-geo-mark.png') center / contain no-repeat;
+}
+.arcade-home .arcade-controller {
+  display: grid;
+  grid-template-columns: minmax(44px, .56fr) minmax(0, 1.44fr);
+  align-items: center;
+  gap: .55rem;
+  padding: .65rem .75rem .82rem;
+  min-block-size: 86px;
+}
+.arcade-home .arcade-controller > img {
+  inline-size: 100%;
+  max-inline-size: 74px;
+  block-size: auto;
+  max-block-size: 74px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  justify-self: center;
+}
+.arcade-home .arcade-controls-art {
+  justify-content: space-around;
+  gap: clamp(.15rem, .45vw, .55rem);
+  padding-inline: .3rem;
+  border-block-end: 1px solid #56616e;
+  border-radius: .4rem;
+  background: linear-gradient(165deg, #0e141b, #212b37);
+}
+.arcade-home .arcade-stick { flex-basis: clamp(20px, 2vw, 32px); margin-inline-end: .15rem; }
+.arcade-home .arcade-controls-art i { inline-size: clamp(11px, 1.25vw, 22px); }
+.arcade-home .arcade-hero { gap: clamp(.65rem, 2.25vw, 2rem); }
+.arcade-home #featured-title { max-width: 17ch; }
+@media (max-width: 975px) {
+  .arcade-home .arcade-controller { display: none; }
+  .arcade-home .arcade-download-full { display: none; }
+  .arcade-home .arcade-download-short { display: inline; }
+}
+@media (max-width: 760px) {
+  .arcade-home .arcade-header { display: grid; grid-template-columns: auto minmax(0,1fr); }
+  .arcade-home .arcade-header .header-actions { justify-self: end; min-width: 0; }
+  .arcade-home .arcade-search { grid-column: 1 / -1; }
+}
+@media (max-width: 390px) {
+  .arcade-home .arcade-header { column-gap: .25rem; padding-inline: .5rem; }
+  .arcade-home .arcade-header .header-actions { gap: .22rem; }
+  .arcade-home .arcade-header .header-actions > :is(a, button, select) { min-block-size: 39px; }
+  .arcade-home .arcade-download .arcade-icon { inline-size: .95rem; block-size: .95rem; }
+  .arcade-home .arcade-header #ng-shortcuts-trigger { inline-size: 33px; min-inline-size: 33px; padding: 0; }
+}
+
+@media (max-width: 350px) {
+  .arcade-home .arcade-brand img { inline-size: 44px; }
+  .arcade-home .arcade-header .header-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .arcade-home .arcade-header .header-actions > :is(a, button, select) { padding-inline: .3rem; }
+}
+
+/* Staged art owns no layout space. The provider retains its URL across the swap. */
+.arcade-home .arcade-staged-image {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  width: 100%; height: 100%; object-fit: contain;
+}
+.arcade-home .arcade-outgoing-image {
+  position: absolute; inset: .64rem; width: calc(100% - 1.28rem); height: calc(100% - 1.28rem);
+  object-fit: contain; pointer-events: none;
+}
+.arcade-home .arcade-hero .arcade-outgoing-copy {
+  position: absolute; margin: 0; z-index: 2; pointer-events: none;
+}
+.arcade-home .arcade-hero > .arcade-outgoing-backdrop {
+  position: absolute; inset: -12px; z-index: -1; pointer-events: none;
+  background-position: center 42%; background-size: cover; filter: blur(10px) saturate(.96);
+}
+.arcade-home .has-artwork #featured-image { animation: none; }
+.arcade-home #arcade-dots button::before { transition: inline-size .25s ease, background-color .25s ease; }
+.arcade-home.ng-living-reduced #arcade-dots button::before { transition: none; }
+@media (prefers-reduced-motion: reduce) { .arcade-home #arcade-dots button::before { transition: none; } }
+@media (max-width:760px) {
+  .arcade-home .arcade-outgoing-image { inset: .32rem; width: calc(100% - .64rem); height: calc(100% - .64rem); }
+}
+
+.arcade-home .arcade-footer {
+  display: grid;
+  grid-template-columns: minmax(170px, .7fr) minmax(150px, .8fr) minmax(0, 1.65fr);
+  align-items: start;
+  gap: clamp(.8rem, 2vw, 2rem);
+  width: 100%;
+  padding: clamp(1rem, 3vw, 2.6rem);
+  border-block-start: 1px solid #3d5369;
+  background: #0d131b;
+}
+.arcade-home .arcade-footer .footer-brand { min-inline-size: 0; color: #eef5fc; }
+.arcade-home .arcade-footer .footer-logo { flex: 0 0 52px; object-fit: contain; }
+.arcade-home .arcade-footer .footer-site-name { overflow-wrap: anywhere; }
+.arcade-home .arcade-footer-links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .36rem .75rem; }
+.arcade-home .arcade-footer-links a { color: #a9eaf4; padding-block: .25rem; overflow-wrap: anywhere; text-decoration: none; }
+.arcade-home .arcade-footer-links a:hover { text-decoration: underline; }
+.arcade-home .arcade-footer .footer-rights { min-width: 0; font-size: .84rem; color: #c3d0df; }
+.arcade-home .arcade-footer .footer-rights strong { color: #eef5fc; }
+@media (max-width: 700px) {
+  .arcade-home .arcade-footer { grid-template-columns: minmax(0,1fr); }
+  .arcade-home .arcade-footer .footer-rights { border-block-start: 1px solid #2d3949; padding-block-start: .7rem; }
+}

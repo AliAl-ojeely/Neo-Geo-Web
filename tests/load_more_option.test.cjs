@@ -75,7 +75,7 @@ function page(allowPaging) {
   const context = {
     state, window, document,
     $: name => elements[name],
-    categoryNames: { fighting: 'Fighting', action: 'Action' },
+    categoryName: value => ({ fighting: 'Fighting', action: 'Action' })[value],
     favorites: new Set(),
     NGI18n: { t: (_key, params) => params ? `${params.shown}/${params.total}` : _key },
     node: (_tag, klass, content) => ({ klass, content }),
