@@ -50,6 +50,8 @@ Four featured games from the project's local Neo Geo catalog. The images are inc
 
 ## What's Inside v0.1.5.1
 
+The official project version is **0.1.5.1**. **Arcade Renaissance v2.5** identifies the current interface design milestone.
+
 | Area | Capabilities |
 | :--- | :--- |
 | **The library** | Search, categories, favorites, previews, catalog-driven game launch, and a rescan/reconnect workflow |
@@ -58,23 +60,41 @@ Four featured games from the project's local Neo Geo catalog. The images are inc
 | **Controls** | Two-player keyboard layout, customizable bindings, and simultaneous multi-button macro shortcuts |
 | **Languages** | English by default, Arabic as an option, RTL/LTR layouts, and saved display-language preferences |
 | **Fully Offline Emulator** | Consent-based offline website + FBNeo runtime, SHA-256 verified install/update, selective removal, and bilingual guidance |
-| **UI design** | Responsive Pitch Black design, clean cards, game previews, guided first-run setup, and accessible dialogs |
+| **UI design** | Arcade Renaissance v2.5 homepage, cinematic featured-game transitions, responsive cards, and mobile touch controls |
 | **Quality checks** | Node.js/Python regression tests, static build verification, and a GitHub Pages asset audit |
 
 ### Current progress
 
 | Metric | Evidence-based status |
 | :--- | :--- |
-| **160 games** | 127 historical boot passes and 33 verified recoveries |
-| **49 more candidates** | Deferred for further compatibility, archive, or driver investigation |
-| **191 candidates total** | Original assessment scope (not all listed on the active public catalog) |
+| **127 historical boot-tested games** | Verified during the original assessment of 191 candidates |
+| **33 recovered games** | Subsequent additions with boot evidence |
+| **160 current catalog games** | 127 historical boot passes plus 33 verified recoveries |
+| **31 deferred candidates** | Outside the active catalog pending further compatibility, archive, or driver investigation |
+| **22/22 priority series entries** | Browser boot coverage for KOF (10/10), Metal Slug (6/6), and Samurai Shodown (6/6) |
 | **Complete gameplay** | **Not verified across all 160 games**; boot success is not a guarantee of playable sessions |
 | **Public hosting** | GitHub Pages preparation is available; the published deployment requires its own acceptance checks |
-| **Offline browser testing** | A recorded hosted-site game session exists; this does not establish full-catalog or cross-browser offline compatibility |
+| **Offline browser testing** | 160/160 previews in each tested desktop browser with the local server stopped. Gameplay evidence covers specific samples. |
 
 ---
 
 ## Key Features
+
+### Premium Arcade Homepage
+
+Arcade Renaissance v2.5 adapts the library to desktop, tablet, and mobile layouts. The featured-game carousel uses cinematic transitions and respects reduced-motion preferences. **Download Assets** is available in the navigation and shows an availability notice while the download link is pending.
+
+### Mobile Landscape Gaming
+
+The player supports landscape and portrait layouts with a customizable virtual gamepad. Adjust joystick, action and auxiliary button sizes, spacing, opacity, and position. **Insert Coin** sends the arcade credit input, and the **Player 1 / Player 2** selector routes touch controls to the selected local player.
+
+### Improved Preview Rendering
+
+The library validates image decoding, shares concurrent requests for the same preview, and releases object URLs after use. The featured carousel keeps the previous image visible while the next one loads.
+
+### Play offline with local files
+
+Install the website and pinned FBNeo runtime once, then use your own local ROM, BIOS, and preview files. See [Fully Offline Emulator](#fully-offline-emulator) for setup and scope.
 
 ### 🎮 Local library and discovery
 
@@ -155,7 +175,7 @@ py -3 manage.py web build; if ($LASTEXITCODE -eq 0) { py -3 manage.py web verify
 node --test tests/fully_offline.test.cjs tests/offline_remove.test.cjs tests/offline_bootstrap_get.test.cjs
 ```
 
-- **Observed evidence / الأدلة:** The regression suite has passed **20/20** offline-related tests and **4/4** focused bootstrap/build checks in the recorded local run. A **November 10, 2026** recorded browser session showed real `breakrev.zip` gameplay on the GitHub Pages site after the offline feature and bootstrap fix were deployed. This is **limited acceptance evidence**, not proof of zero browser-level traffic, every browser/version, all 127 catalog entries, complete playthroughs, permanent permissions, or licensing clearance.
+- **Historical evidence / الأدلة السابقة:** The recorded earlier local run passed **20/20** offline-related tests and **4/4** focused bootstrap/build checks. A **November 10, 2026** GitHub Pages session demonstrated `breakrev.zip` gameplay after the offline bootstrap fix. That session covered one game during the 127-title catalog phase. See [Web Browser Compatibility](#web-browser-compatibility) for the current desktop preview and gameplay sample coverage.
 - **Release safety / سلامة النشر:** The published build must never bundle proprietary ROM or BIOS archives, local files, backup folders or private diagnostics. Keep third-party license and redistribution checks separate from functional offline testing.
 
 ---
@@ -581,11 +601,21 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 
 ### Still under investigation
 
-The **49 deferred candidates** have not been added to the active catalog. Further research includes ROM composition and dependencies, driver mapping, BIOS compatibility, boot validation, and real-browser play testing. They will be added only after evidence supports the change. **No date or blanket compatibility guarantee is implied.**
+The **31 deferred candidates** remain outside the active catalog. Further research includes ROM composition and dependencies, driver mapping, BIOS compatibility, boot validation, and real-browser play testing. They will be added only after evidence supports the change. **No date or blanket compatibility guarantee is implied.**
 
 ---
 
 ## Validation & Maintenance
+
+| Arcade Renaissance v2.5 acceptance check | Recorded result |
+| :--- | :--- |
+| Node.js | 260/260 |
+| Python | 12/12 |
+| Online preview rendering | 160/160 per browser in Chrome, Brave, and Edge |
+| Offline preview rendering | 160/160 per browser in Chrome, Brave, and Edge with the local server stopped |
+| Web Build | PASS |
+| Web Verify | PASS |
+| GitHub Audit | PASS |
 
 Development workflows include:
 
