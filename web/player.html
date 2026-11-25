@@ -60,6 +60,7 @@
         </nav>
 
         <div class="header-actions">
+          <button id="ng-player-touch-mode" class="header-link" type="button" aria-pressed="false" data-i18n-text="touch.controls" hidden>Touch controls</button>
           <a class="back-btn" href="/" data-i18n-text="player.back_to_library">Back to library</a>
         </div>
       </header>
@@ -100,6 +101,7 @@
               <option value="higher" data-i18n-text="touch.higher">Higher</option>
             </select></label>
             <button type="reset" data-i18n-text="touch.reset">Reset to default</button>
+            <button type="button" data-touch-disable data-i18n-text="touch.disable" hidden>Switch to desktop controls</button>
           </form>
         </template>
 

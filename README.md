@@ -303,12 +303,16 @@ The preview checks use the local library and the installed offline package. Nati
 
 ### Playing with touch controls
 
+Desktop play uses the native EmulatorJS toolbar at the bottom of the game frame. Phones and touch-first tablets open the virtual gamepad automatically. On a touch-enabled laptop, use **Touch controls** in the player header to enable it and **Switch to desktop controls** in the touch panel to return.
+
 1. Open a game and tap **Start Game**. On compatible mobile browsers the player requests fullscreen and landscape. Rotate the device manually if prompted, or continue in portrait.
 2. Select **Player 1** or **Player 2** in the touch toolbar. A new session starts with Player 1. The selector changes only the local touch controller port.
 3. In arcade modes that request credits, tap **Insert Coin**, then **Start P1** or **Start P2**. Insert Coin uses the original Neo Geo Select input. A game may use shared credits or require an additional credit or a specific screen for the second player to join. AES modes may start without coins.
 4. Open **Touch controls** to adjust joystick, action and auxiliary button sizes, spacing, opacity, or position. Changes apply while playing and are saved locally.
 
 ### Mobile Browser Testing
+
+The v2.6 player layout checks used **Metal Slug 3** in Chrome, Brave, and Edge on Windows. They verified the native toolbar at the bottom edge in desktop and fullscreen layouts, and checked that it left the joystick, action buttons, Insert Coin, and Start reachable in emulated touch layouts. Chrome also verified manually switching modes on an emulated hybrid laptop and booting the game from the updated offline package with the network disabled.
 
 The v2.5 desktop touch checks used emulated input in Chrome (KOF ’98), Brave (Metal Slug), and Edge (Samurai Shodown IV). In KOF ’98, Insert Coin increased the credit counter and both players reached team order selection. In Metal Slug, both players entered a stage. In Samurai Shodown IV, both ports received input and the versus screen appeared. All three sessions exercised in-session save/load and return to the library. The v2.5 offline check covered all 160 previews in each browser with the local server stopped. A full offline gameplay session with the new touch controls remains **Not Yet Verified**.
 
@@ -610,7 +614,7 @@ The **31 deferred candidates** remain outside the active catalog. Further resear
 
 | Arcade Renaissance v2.5 acceptance check | Recorded result |
 | :--- | :--- |
-| Node.js | 260/260 at v2.5 acceptance; 262/262 after Offline Manager v1.0 |
+| Node.js | 265/265 after Player Layout Refinement v2.6 |
 | Python | 12/12 |
 | Online preview rendering | 160/160 per browser in Chrome, Brave, and Edge |
 | Offline preview rendering | 160/160 per browser in Chrome, Brave, and Edge with the local server stopped |

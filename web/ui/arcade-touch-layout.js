@@ -13,6 +13,13 @@
     return result;
   }
 
+  // A hybrid PC stays in desktop mode until its player opts in.
+  function prefersTouch({ points, userAgent, coarse, hover, fine }) {
+    if (!points || /Windows|CrOS/i.test(userAgent)) return false;
+    if (/Android|iPhone|iPad|iPod/i.test(userAgent)) return true;
+    return coarse && !hover && !fine;
+  }
+
   // Requests fullscreen synchronously in the initiating gesture, then attempts the optional lock.
   function orientationSession(game, doc, screen) {
     let generation = 0, locked = false;
@@ -80,15 +87,22 @@
   }
 
   if (typeof module === 'object' && module.exports) {
-    module.exports = { normalize, orientationSession, touchRouter };
+    module.exports = { normalize, prefersTouch, orientationSession, touchRouter };
     return;
   }
   const game = document.getElementById('game');
   if (!game) return;
   const portrait = matchMedia('(orientation: portrait)');
-  const coarse = matchMedia('(pointer: coarse)');
   const touch = navigator.maxTouchPoints > 0;
-  const mobile = touch && (coarse.matches || /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent));
+  const automatic = prefersTouch({
+    points: navigator.maxTouchPoints,
+    userAgent: navigator.userAgent,
+    coarse: matchMedia('(pointer: coarse)').matches,
+    hover: matchMedia('(any-hover: hover)').matches,
+    fine: matchMedia('(any-pointer: fine)').matches
+  });
+  const modeButton = document.getElementById('ng-player-touch-mode');
+  let touchMode = automatic;
   const session = orientationSession(game, document, screen);
   const listeners = new AbortController();
   const options = { signal: listeners.signal };
@@ -102,8 +116,14 @@
   function refreshGeometry() {
     cancelAnimationFrame(resizeFrame);
     resizeFrame = requestAnimationFrame(() => {
+      const deck = game.querySelector('.ejs_virtualGamepad_parent');
+      if (touchMode && portrait.matches && deck?.offsetHeight) {
+        const height = deck.offsetHeight + 'px';
+        if (game.style.getPropertyValue('--touch-deck-height') !== height)
+          game.style.setProperty('--touch-deck-height', height);
+      }
       // EmulatorJS and its stick recalculate their own positions through the existing resize event.
-      if (game.querySelector('.ejs_virtualGamepad_parent')?.offsetHeight)
+      if (deck?.offsetHeight)
         window.dispatchEvent(new Event('resize'));
     });
   }
@@ -117,7 +137,7 @@
     // Bind only timers scheduled during this dispatch to the same player snapshot.
     for (const type of ['touchstart','touchend','touchcancel','pointerdown','pointermove','pointerup','pointercancel']) {
       window.addEventListener(type, event => {
-        if (!router || !(padTarget(event.target) || pointers.has(event.pointerId))) return;
+        if (!touchMode || !router || !(padTarget(event.target) || pointers.has(event.pointerId))) return;
         if (event.isTrusted && event.changedTouches?.length) {
           const fingers = Array.from(event.changedTouches);
           if (type === 'touchstart') for (const finger of fingers) cancelledFingers.delete(finger.identifier);
@@ -227,10 +247,15 @@
   }
 
   function sync() {
-    const landscape = mobile && started && !portrait.matches;
+    const landscape = touchMode && started && !portrait.matches;
+    game.classList.toggle('ng-touch-mode', touchMode);
     document.body.classList.toggle('ng-touch-landscape', landscape);
-    game.classList.toggle('ng-touch-portrait', mobile && portrait.matches);
-    if (note) note.hidden = !mobile || !portrait.matches || !failed;
+    game.classList.toggle('ng-touch-portrait', touchMode && portrait.matches);
+    if (note) note.hidden = !touchMode || !portrait.matches || !failed;
+    if (modeButton) {
+      modeButton.hidden = !started || !touch || automatic;
+      modeButton.setAttribute('aria-pressed', String(touchMode));
+    }
     const full = tools?.querySelector('[data-touch-full]');
     const menu = tools?.querySelector('[data-touch-menu]');
     if (menu) {
@@ -255,7 +280,7 @@
 
   // A trusted Start click still carries activation inside the player, including in the session iframe.
   game.addEventListener('click', event => {
-    if (mobile && event.isTrusted && event.target.closest('.ejs_start_button')) enter();
+    if (touchMode && event.isTrusted && event.target.closest('.ejs_start_button')) enter();
   }, { ...options, capture: true });
   portrait.addEventListener('change', () => { releaseTouches(); sync(); }, options);
   for (const type of ['fullscreenchange','webkitfullscreenchange']) document.addEventListener(type, () => {
@@ -276,6 +301,20 @@
     back?.click();
   }
 
+  function setTouchMode(enabled) {
+    releaseTouches();
+    if (!enabled) {
+      session.release();
+      panel.hidden = true;
+      tools.querySelector('[data-touch-panel]').setAttribute('aria-expanded', 'false');
+    }
+    touchMode = enabled;
+    // EmulatorJS owns the virtual gamepad and can keep it hidden after changing input mode.
+    window.EJS_emulator?.toggleVirtualGamepad?.(enabled);
+    sync();
+    if (!enabled && !session.active()) modeButton?.focus({ preventScroll: true });
+  }
+
   document.addEventListener('ng-touch-game-start', () => {
     if (!touch || started) return;
     started = true;
@@ -283,6 +322,10 @@
     tools = fragment.querySelector('.ng-touch-tools');
     panel = fragment.querySelector('.ng-touch-panel');
     note = fragment.querySelector('.ng-rotate-note');
+    const disableTouch = panel.querySelector('[data-touch-disable]');
+    disableTouch.hidden = automatic;
+    disableTouch.addEventListener('click', () => setTouchMode(false), options);
+    modeButton?.addEventListener('click', () => setTouchMode(!touchMode), options);
     game.append(fragment);
     const manager = window.EJS_emulator.gameManager;
     const originalInput = manager.simulateInput;

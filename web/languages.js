@@ -11,6 +11,7 @@
       auxiliary: { en: "Auxiliary button size", ar: "حجم الأزرار المساعدة" },
       menu: { en: "Emulator menu", ar: "قائمة المحاكي" },
       controls: { en: "Touch controls", ar: "أدوات اللمس" },
+      disable: { en: "Switch to desktop controls", ar: "التبديل إلى أدوات الكمبيوتر" },
       fullscreen: { en: "Fullscreen", ar: "ملء الشاشة" },
       exit_fullscreen: { en: "Exit fullscreen", ar: "إنهاء ملء الشاشة" },
       rotate: { en: "Rotate your device to landscape for a better gaming experience.", ar: "أدر هاتفك بالعرض للحصول على تجربة لعب أفضل." },

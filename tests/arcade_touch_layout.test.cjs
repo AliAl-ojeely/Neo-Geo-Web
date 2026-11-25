@@ -1,7 +1,22 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { normalize, orientationSession, touchRouter } = require('../web/ui/arcade-touch-layout.js');
+const { normalize, prefersTouch, orientationSession, touchRouter } = require('../web/ui/arcade-touch-layout.js');
+
+test('desktop and Windows hybrids keep the native layout regardless of screen dimensions', () => {
+  for (const options of [
+    { points: 0, userAgent: 'Windows', coarse: false, hover: true, fine: true },
+    { points: 10, userAgent: 'Windows', coarse: true, hover: false, fine: false },
+    { points: 10, userAgent: 'X11; Linux', coarse: true, hover: true, fine: true }
+  ]) assert.equal(prefersTouch(options), false);
+});
+
+test('phones, tablets and coarse-only tablet browsers start in touch mode', () => {
+  for (const userAgent of ['Android', 'iPhone', 'iPad', 'Macintosh']) {
+    assert.equal(prefersTouch({ points: 5, userAgent, coarse: true, hover: false, fine: false }), true);
+  }
+  assert.equal(prefersTouch({ points: 5, userAgent: 'Android', coarse: false, hover: true, fine: true }), true);
+});
 
 test('touch preferences are restored with safe bounds and sensible defaults', () => {
   const defaults = normalize(null);
@@ -106,4 +121,20 @@ test('the responsive touch toolbar supplies an exclusive player selector and sca
   assert.match(css, /\.ng-touch-coin > span \{ pointer-events: none/);
   assert.match(css, /orientation: landscape/);
   assert.match(css, /max-width: 420px.*orientation: portrait/);
+});
+
+test('desktop CSS hides the extra controls and leaves the native toolbar geometry alone', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const read = name => fs.readFileSync(path.join(__dirname, '..', name), 'utf8');
+  const css = read('web/ui/arcade-touch-controls.css');
+  const html = read('web/player.html');
+  assert.match(css, /#game:not\(\.ng-touch-mode\)[^{]+\.ejs_virtualGamepad_parent[^{]+\{ display: none !important;/);
+  for (const rule of css.matchAll(/^([^@\n{]*\.ejs_menu_bar[^\n{]*)\s*\{/gm))
+    assert.match(rule[1], /#game\.ng-touch-mode/);
+  assert.match(css, /\.ng-touch-landscape \.theater-backdrop \{ animation: none; \}/);
+  assert.match(css, /\.ng-touch-landscape \.emulator-stage\.crt \{ filter: none; \}/);
+  assert.match(html, /id="ng-player-touch-mode"[^>]+ hidden>/);
+  assert.match(html, /data-touch-disable[^>]+ hidden>/);
+  assert.match(html, /class="back-btn"/);
 });
