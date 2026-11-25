@@ -9,7 +9,7 @@
 [![Version](https://img.shields.io/badge/Version-0.1.5.1-e55353?style=for-the-badge)](https://github.com/AliAl-ojeely/Neo-Geo-Web)
 [![EmulatorJS](https://img.shields.io/badge/EmulatorJS-4.2.3-725ac1?style=for-the-badge)](https://github.com/EmulatorJS/EmulatorJS)
 [![FBNeo](https://img.shields.io/badge/Core-FBNeo%20WebAssembly-008f9b?style=for-the-badge)](https://github.com/finalburnneo/FBNeo)
-[![Boot-tested](https://img.shields.io/badge/Boot%20tested-144%20games-239e70?style=for-the-badge)](#game-compatibility)
+[![Boot-tested](https://img.shields.io/badge/Boot%20tested-147%20games-239e70?style=for-the-badge)](#game-compatibility)
 [![Localization](https://img.shields.io/badge/Languages-English%20%7C%20Arabic-efbb33?style=for-the-badge)](#english--arabic)
 [![License](https://img.shields.io/badge/Frontend-GPL--3.0--or--later-467a36?style=for-the-badge)](LICENSE)
 
@@ -19,7 +19,7 @@
 
 **Status: Active development · Partial validation · Noncommercial core restrictions apply**
 
-[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Fully Offline / دون إنترنت**](#fully-offline-emulator) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#144-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
+[**Source code**](https://github.com/AliAl-ojeely/Neo-Geo-Web) · [**Fully Offline / دون إنترنت**](#fully-offline-emulator) · [**Setup guide**](#installation--local-development) · [**Browser help**](#browser-compatibility--saved-library-access) · [**Game catalog**](#147-boot-verified-catalog-titles) · [**Report an issue**](https://github.com/AliAl-ojeely/Neo-Geo-Web/issues)
 
 </div>
 
@@ -65,10 +65,10 @@ Four featured games from the project's local Neo Geo catalog. The images are inc
 
 | Metric | Evidence-based status |
 | :--- | :--- |
-| **144 games** | 127 historical boot passes and 17 verified recoveries |
+| **147 games** | 127 historical boot passes and 20 verified recoveries |
 | **49 more candidates** | Deferred for further compatibility, archive, or driver investigation |
 | **191 candidates total** | Original assessment scope (not all listed on the active public catalog) |
-| **Complete gameplay** | **Not verified across all 144 games**; boot success is not a guarantee of playable sessions |
+| **Complete gameplay** | **Not verified across all 147 games**; boot success is not a guarantee of playable sessions |
 | **Public hosting** | GitHub Pages preparation is available; the published deployment requires its own acceptance checks |
 | **Offline browser testing** | A recorded hosted-site game session exists; this does not establish full-catalog or cross-browser offline compatibility |
 
@@ -191,7 +191,7 @@ Neo-Geo-Web/
 ├── tools/                          # Local companion, preview and preflight tools
 ├── web/                            # First-party frontend source
 │   ├── controls/                   # Custom controls, UI and Tab pause
-│   ├── data/catalog.json           # 144 boot-verified catalog entries and identities
+│   ├── data/catalog.json           # 147 boot-verified catalog entries and identities
 │   ├── library/                    # Source linking, storage, validation and recovery
 │   ├── offline/                    # Install, update and selective removal UI
 │   ├── media/                      # Frontend icon/logo assets
@@ -325,11 +325,11 @@ The public [GitHub Pages site](https://alial-ojeely.github.io/Neo-Geo-Web/) **ne
 
 ## Game Compatibility
 
-The catalog contains **144 titles with boot evidence**. The historical assessment verified 127 boots. Seventeen subsequent recoveries used locally derived archives with SHA-256 values recorded in the catalog. Of 191 assessed candidates, 47 remain deferred. Full gameplay testing is incomplete across the catalog. Metal Slug 3 (NGH-2560) has additional static-site evidence in Chrome, Brave, and Edge for keyboard input, digital audio, save/load, return to library, and offline boot and save restoration with the preview server stopped.
+The catalog contains **147 titles with boot evidence**. The historical assessment verified 127 boots. 20 subsequent recoveries used locally derived archives with SHA-256 values recorded in the catalog. Of 191 assessed candidates, 44 remain deferred. Full gameplay testing is incomplete across the catalog. Metal Slug 3 (NGH-2560) has additional static-site evidence in Chrome, Brave, and Edge for keyboard input, digital audio, save/load, return to library, and offline boot and save restoration with the preview server stopped.
 
-The project’s completion target is the **22 original Neo Geo entries in The King of Fighters, Metal Slug, and Samurai Shodown**. Current browser boot coverage is **19/22** (KOF 8/10, Metal Slug 5/6, Samurai Shodown 6/6). Full acceptance includes in-game controls, graphics and digital audio, save/load, offline reopen, and stability in Chrome, Brave, and Edge. Physical audio and controller checks are tracked separately. The release remains **PARTIAL_VALIDATION**. KOF 2003 and Metal Slug 5 passed three-browser runtime and offline checks, including 120-second sessions. The Offline Manifest generator now derives the service worker build ID, asset hashes, and byte totals in one build step.
+The project’s completion target is the **22 original Neo Geo entries in The King of Fighters, Metal Slug, and Samurai Shodown**. Current browser boot coverage is **22/22** (KOF 10/10, Metal Slug 6/6, Samurai Shodown 6/6). Full acceptance includes in-game controls, graphics and digital audio, save/load, offline reopen, and stability in Chrome, Brave, and Edge. Physical audio and controller checks are tracked separately. The release remains **PARTIAL_VALIDATION**. KOF 2003 and Metal Slug 5 passed three-browser runtime and offline checks, including 120-second sessions. The Offline Manifest generator now derives the service worker build ID, asset hashes, and byte totals in one build step.
 
-For the three remaining games (KOF ’99, KOF 2000, and Metal Slug 4), use [the local priority importer](import_priority_games.py) with authorized sources:
+To verify an authorized local cartridge, use [the local priority importer](import_priority_games.py) with authorized sources:
 
 ```powershell
 py -3 import_priority_games.py "D:\path\to\owned-files" --game mslug4
@@ -338,16 +338,18 @@ py -3 import_priority_games.py "D:\path\to\owned-files" --game mslug4 --output "
 
 The default mode audits loose files, ZIPs, and one layer of nested ZIPs. The output option writes a complete, verified cartridge only when all required members are present. Pass `--project-layouts` and explicitly include the legacy source archive to reuse audited project conversions. Imported archives still need browser validation with the project's BIOS.
 
-### 144 Boot-Verified Catalog Titles
+### 147 Boot-Verified Catalog Titles
 
 The entries below were extracted from `web/data/catalog.json`, retaining the project's actual titles and driver identifiers. Open any category to see every title. These groupings reflect the catalog's classifications, not necessarily original publisher genres.
 
 <details>
-<summary><strong>Fighting — 41 games</strong></summary>
+<summary><strong>Fighting — 43 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
 | Aggressors of Dark Kombat | `aodk` | Boot PASS only |
+| The King of Fighters '99 | `kof99` | Three-browser runtime and offline PASS |
+| The King of Fighters 2000 | `kof2000` | Three-browser runtime and offline PASS |
 | The King of Fighters 2003 | `kof2k3fd` | Three-browser runtime and offline PASS |
 | Art of Fighting 2 | `aof2` | Boot PASS only |
 | Art of Fighting 3 | `aof3` | Boot PASS only |
@@ -392,7 +394,7 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 </details>
 
 <details>
-<summary><strong>Action — 29 games</strong></summary>
+<summary><strong>Action — 30 games</strong></summary>
 
 | Game title | ROM / driver ID | Current evidence |
 | :--- | :--- | :--- |
@@ -406,6 +408,7 @@ The entries below were extracted from `web/data/catalog.json`, retaining the pro
 | King of the Monsters | `kotm` | Boot PASS only |
 | Magician Lord | `maglord` | Boot PASS only |
 | Metal Slug 2 | `mslug2` | Boot PASS only |
+| Metal Slug 4 | `mslug4` | Three-browser runtime and offline PASS |
 | Metal Slug 5 | `mslug5fd` | Three-browser runtime and offline PASS |
 | Metal Slug 3 (NGH-2560) | `mslug3h` | Browser gameplay check recorded |
 | Metal Slug 6 (Metal Slug 3 bootleg) | `mslug3b6` | Boot PASS only |
@@ -599,7 +602,7 @@ AI contributions are **assistive, not a replacement for the emulator core or ind
 
 **Planned improvements**
 
-- Resolve the five ROM blockers in the 22-game KOF, Metal Slug, and Samurai Shodown acceptance list.
+- Track further gameplay validation across the full catalog, including physical controller and audible audio checks.
 - Expand real-game audio, input, rendering and save-state testing.
 - Improve recovery and permission feedback in supported browsers.
 - Polish localization, accessibility and mobile layout behavior.
