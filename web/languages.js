@@ -73,6 +73,18 @@
       motion_label: { en: 'Toggle decorative library motion', ar: 'تبديل الحركة الزخرفية في المكتبة' }
     },
     offline: {
+      information: { en: 'Storage, Privacy & Troubleshooting', ar: 'التخزين والخصوصية وحل المشكلات' },
+      package_size: { en: 'Package size', ar: 'حجم الحزمة' },
+      file_count: { en: 'Files count', ar: 'عدد الملفات' },
+      verification: { en: 'Verification status', ar: 'حالة التحقق' },
+      verified: { en: 'Installed package verified', ar: 'الحزمة المثبّتة متحقق منها' },
+      verifying: { en: 'Verifying downloaded files', ar: 'جارٍ التحقق من الملفات المنزّلة' },
+      verification_incomplete: { en: 'Installed files incomplete', ar: 'الملفات المثبّتة غير مكتملة' },
+      verification_pending: { en: 'Awaiting installation', ar: 'في انتظار التثبيت' },
+      progress: { en: 'Installation progress', ar: 'تقدّم التثبيت' },
+      confirming: { en: 'Waiting for download approval', ar: 'في انتظار الموافقة على التنزيل' },
+      removing: { en: 'Removing the offline package', ar: 'جارٍ إزالة حزمة التشغيل دون إنترنت' },
+      install_help: { en: 'Reconnect and retry. If downloads keep failing, check the download-manager guidance below.', ar: 'أعد الاتصال وحاول مجددًا. إذا استمر فشل التنزيل، راجع إرشادات برامج إدارة التنزيل أدناه.' },
       remove_scope: { en: "Remove deletes ONLY this feature's offline cache. It does not clear your browser cache or your personal game data.", ar: "زر «إزالة» يحذف ذاكرة التخزين الخاصة بهذه الميزة فقط، دون مسح ذاكرة المتصفح بالكامل أو بيانات ألعابك الشخصية." },
       removed: { en: "Offline package removed", ar: "أُزيلت حزمة التشغيل دون إنترنت" },
       remove_success_note: { en: "Only the offline website and emulator cache was deleted. Your other site data, ROMs, BIOS, preferences and game saves are unchanged. An internet connection will be needed to install it again or reload the site.", ar: "حُذفت ذاكرة ملفات الموقع والمحرك الخاصة بالوضع دون إنترنت فقط. لم تتغير بيانات الموقع الأخرى أو ROMs أو BIOS أو الإعدادات أو ملفات الحفظ. ستحتاج إلى الإنترنت لإعادة تثبيت الحزمة أو إعادة تحميل الموقع." },
@@ -89,7 +101,7 @@
         en: 'Troubleshooting: If offline setup fails, a download-manager browser extension, such as Internet Download Manager (IDM), may have intercepted a file request. Temporarily disable IDM integration or other download-manager extensions, then retry. You can re-enable them after setup.',
         ar: 'تنبيه: إذا فشل تجهيز التشغيل دون إنترنت، فقد تكون إضافة Internet Download Manager ‏(IDM) أو إحدى إضافات إدارة التنزيلات قد اعترضت طلب أحد الملفات. عطّل الإضافة مؤقتًا ثم أعد المحاولة، ويمكنك إعادة تفعيلها بعد اكتمال التجهيز.'
       },
-      title: { en: 'Fully Offline Emulator', ar: 'دون الحاجة الى الاتصال بالانترنت بشكل كامل' },
+      title: { en: 'Offline Manager', ar: 'مدير التشغيل دون إنترنت' },
       button: { en: "Install", ar: "تثبيت" },
       description: { en: 'Save the website and the complete emulator runtime locally for access without an internet connection.', ar: 'احتفظ بملفات الموقع والمحاكي كاملة داخل المتصفح لتشغيلها دون اتصال بالإنترنت.' },
       dialog_title: { en: 'Prepare fully offline emulation', ar: 'تجهيز المحاكي للعمل دون إنترنت' },
@@ -127,8 +139,8 @@
     offline_update: {
       title: { en: 'Offline Update Manager', ar: 'مدير تحديثات التشغيل دون إنترنت' },
       description: { en: 'Compare your installed offline package with the latest published site build. Download only after approval.', ar: 'قارن حزمة التشغيل دون إنترنت المثبتة بأحدث إصدار منشور. لن يبدأ التنزيل إلا بعد موافقتك.' },
-      check_button: { en: 'Check for updates', ar: 'التحقق من التحديثات' },
-      update_button: { en: 'Install verified update', ar: 'تثبيت التحديث المتحقق منه' },
+      check_button: { en: 'Check for Updates', ar: 'التحقق من التحديثات' },
+      update_button: { en: 'Install Update', ar: 'تثبيت التحديث' },
       checking: { en: 'Checking offline package...', ar: 'جارٍ فحص حزمة التشغيل دون إنترنت...' },
       up_to_date: { en: 'Your offline package is up to date.', ar: 'حزمة التشغيل دون إنترنت محدثة.' },
       available: { en: 'An offline update is available.', ar: 'يتوفر تحديث جديد لحزمة التشغيل دون إنترنت.' },

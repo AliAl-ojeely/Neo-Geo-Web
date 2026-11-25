@@ -45,7 +45,7 @@ test('existing action data attributes support style targeting without JS changes
 });
 
 test('Settings explicitly requests the new stylesheet revision', () => {
-  assert.match(html, /\/assets\/style\.css\?v=1\.4\.7/);
+  assert.match(html, /\/assets\/style\.css\?v=1\.8\.0/);
   assert.doesNotMatch(html, /\/assets\/style\.css\?v=1\.4\.4/);
   assert.match(html, /gamepad-remap\.js\?v=1\.4\.5/);
 });

@@ -121,9 +121,9 @@ ROMs and BIOS files are provided by the user. The generated static site includes
 
 ## Fully Offline Emulator
 
-The **Fully Offline Emulator** option lets you prepare the public website and its pinned EmulatorJS/FBNeo runtime **once while connected**, then reopen the same website and run supported games using **your own local ROM and BIOS files** without downloading the website or emulator assets again. The feature is available under **Settings → More options**. It is an opt-in browser cache, **not** a Windows installer, a downloadable ROM pack, or a standalone ZIP.
+Use **Offline Manager** under **Settings → More options** to prepare the public website and its pinned EmulatorJS/FBNeo runtime **once while connected**. You can then reopen the same site and run supported games using **your own local ROM and BIOS files**. The manager shows the installed and published builds, package size and file count, verification status, and download progress. The package is stored in this browser's Cache Storage.
 
-**العربية:** تتيح ميزة **دون الحاجة إلى الاتصال بالإنترنت بشكل كامل** تجهيز ملفات الموقع ومحرك المحاكاة مرة واحدة أثناء الاتصال، ثم فتح الموقع نفسه وتشغيل الألعاب المدعومة باستخدام ملفات ROM وBIOS المحلية الخاصة بك دون إعادة تنزيل ملفات الموقع أو المحرك. ستجدها في **الإعدادات ← خيارات إضافية**. وهي تخزين محلي اختياري داخل المتصفح، وليست برنامج تثبيت لويندوز أو حزمة ألعاب أو ملف ZIP مستقل.
+**العربية:** يتيح **مدير التشغيل دون إنترنت** تجهيز ملفات الموقع والمحاكي أثناء الاتصال، ثم فتح الموقع نفسه وتشغيل الألعاب المدعومة باستخدام ملفات ROM وBIOS المحلية. ستجده في **الإعدادات ← خيارات إضافية**. تُحفظ حزمة الموقع والمحاكي في ذاكرة المتصفح المحلية.
 
 ### English — user guide
 
@@ -131,13 +131,13 @@ The **Fully Offline Emulator** option lets you prepare the public website and it
 
 **Install, update, remove:**
 
-1. Open the [hosted website](https://alial-ojeely.github.io/Neo-Geo-Web/) while online and choose **Settings → More options → Fully Offline Emulator**.
-2. Select **Install** (Arabic: **تثبيت**). Review the confirmation dialog: it lists downloaded file categories, total size, storage location and possible download-extension conflicts. Nothing is precached before explicit consent.
+1. Open the [hosted website](https://alial-ojeely.github.io/Neo-Geo-Web/) while online and choose **Settings → More options → Offline Manager**.
+2. Select **Install** (Arabic: **تثبيت**). The confirmation shows what the package contains, its size, and the number of files. The download starts after approval.
 3. Approve the download. Wait for the verified completion message; interrupting the installation does **not** certify a partially downloaded pack as ready.
-4. After installation, the controls change to **Update** (**تحديث**) and **Remove** (**إزالة**). Use **Update** while connected to obtain the current published site and runtime. When a new version is deployed, update the pack **before** going offline, then reload the page.
+4. Use **Check for Updates** while connected. If a different published build is available, **Install Update** appears. Approve the download to replace the current package after verification. Reload the page after the update.
 5. Choose **Remove** to delete only the caches owned by this feature (including incomplete package remnants), after confirmation. It **does not** clear other browser caches, IndexedDB, local library references, site preferences, save data, or your ROM/BIOS files. The Service Worker may remain registered, but no offline app files remain available from this package; reconnect to reinstall.
 
-**Where are the files?** The downloaded assets reside in the current browser profile's **Cache Storage**, associated with this website's origin and Service Worker scope. They are **not** stored in your Downloads folder and no portable ZIP is created. Inspect them using browser developer tools: **F12 → Application → Cache Storage** (the exact tab label depends on the browser). The browser chooses its own on-disk directory; there is no universal Windows folder path. **Chrome, Brave, Edge, different browser profiles, `localhost`, and GitHub Pages do not automatically share offline packages.** Even changing the local test port changes the origin.
+**Where are the files?** Expand **Storage, Privacy & Troubleshooting** in Offline Manager. The downloaded assets reside in the current browser profile's **Cache Storage**, associated with this website's origin and Service Worker scope. They are **not** stored in your Downloads folder and no portable ZIP is created. Inspect them using browser developer tools: **F12 → Application → Cache Storage** (the exact tab label depends on the browser). The browser chooses its own on-disk directory; there is no universal Windows folder path. **Chrome, Brave, Edge, different browser profiles, `localhost`, and GitHub Pages do not automatically share offline packages.** Even changing the local test port changes the origin.
 
 **Playing completely offline:** First install the package online and connect your legally obtained ROMs and BIOS using the Local Library Manager. Verify a game starts, then disconnect the network, reload the **same site URL** and launch it again. Browser File System Access permissions may need renewal after restart, including while offline, and the browser may not provide permanent file access. Keep your game files on your own device. The feature is designed to serve verified app/runtime files locally and avoid unexpected app network requests once enabled; **it does not control the browser's own update checks or guarantee permanent storage**, nor does one successful game certify the entire catalog.
 
@@ -151,13 +151,13 @@ The **Fully Offline Emulator** option lets you prepare the public website and it
 
 **التثبيت والتحديث والإزالة:**
 
-1. افتح [الموقع الفعلي](https://alial-ojeely.github.io/Neo-Geo-Web/) أثناء الاتصال بالإنترنت، ثم انتقل إلى **الإعدادات ← خيارات إضافية ← دون الحاجة إلى الاتصال بالإنترنت بشكل كامل**.
-2. اضغط **تثبيت (Install)**. راجع نافذة الموافقة التي تشرح أنواع الملفات وحجمها ومكان تخزينها واحتمال تعارض إضافات التحميل. لا يبدأ التخزين المسبق دون موافقتك.
+1. افتح [الموقع الفعلي](https://alial-ojeely.github.io/Neo-Geo-Web/) أثناء الاتصال بالإنترنت، ثم انتقل إلى **الإعدادات ← خيارات إضافية ← مدير التشغيل دون إنترنت**. يعرض المدير الإصدار المثبّت والمنشور، وحجم الحزمة وعدد الملفات، وحالة التحقق.
+2. اضغط **تثبيت (Install)** وراجع محتوى الحزمة وحجمها وعدد ملفاتها في نافذة الموافقة. يبدأ التنزيل بعد موافقتك.
 3. وافق وانتظر رسالة اكتمال التنزيل والتحقق. لا تُعدّ الحزمة جاهزة إذا كان التنزيل ناقصًا أو فشل التحقق.
-4. بعد النجاح، يظهر زرا **تحديث (Update)** و**إزالة (Remove)**. استخدم **تحديث** أثناء الاتصال للحصول على أحدث ملفات الموقع والمحرك، ثم أعد تحميل الصفحة قبل فصل الإنترنت.
+4. استخدم **التحقق من التحديثات** أثناء الاتصال. عند توفر إصدار مختلف يظهر زر **تثبيت التحديث**. وافق على التنزيل، ثم أعد تحميل الصفحة بعد اكتمال التحقق والتثبيت.
 5. يتيح زر **إزالة**، بعد رسالة تأكيد، حذف **ذاكرة التخزين الخاصة بهذه الميزة فقط**، بما فيها بقايا التنزيلات غير المكتملة. لا يحذف ذاكرة المتصفح الأخرى أو IndexedDB أو مراجع ملفات الألعاب المحفوظة أو الإعدادات أو ملفات الحفظ أو ROM وBIOS. قد يظل Service Worker مسجّلًا، لكن ملفات التشغيل دون إنترنت تكون قد أُزيلت؛ وتحتاج إلى الاتصال لإعادة تثبيتها.
 
-**أين تُحفظ الحزمة؟** داخل **Cache Storage** الخاص بالمتصفح وملف المستخدم وعنوان الموقع ونطاق Service Worker؛ **وليست في Downloads ولا في ملف ZIP مستقل**. لمعاينتها افتح أدوات المطور **F12 ← Application ← Cache Storage** (قد تختلف التسميات بين المتصفحات). يختار المتصفح المسار الفعلي على القرص، ولا يوجد مجلد Windows ثابت يصلح لكل المستخدمين. التخزين منفصل بين Chrome وBrave وEdge وملفات المستخدمين المختلفة، وكذلك بين `localhost` وموقع GitHub Pages. حتى تغيير منفذ الخادم المحلي قد ينشئ نطاق تخزين مختلفًا.
+**أين تُحفظ الحزمة؟** افتح **التخزين والخصوصية وحل المشكلات** داخل المدير. تُحفظ الحزمة في **Cache Storage** الخاص بالمتصفح وملف المستخدم وعنوان الموقع ونطاق Service Worker؛ **وليست في Downloads ولا في ملف ZIP مستقل**. لمعاينتها افتح أدوات المطور **F12 ← Application ← Cache Storage** (قد تختلف التسميات بين المتصفحات). يختار المتصفح المسار الفعلي على القرص، ولا يوجد مجلد Windows ثابت يصلح لكل المستخدمين. التخزين منفصل بين Chrome وBrave وEdge وملفات المستخدمين المختلفة، وكذلك بين `localhost` وموقع GitHub Pages. حتى تغيير منفذ الخادم المحلي قد ينشئ نطاق تخزين مختلفًا.
 
 **التشغيل دون إنترنت فعليًا:** ثبّت الحزمة أثناء الاتصال، ثم اربط ملفات ROM وBIOS التي تملك حق استخدامها من **مدير المكتبة المحلية**. تأكد أولًا من تشغيل لعبة، ثم افصل الإنترنت وأعد تحميل **عنوان الموقع نفسه** وشغّل اللعبة مجددًا. قد يطلب المتصفح تجديد صلاحية قراءة المجلدات بعد إعادة تشغيله، حتى دون إنترنت. صُممت الميزة لتقديم ملفات الموقع والمحرك من التخزين المحلي وتجنب طلبات الشبكة غير المتوقعة من التطبيق بعد تفعيلها؛ لكنها **لا تتحكم في فحوص تحديث المتصفح نفسه ولا تضمن بقاء التخزين إلى الأبد**، ولا يعني نجاح لعبة واحدة توافق جميع الألعاب.
 
@@ -167,6 +167,7 @@ The **Fully Offline Emulator** option lets you prepare the public website and it
 
 ### Implementation, testing & acceptance | التنفيذ والاختبارات
 
+- **Offline Manager v1.0 acceptance:** Isolated Windows profiles in Brave and Microsoft Edge passed a fresh install, an up-to-date check, update discovery and installation, reopening Settings with network disabled, and selective removal. A deliberately corrupted download was rejected while the previous package remained ready. Removal preserved unrelated cache and IndexedDB data, the saved controls profile, and a test library reference in both browsers. In Brave, **Metal Slug** booted from the updated offline package using local game files stored in the test profile. Its save state was created and loaded offline, then matched byte-for-byte after removal.
 - **Implementation / التنفيذ:** `web/offline/offline-ui.js` (bilingual opt-in controls), `tools/offline-sw.template.js` (install, update, selective remove, cache-only runtime), `app/web_distribution.py` (build/manifest), `web/languages.js` (translations), `web/player.js` (offline-safe core preflight). The generated `dist/github-pages/` files must be rebuilt rather than edited directly.
 - **Local commands / أوامر محلية** (each PowerShell command is on one line):
 
@@ -609,7 +610,7 @@ The **31 deferred candidates** remain outside the active catalog. Further resear
 
 | Arcade Renaissance v2.5 acceptance check | Recorded result |
 | :--- | :--- |
-| Node.js | 260/260 |
+| Node.js | 260/260 at v2.5 acceptance; 262/262 after Offline Manager v1.0 |
 | Python | 12/12 |
 | Online preview rendering | 160/160 per browser in Chrome, Brave, and Edge |
 | Offline preview rendering | 160/160 per browser in Chrome, Brave, and Edge with the local server stopped |

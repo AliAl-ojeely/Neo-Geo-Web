@@ -45,7 +45,7 @@ function fakeWorker(corrupt = false, badTotal = false, origin = site) {
   };
   const self={registration:{scope:site},skipWaiting:async()=>{},clients:{claim:async()=>{}},addEventListener:(name,cb)=>handlers.set(name,cb)};
   vm.runInNewContext(source.replace('__NG_OFFLINE_BUILD_ID__',manifest.id),{self,caches,fetch,crypto:webcrypto,URL,Request,Response,Uint8Array,Promise,Map,Set,Date,Error,Number,String,console});
-  async function send(command){let work;const messages=[];handlers.get('message')({ports:[{postMessage:x=>messages.push(x)}],data:{command},waitUntil:p=>work=p});await work;return messages;}
+  async function send(command, expectedBuild){let work;const messages=[];handlers.get('message')({ports:[{postMessage:x=>messages.push(x)}],data:{command,expectedBuild},waitUntil:p=>work=p});await work;return messages;}
   async function get(path){let response;handlers.get('fetch')({request:new Request(new URL(path,site)),respondWith:p=>response=p});return response;}
   async function removeCached(path) {
     const meta = maps.get('neogeo-static-offline-meta-v1');
@@ -60,7 +60,7 @@ test('the UI, bilingual labels and static builder include fully offline assets',
   const file=name=>fs.readFileSync(path.join(root,name),'utf8');
   assert.match(file('web/settings.js'),/id="ng-offline-action"/);
   assert.match(file('web/settings.html'),/offline\/offline-ui\.js/);
-  assert.match(file('web/languages.js'),/دون الحاجة الى الاتصال بالانترنت بشكل كامل/);
+  assert.match(file('web/languages.js'),/مدير التشغيل دون إنترنت/);
   assert.match(file('app/web_distribution.py'),/write_bundle\(PUBLIC/);
   assert.match(file('app/offline_manifest.py'),/offline-manifest\.json/);
 });
@@ -88,6 +88,14 @@ test('corrupt downloaded bytes cannot activate a partial package',async()=>{
   const w=fakeWorker(true);
   assert.match((await w.send('INSTALL')).at(-1).message,/CHECKSUM_MISMATCH/);
   assert.equal((await w.send('STATUS')).at(-1).ready,false);
+});
+
+test('worker rejects a build other than the one approved before any network or cache writes', async () => {
+  const worker = fakeWorker();
+  const result = await worker.send('INSTALL', 'different-build');
+  assert.match(result.at(-1).message, /OFFLINE_MANIFEST_BUILD_MISMATCH/);
+  assert.equal(worker.count(), 0);
+  assert.deepEqual(worker.cacheNames(), []);
 });
 
 test('no background cache of application files without user activation',async()=>{

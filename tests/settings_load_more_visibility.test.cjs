@@ -15,18 +15,18 @@ test('settings page has one Library nav link without redundant Back to library',
 
 test('settings page references versioned JS for the installed paging setting', () => {
   const html = read('web/settings.html');
-  for (const [name, version] of [['languages.js', '1.7.0-gm143'], ['preferences.js', '1.3.2']]) {
+  for (const [name, version] of [['languages.js', '1.8.0'], ['preferences.js', '1.3.2']]) {
     const escapedVersion = version.replace(/\./g, '\\.');
     assert.match(html, new RegExp('src="/assets/' + name.replace('.', '\\.') + '\\?v=' + escapedVersion + '"'));
   }
-  assert.match(html, /src="\/assets\/settings\.js\?v=1\.7\.0-gm143"/);
+  assert.match(html, /src="\/assets\/settings\.js\?v=1\.8\.0"/);
 });
 
 test('More options really renders the Load More Games preference', () => {
   const source = read('web/settings.js');
   const preferences = read('web/preferences.js');
   const languages = read('web/languages.js');
-  assert.match(source, /misc:\s*\(\)\s*=>\s*\[\s*\/\/ Library paging/);
+  assert.match(source, /misc:\s*\(\)\s*=>\s*\[[\s\S]*?toggle\('loadMoreGames'/);
   assert.match(source, /toggle\('loadMoreGames', NGI18n\.t\('settings\.library_load_more_enable'\)\)/);
   assert.match(preferences, /loadMoreGames:\s*true/);
   assert.match(preferences, /'loadMoreGames'/);

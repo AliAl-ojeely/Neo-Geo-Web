@@ -53,8 +53,8 @@ test('all added CSS is limited to Settings and does not target the vendor or pla
   assert.doesNotMatch(patch, /\b!important\b/);
 });
 
-test('Settings references v1.4.7 CSS and keeps the working v1.4.5 input script', () => {
-  assert.match(html, /\/assets\/style\.css\?v=1\.4\.7/);
+test('Settings references the current stylesheet and keeps the working v1.4.5 input script', () => {
+  assert.match(html, /\/assets\/style\.css\?v=1\.8\.0/);
   assert.doesNotMatch(html, /\/assets\/style\.css\?v=1\.4\.6/);
   assert.match(html, /\/assets\/controls\/gamepad-remap\.js\?v=1\.4\.5/);
 });

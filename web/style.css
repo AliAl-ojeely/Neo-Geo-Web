@@ -3142,6 +3142,14 @@ input[type='number'],
 
 /* Fully Offline Emulator: confined to the existing settings card system. */
 .ng-offline-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ng-offline-manager [hidden] { display: none; }
+.ng-offline-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; margin: 0 0 16px; }
+.ng-offline-facts > div { min-inline-size: 0; padding: 10px; border: 1px solid var(--stroke-strong, #393943); border-radius: 8px; }
+.ng-offline-facts dt { color: var(--text-muted, #b9b9c4); font-size: 0.85rem; }
+.ng-offline-facts dd { margin: 4px 0 0; overflow-wrap: anywhere; text-align: start; }
+.ng-offline-facts dd[dir="ltr"] { text-align: inherit; unicode-bidi: isolate; }
+.ng-offline-manager progress { margin-block-start: 12px; }
+.ng-offline-storage-box summary { cursor: pointer; font-weight: 700; }
 .ng-offline-button { border-color: #9d8c2b; background: #3b330b; color: #ffdd6a; }
 .ng-offline-remove { border-color: #88524c; }
 .ng-offline-status { margin: 12px 0 6px; font-weight: 700; overflow-wrap: anywhere; }

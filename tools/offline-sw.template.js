@@ -123,7 +123,11 @@ async function fetchVerifiedAsset(url, item) {
     (failure?.noRetry ? '1' : MAX_ATTEMPTS) + ']');
 }
 
-async function installPack(port) {
+async function installPack(port, expectedBuild) {
+  if (expectedBuild !== undefined && expectedBuild !== BUILD_ID) {
+    report(port, 'error', { message: 'OFFLINE_MANIFEST_BUILD_MISMATCH: Refresh the page online.' });
+    return;
+  }
   if (busy) { report(port, 'error', { message: 'An offline download is already running.' }); return; }
   busy = true;
   let stageName;
@@ -215,7 +219,7 @@ self.addEventListener('message', event => {
   const cmd = event.data?.command;
   const task = cmd === 'STATUS'
     ? reportStatus().then(result => report(port, 'status', result))
-    : cmd === 'INSTALL' ? installPack(port)
+    : cmd === 'INSTALL' ? installPack(port, event.data.expectedBuild)
       : cmd === 'REMOVE' ? deletePack(port)
         : Promise.resolve(report(port, 'error', { message: 'Unknown offline command.' }));
   event.waitUntil(task.catch(error => report(port, 'error', { message: error.message })));

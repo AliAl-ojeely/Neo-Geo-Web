@@ -166,28 +166,30 @@ test('UI and locale strings include clear bilingual Install/Update/Remove contro
     'remove_button: { en: "Remove", ar: "إزالة" }',
     'remove_scope:', 'remove_success_note:', 'cleanup_available:'
   ]) assert.ok(language.includes(token), token);
-  assert.match(settings, /data-i18n-text="offline\.remove_scope"/);
-  assert.match(ui, /latest\?\.removable/);
-  assert.match(ui, /message\('removed'/);
+  assert.match(settings, /'remove_scope'/);
+  assert.match(ui, /installed\?\.removable/);
+  assert.match(ui, /show\('offline\.removed'/);
   assert.match(ui, /command\(reg, 'REMOVE'\)/);
 });
 
-test('UI transitions Update -> Remove -> Install after the user confirms deletion', async () => {
+test('UI transitions Check for Updates -> Remove -> Install after the user confirms deletion', async () => {
   const { MessageChannel } = require('node:worker_threads');
   const elements = {};
-  for (const id of ['ng-offline-action', 'ng-offline-remove', 'ng-offline-status', 'ng-offline-progress', 'ng-offline-detail', 'ng-offline-storage-site']) {
+  for (const suffix of ['action', 'remove', 'status', 'progress', 'detail', 'storage-site', 'update-check',
+    'installed', 'published', 'count', 'size', 'verification']) {
+    const id = 'ng-offline-' + suffix;
     elements[id] = { hidden: id === 'ng-offline-remove', disabled: false, textContent: '', dataset: {}, value: 0 };
   }
   const handlers = new Map();
   const document = { getElementById: id => elements[id] || null,
-    addEventListener: (event, handler) => handlers.set(event, handler) };
+    addEventListener: (event, handler) => handlers.set(event, handler), dispatchEvent() {} };
   let installed = true;
   const commands = [];
   const active = { postMessage: (message, ports) => {
     commands.push(message.command);
     const port = ports[0];
     const result = message.command === 'STATUS'
-      ? { type: 'status', ready: installed, removable: installed, count: installed ? 67 : 0, bytes: 100 }
+      ? { type: 'status', ready: installed, removable: installed, count: installed ? 67 : 0, bytes: 100, id: installed ? 'current' : null }
       : message.command === 'REMOVE'
         ? { type: 'removed', ready: false, removable: false, removedCaches: 2 }
         : { type: 'error', message: 'unexpected' };
@@ -198,19 +200,21 @@ test('UI transitions Update -> Remove -> Install after the user confirms deletio
   const registration = { active };
   let confirmed = 0;
   const t = k => ({
-    'offline.button': 'Install', 'offline.update_button': 'Update',
+    'offline.button': 'Install',
     'offline.remove_button': 'Remove', 'offline.removed': 'Offline package removed',
     'offline.remove_success_note': 'Other site data are unchanged.'
   })[k] || k;
   const context = {
     document, navigator: { serviceWorker: { getRegistration: async () => registration } },
-    location: new URL(scope), NG_BASE: new URL(scope), NG_STATIC: true,
+    location: new URL(scope), NG_BASE: new URL(scope), NG_STATIC: true, isSecureContext: true,
+    NGOfflineUpdate: { published: async () => ({ id: 'current', files: [], totalBytes: 100 }) },
     NGI18n: { t }, NGDialog: { confirm: async () => { confirmed++; return true; } },
-    URL, MessageChannel, setTimeout, clearTimeout, console
+    URL, MessageChannel, Event, setTimeout, clearTimeout, console
   };
   vm.runInNewContext(fs.readFileSync(path.join(root, 'web/offline/offline-ui.js'), 'utf8'), context);
   await context.NGOfflineUI.mount();
-  assert.equal(elements['ng-offline-action'].textContent, 'Update');
+  assert.equal(elements['ng-offline-action'].hidden, true);
+  assert.equal(elements['ng-offline-update-check'].hidden, false);
   assert.equal(elements['ng-offline-remove'].hidden, false);
   await elements['ng-offline-remove'].onclick();
   assert.equal(confirmed, 1);

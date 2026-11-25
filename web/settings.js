@@ -208,19 +208,32 @@
 
     // Render startup, exit confirmation, and diagnostic preferences.
     misc: () => [
-      // Library paging is independent of the existing entrance animations.
       card(
         NGI18n.t('offline.title'),
         NGI18n.t('offline.description'),
-        `<div class="ng-offline-actions"><button id="ng-offline-action" class="settings-utility ng-offline-button" type="button">${NGI18n.t('offline.button')}</button><button id="ng-offline-remove" class="settings-utility ng-offline-remove" type="button" hidden>${NGI18n.t('offline.remove_button')}</button></div><p class="ng-offline-detail" data-i18n-text="offline.remove_scope">${NGI18n.t('offline.remove_scope')}</p><p id="ng-offline-status" class="ng-offline-status" role="status">${NGI18n.t('offline.not_installed')}</p><p class="ng-offline-extension-note" data-i18n-text="offline.extension_note" role="note">${NGI18n.t('offline.extension_note')}</p><section class="ng-offline-storage-box" aria-label="${NGI18n.t('offline.storage_heading')}"><strong data-i18n-text="offline.storage_heading">${NGI18n.t('offline.storage_heading')}</strong><p data-i18n-text="offline.storage_location">${NGI18n.t('offline.storage_location')}</p><p><span data-i18n-text="offline.storage_site">${NGI18n.t('offline.storage_site')}</span> <span id="ng-offline-storage-site" class="ng-offline-storage-site" dir="ltr" data-no-i18n></span></p><p data-i18n-text="offline.storage_scope">${NGI18n.t('offline.storage_scope')}</p><p data-i18n-text="offline.storage_inspect">${NGI18n.t('offline.storage_inspect')}</p><p data-i18n-text="offline.storage_privacy">${NGI18n.t('offline.storage_privacy')}</p></section><progress id="ng-offline-progress" class="ng-offline-progress" max="100" value="0" hidden></progress><p id="ng-offline-detail" class="ng-offline-detail" role="status"></p>`,
-        true,
-        true
-      ),
-      // Show published and locally installed offline build IDs without downloading assets.
-      card(
-        NGI18n.t('offline_update.title'),
-        NGI18n.t('offline_update.description'),
-        `<div class="ng-offline-actions"><button id="ng-offline-update-check" class="settings-utility" type="button">${NGI18n.t('offline_update.check_button')}</button><button id="ng-offline-update-apply" class="settings-utility ng-offline-button" type="button" hidden>${NGI18n.t('offline_update.update_button')}</button></div><p id="ng-offline-update-status" class="ng-offline-status" role="status" aria-live="polite">${NGI18n.t('offline_update.checking')}</p><p id="ng-offline-update-detail" class="ng-offline-detail" style="white-space: pre-line"></p><p class="ng-offline-detail">${NGI18n.t('offline_update.privacy_note')}</p>`,
+        `<div class="ng-offline-manager">
+          <p id="ng-offline-status" class="ng-offline-status" role="status">${NGI18n.t('offline_update.checking')}</p>
+          <dl class="ng-offline-facts">
+            <div><dt>${NGI18n.t('offline_update.installed_build')}</dt><dd id="ng-offline-installed" dir="ltr">—</dd></div>
+            <div><dt>${NGI18n.t('offline_update.published_build')}</dt><dd id="ng-offline-published" dir="ltr">—</dd></div>
+            <div><dt>${NGI18n.t('offline.package_size')}</dt><dd id="ng-offline-size" dir="ltr">—</dd></div>
+            <div><dt>${NGI18n.t('offline.file_count')}</dt><dd id="ng-offline-count" dir="ltr">—</dd></div>
+            <div><dt>${NGI18n.t('offline.verification')}</dt><dd id="ng-offline-verification">—</dd></div>
+          </dl>
+          <div class="ng-offline-actions">
+            <button id="ng-offline-action" class="settings-utility ng-offline-button" type="button" disabled>${NGI18n.t('offline.button')}</button>
+            <button id="ng-offline-update-check" class="settings-utility" type="button" hidden>${NGI18n.t('offline_update.check_button')}</button>
+            <button id="ng-offline-remove" class="settings-utility ng-offline-remove" type="button" hidden>${NGI18n.t('offline.remove_button')}</button>
+          </div>
+          <progress id="ng-offline-progress" class="ng-offline-progress" max="100" value="0" aria-label="${NGI18n.t('offline.progress')}" hidden></progress>
+          <p id="ng-offline-detail" class="ng-offline-detail" hidden></p>
+          <details class="ng-offline-storage-box">
+            <summary>${NGI18n.t('offline.information')}</summary>
+            <p>${NGI18n.t('offline.storage_location')}</p>
+            <p>${NGI18n.t('offline.storage_site')} <bdi id="ng-offline-storage-site" class="ng-offline-storage-site" dir="ltr"></bdi></p>
+            ${['storage_scope', 'storage_inspect', 'local_files_note', 'remove_scope', 'permissions_note', 'updates_note', 'extension_note'].map(key => `<p>${NGI18n.t('offline.' + key)}</p>`).join('')}
+          </details>
+        </div>`,
         true,
         true
       ),
@@ -309,7 +322,6 @@
     window.NGGamepadKeyboardVisualizer?.mount?.();
     window.NGGamepadShortcuts?.mount?.();
     window.NGOfflineUI?.mount();
-    window.NGOfflineUpdateUI?.mount();
 
     document.querySelectorAll('[data-pref]').forEach(el =>
       // Stage preference changes without persisting them until the save action.
